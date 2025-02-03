@@ -10,7 +10,10 @@ cd CMSSW_14_2_1/src
 
 git clone https://github.com/Sumantifr/XtoYH4b.git 
 
+cd XtoYH4b/
+
 For processing ntuples:
+----------------------
 
 Compile the code with:
 ./Makefile Anal_XtoYH4b
@@ -19,6 +22,7 @@ Create condor jobs using:
 root -l -b -q 'jobmaker.C'
 
 For histograms:
+--------------
 
 cd HistoMaker/
 
