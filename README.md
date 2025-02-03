@@ -29,13 +29,20 @@ cd HistoMaker/
 Compile the code with:
 
 ./Makefile  HistoMaker_XtoYH4b 
+
 OR
+
 ./Makefile  CutOptimizer
 
 Run executable using, e.g.:
+
 ./CutOptimizer.exe  isDATA isSIGNAL inputname.root year
+
 OR
+
 Create jobs using:
+
 root -l -b -q 'histjobmaker.C(isDATA,isSIGNAL,year)'
+
 Change the executable name in histjobmaker.C depending on which executable you want to run
 
