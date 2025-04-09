@@ -4,7 +4,7 @@ Log in to your DESY NAF accouny
 
 cmsrel CMSSW_14_2_1 
 
-#For CMSSW_ version should not matter much here
+#Lower CMSSW_ versions might have a problem to read PartT scores
 
 cd CMSSW_14_2_1/src
 
