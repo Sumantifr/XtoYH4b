@@ -8,6 +8,10 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <math.h>
+#include <cmath>
+#include <cassert>
+#include <sstream>
 
 #include "Functions.h"
 
@@ -16,7 +20,9 @@
 
 // Header file for the classes stored in the TTree if any.
 #include "vector"
-# include <vector>
+
+#include <vector>
+
 #ifdef __MAKECINT__
     
     #pragma link C++ class std::vector+;
@@ -50,8 +56,11 @@ using namespace std;
    Int_t           nfatjets;
    Int_t		   nsmalljets;
    Int_t           ncuts;
-   Bool_t          Flag_event_cuts[5];   //[ncuts]
+   Bool_t          Flag_event_cuts[njetmax];   //[ncuts]
+   Int_t           ncuts_offline;
+   Bool_t          Flag_event_cuts_offline[njetmax];   //[ncuts]
    Bool_t          Flag_pass_baseline;
+   Bool_t		   Flag_pass_baseline_nobtag;
    Bool_t          Flag_pass_baseline_no_LJet;
    Bool_t          hlt_IsoMu24;
    Bool_t          hlt_IsoTkMu24;
@@ -204,6 +213,9 @@ using namespace std;
    Int_t           JetAK4_partonflav[njetmax];   //[_s_nJetAK4]
    Float_t         JetAK4_qgl[njetmax];   //[_s_nJetAK4]
    Float_t         JetAK4_PUID[njetmax];   //[_s_nJetAK4]
+   Float_t         JetAK4_charge_kappa_0p3[njetmax];   //[_s_nJetAK4]
+   Float_t         JetAK4_charge_kappa_0p6[njetmax];   //[_s_nJetAK4]
+   Float_t         JetAK4_charge_kappa_1p0[njetmax];   //[_s_nJetAK4]
    Bool_t          JetAK4_isMediumBJet[njetmax];   //[_s_nJetAK4]
    Bool_t          JetAK4_isLooseBJet[njetmax];   //[_s_nJetAK4]
    Bool_t		   JetAK4_isMatchB[njetmax];   //[_s_nJetAK4]
@@ -215,7 +227,7 @@ using namespace std;
    //Float_t         JetAK4_btag_DeepFlav_SF_dn[njetmax];   //[_s_nJetAK4]
    //vector<vector<float> > *JetAK4_JESup_split;
    //vector<vector<float> > *JetAK4_JESdn_split;
-   Double_t        Event_weight;
+   Float_t	       Event_weight;
    Bool_t          Flag_PNet_isSR_L;
    Bool_t          Flag_PNet_isSR_M;
    Bool_t          Flag_PNet_isSR_T;
@@ -246,8 +258,25 @@ using namespace std;
    Bool_t          Flag_ParT_isCR_T;
    Bool_t          Flag_ParT_isCR_XT;
    Bool_t          Flag_ParT_isCR_XXT;
+   Float_t		   angle_theta_H;
+   Float_t		   angle_theta_Y;
+   Float_t		   angle_phi;
+   Float_t		   angle_phi_prime;
+   Float_t		   angle_theta_star;
+   Float_t		   angle_phi_star;
+   Float_t		   angle_theta_H_lab;
+   Float_t		   angle_theta_Y_lab;
+   Float_t		   angle_theta_H_lab_prime;
+   Float_t		   angle_theta_Y_lab_prime;
+   Float_t		   angle_theta_H_gen;
+   Float_t		   angle_theta_Y_gen;
+   Float_t		   angle_phi_gen;
+   Float_t		   angle_phi_prime_gen;
+   Float_t		   angle_theta_star_gen;
+   Float_t		   angle_phi_star_gen;
    Double_t        LHE_weight;
    Double_t        Generator_weight;
+   Double_t	       Generator_weight_prescl; //proxy for preselection tree
    Float_t         puWeight;
    Float_t         puWeightup;
    Float_t         puWeightdown;
@@ -327,6 +356,8 @@ using namespace std;
    Int_t           Generator_id2;
    Float_t         Generator_scalePDF;
    
+   Int_t nfatjet_pass;
+   
    TString sysnames[] = {
 	 "JES_AbsoluteStat", "JES_AbsoluteScale","JES_AbsoluteMPFBias", 
 	 "JES_FlavorQCD", "JES_Fragmentation", 
@@ -354,6 +385,54 @@ using namespace std;
   string year;
   
   float xsec_weight;
+  float CrossSection;
+  
+  string sample_tag;
+  TFile *file_btagSF_correction;
+  
+  
+  //variables for jet pairing //
+  
+  float DR_b1b2_H1, DR_b1b2_H2;
+  float DEta_b1b2_H1, DEta_b1b2_H2;
+  float DPhi_b1b2_H1, DPhi_b1b2_H2;
+  float pT_ratio_b1b2_H1, pT_ratio_b1b2_H2;
+  float charge_kappa_0p3_product_b1b2_H1, charge_kappa_0p3_product_b1b2_H2;
+  float charge_kappa_0p6_product_b1b2_H1, charge_kappa_0p6_product_b1b2_H2;
+  float charge_kappa_1p0_product_b1b2_H1, charge_kappa_1p0_product_b1b2_H2;
+  float charge_kappa_0p3_sum_b1b2_H1, charge_kappa_0p3_sum_b1b2_H2;
+  float charge_kappa_0p6_sum_b1b2_H1, charge_kappa_0p6_sum_b1b2_H2;
+  float charge_kappa_1p0_sum_b1b2_H1, charge_kappa_1p0_sum_b1b2_H2;
+  float mass_H1, mass_H2;
+  
+  bool H1_pairing_truth, H2_pairing_truth;
+  int H1_b1_pdgId, H1_b2_pdgId;
+  int H2_b1_pdgId, H2_b2_pdgId;
+  int H1_b1_mom_pdgId, H1_b2_mom_pdgId;
+  int H2_b1_mom_pdgId, H2_b2_mom_pdgId;
+  
+  float pT_ratio_H1H2;
+  vector<float> angles_comb;
+  float angle_theta_H1H2, angle_theta_H1, angle_theta_H2;
+  
+  int combination_index = -1;
+  int combination_label = 0;
+  int combination_Hmass_min = 0;
+  
+  float event_weight_value;
+  
+  TTree *Tree_Pairing ;
+    
+  // end of pairing variables //
+  
+  void readTreePrescl(TTree* fChain) {
+	   
+   fChain->SetBranchAddress("ncuts", &ncuts);
+   fChain->SetBranchAddress("Flag_event_cuts", Flag_event_cuts);
+   
+   fChain->SetBranchAddress("Generator_weight", &Generator_weight_prescl);
+  
+  }
   
   void readTree(TTree* fChain, bool isMC) {
   
@@ -370,9 +449,10 @@ using namespace std;
    fChain->SetBranchAddress("nfatjets", &nfatjets);
    fChain->SetBranchAddress("nsmalljets", &nsmalljets);
   
-   fChain->SetBranchAddress("ncuts", &ncuts);
-   fChain->SetBranchAddress("Flag_event_cuts", Flag_event_cuts);
+   fChain->SetBranchAddress("ncuts", &ncuts_offline);
+   fChain->SetBranchAddress("Flag_event_cuts", Flag_event_cuts_offline);
    fChain->SetBranchAddress("Flag_pass_baseline", &Flag_pass_baseline);
+   fChain->SetBranchAddress("Flag_pass_baseline_nobtag", &Flag_pass_baseline_nobtag);
    fChain->SetBranchAddress("Flag_pass_baseline_no_LJet", &Flag_pass_baseline_no_LJet);
    fChain->SetBranchAddress("hlt_QuadPFJet70_50_40_35_PFBTagParticleNet_2BTagSum0p65", &hlt_QuadPFJet70_50_40_35_PFBTagParticleNet_2BTagSum0p65);
    fChain->SetBranchAddress("hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65", &hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65);
@@ -487,6 +567,11 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_partonflav", JetAK4_partonflav);
    fChain->SetBranchAddress("JetAK4_qgl", JetAK4_qgl);
    fChain->SetBranchAddress("JetAK4_PUID", JetAK4_PUID);
+   fChain->SetBranchAddress("JetAK4_charge_kappa_0p3", JetAK4_charge_kappa_0p3);
+   fChain->SetBranchAddress("JetAK4_charge_kappa_0p6", JetAK4_charge_kappa_0p6);
+   fChain->SetBranchAddress("JetAK4_charge_kappa_1p0", JetAK4_charge_kappa_1p0);
+   fChain->SetBranchAddress("JetAK4_isMatchB", JetAK4_isMatchB);
+   fChain->SetBranchAddress("JetAK4_MatchB_Index", JetAK4_MatchB_Index);
    fChain->SetBranchAddress("JetAK4_JESup", JetAK4_JESup);
    fChain->SetBranchAddress("JetAK4_JESdn", JetAK4_JESdn);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF", JetAK4_btag_DeepFlav_SF);
@@ -494,7 +579,7 @@ using namespace std;
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_dn", JetAK4_btag_DeepFlav_SF_dn);
    //fChain->SetBranchAddress("JetAK4_JESup_split", &JetAK4_JESup_split);
    //fChain->SetBranchAddress("JetAK4_JESdn_split", &JetAK4_JESdn_split);
-  
+   /*
    fChain->SetBranchAddress("Flag_PNet_isSR_L", &Flag_PNet_isSR_L);
    fChain->SetBranchAddress("Flag_PNet_isSR_M", &Flag_PNet_isSR_M);
    fChain->SetBranchAddress("Flag_PNet_isSR_T", &Flag_PNet_isSR_T);
@@ -526,7 +611,18 @@ using namespace std;
    fChain->SetBranchAddress("Flag_ParT_isCR_T", &Flag_ParT_isCR_T);
    fChain->SetBranchAddress("Flag_ParT_isCR_XT", &Flag_ParT_isCR_XT);
    fChain->SetBranchAddress("Flag_ParT_isCR_XXT", &Flag_ParT_isCR_XXT);
+   */
    
+   fChain->SetBranchAddress("angle_theta_H", &angle_theta_H);
+   fChain->SetBranchAddress("angle_theta_Y", &angle_theta_Y);
+   fChain->SetBranchAddress("angle_phi", &angle_phi);
+   fChain->SetBranchAddress("angle_phi_prime", &angle_phi_prime);
+   fChain->SetBranchAddress("angle_theta_star", &angle_theta_star);
+   fChain->SetBranchAddress("angle_phi_star", &angle_phi_star);
+   fChain->SetBranchAddress("angle_theta_H_lab", &angle_theta_H_lab);
+   fChain->SetBranchAddress("angle_theta_Y_lab", &angle_theta_Y_lab);
+   fChain->SetBranchAddress("angle_theta_H_lab_prime", &angle_theta_H_lab_prime);
+   fChain->SetBranchAddress("angle_theta_Y_lab_prime", &angle_theta_Y_lab_prime);
    
    fChain->SetBranchAddress("LHE_weight", &LHE_weight);
    fChain->SetBranchAddress("Event_weight", &Event_weight);
@@ -606,6 +702,13 @@ using namespace std;
    fChain->SetBranchAddress("Generator_id2", &Generator_id2);
    fChain->SetBranchAddress("Generator_scalePDF", &Generator_scalePDF);
    
+   fChain->SetBranchAddress("angle_theta_H_gen", &angle_theta_H_gen);
+   fChain->SetBranchAddress("angle_theta_Y_gen", &angle_theta_Y_gen);
+   fChain->SetBranchAddress("angle_phi_gen", &angle_phi_gen);
+   fChain->SetBranchAddress("angle_phi_prime_gen", &angle_phi_prime_gen);
+   fChain->SetBranchAddress("angle_theta_star_gen", &angle_theta_star_gen);
+   //fChain->SetBranchAddress("angle_phi_star_gen", &angle_phi_star_gen);
+	   
    }
    
 }
@@ -701,6 +804,7 @@ std::unordered_map<std::string, SampleData> CalculateXsecWeights(std::string& fi
 			}
             sample = trim(sample); // Trim any extra spaces from the sample name
             // Store the data in the map
+            if(sumGEN<1.e-6) {   sumGEN = 1.e-6;  xsec = 0.; xsecDB = 0.; }
             float xsecWeight = 1000*xsec/sumGEN;
             if(use_LHE_weights) { xsecWeight = 1000*xsec/sumLHE; }
             if(use_xsecDB) { xsecWeight = 1000*xsecDB/sumGEN; }
