@@ -2,11 +2,29 @@
 #include <math.h>
 #include "Functions.h"
 #include "TColor.h"
+#include "TAxis.h"
+
+std::string float_to_string(float value, int precision = 2) {
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(precision) << value;
+    return out.str();
+}
 
 struct variable_plot
 {
 	string name;
 	string title;
+	bool uselogscale;
+	bool plot_sys;
+	bool normalize;
+	
+};
+
+struct variable_plot_2D
+{
+	string name;
+	string title_x;
+	string title_y;
 	bool uselogscale;
 	bool plot_sys;
 	bool normalize;
@@ -210,7 +228,7 @@ void Plot(vector<TH1D*> hists_in,
 	THStack *h_var_stack = new THStack(name,"");
 	
 	// Plotting //
-		
+
 	for(int fg=0; fg<int(hists.size()-1); fg++){
 	
 		SetAxisStyle(hists[fg]);
@@ -245,7 +263,7 @@ void Plot(vector<TH1D*> hists_in,
 		h_data->Draw("E1X0 SAME");	// data
 		leg_data->AddEntry(h_data,"Data","pe");
 	}
-	
+
 	gPad->RedrawAxis();
 	
 	// Canvas 2 //
@@ -352,13 +370,16 @@ void Plot(vector<TH1D*> hists_in,
 void Plot2D(TH2D *hist, 
 		  string canvas_name, string sample_name,
 		  int runtag, string signal_process, 
-		  string output_filepath, float data_lumi){
+		  string output_filepath, float data_lumi,
+		  bool print_value = false){
 	
 	TString cmsText     = "CMS";
 	float cmsTextFont   = 61;
 
-	TString extraText   = "Simulation  Preliminary";
+	TString extraText   = "Simulation";//  Preliminary";
 	float extraTextFont = 52;  // default is helvetica-italics
+	
+	TString lumiText   = float_to_string(data_lumi)+" fb^{-1} (13 TeV)";
 
 	float lumiTextSize     = 0.06;
 	float lumiTextOffset   = 0.2;
@@ -410,17 +431,21 @@ void Plot2D(TH2D *hist,
     canv->SetBottomMargin( 0.12);
 
 	canv->cd(1);
-	gStyle->SetPalette(kInvertedDarkBodyRadiator);
+	//gStyle->SetPalette(kInvertedDarkBodyRadiator);
 
 	hist->SetBit(TH1::kNoStats);
 	SetAxisStyle(hist);
+	hist->SetTitle(0);
 	
-	hist->Draw("COLZ");	
+	gStyle->SetPaintTextFormat("1.2f");
+	
+	if(print_value) { hist->Draw("COLZ:text"); }
+	else { hist->Draw("COLZ");	 }
 	leg->AddEntry(hist,sample_name.c_str(),"b");
 	
 	cms_latex.DrawLatex(lp+0.025,1-tp,cmsText);                                                                                                                                                           
-    cms_ex_latex.DrawLatex(lp+0.5,1-tp,extraText);
-    cms_lumi.DrawLatex(1-rp,1-tp,"(13 TeV)");
+    cms_ex_latex.DrawLatex(lp+0.25,1-tp,extraText);
+    cms_lumi.DrawLatex(1-rp,1-tp,lumiText);
 
 	gPad->RedrawAxis();
 	
@@ -436,6 +461,156 @@ void Plot2D(TH2D *hist,
 
 	sprintf(name,"%s/%s.png",(output_filepath).c_str(),canv->GetName());
 	canv->SaveAs(name);
+	
+	canv->Close();
+	gSystem->ProcessEvents();
+	delete canv;
+}
+
+
+void Compare_1D(vector<TH1D*> hists_in,
+		  string canvas_name, 
+		  int runtag, 
+		  vector<sample_info> procs,
+		  string output_filepath, 
+		  float data_lumi,
+		  bool use_log
+		  )
+{
+	
+	if(hists_in.size()<2) {
+		cout<<"Need at least two samples!";
+		return;
+	}
+	
+	vector<TH1D*> hists;
+	for(unsigned ih=0; ih<hists_in.size(); ih++){
+		hists.push_back(hists_in[ih]);
+	}
+	
+	// sum of processes //
+	
+	TH1D *hists_mcsum;
+	
+	for(int fg=0; fg<(hists.size()); fg++){
+		
+		if(fg==0){
+			hists_mcsum = (TH1D*)hists[fg]->Clone();
+		}			
+		else{
+			if(isnan(hists[fg]->Integral())) continue;
+			hists_mcsum->Add(hists[fg]);
+		}
+		
+	}//fg
+	
+	float maxval=-1000, minval=1000;
+
+	unsigned imax = 0;
+	for(unsigned fg=0; fg<(hists.size()); fg++){
+		if(hists[fg]->GetMaximum()>hists[imax]->GetMaximum()){
+			imax = fg;
+		}
+	}
+	maxval = max(hists_mcsum->GetMaximum(),hists[imax]->GetMaximum());
+	
+	for(int bn=0; bn<hists_mcsum->GetNbinsX(); bn++){
+		if(hists_mcsum->GetBinContent(bn+1)<minval && fabs(hists_mcsum->GetBinContent(bn+1))>1.e-12){
+			minval = hists_mcsum->GetBinContent(bn+1);
+		}
+	}
+	
+	char name[1000];
+	sprintf(name,"Plot_%s",(canvas_name).c_str());
+	TCanvas *canv;
+			
+	canv = tdrDiCanvas(name,hists[1],hists[imax],runtag,0);
+	
+	TLegend *leg;
+	leg_x1 = 0.7;
+	leg_x2 = 0.95;
+	leg = tdrLeg(leg_x1,leg_y1,leg_x2,leg_y2,42,0.04);
+	if((hists.size())>8){ leg->SetNColumns(3); }
+	else if((hists.size())>4){ leg->SetNColumns(2); }
+	else{ leg->SetNColumns(1); }
+	
+	// Canvas 1 //
+	
+	canv->cd(1);
+//	gPad->SetRightMargin(0.225);
+	
+	char hist_name[500];
+	sprintf(hist_name,"%s",hists[0]->GetName());
+	//if(string(hist_name).find("miniso")!=string::npos || string(hist_name).find("_pt")!=string::npos || string(hist_name).find("_ST")!=string::npos || string(hist_name).find("X_mass")!=string::npos)
+	if(use_log)
+	{
+		gPad->SetLogy(1);
+	}
+	
+	// Setting plotting height limits //
+	
+	//SetLimits(hists[0],hists_mcsum->GetMaximumBin(),maxval,minval,gPad->GetLogy());
+
+	// Plotting //
+		
+	for(int fg=0; fg<int(hists.size()); fg++){
+	
+		SetAxisStyle(hists[fg]);
+		hists[fg]->GetXaxis()->SetNdivisions(506);
+		SetPlotStyle(hists[fg],kSolid,procs[fg].color,1,0,procs[fg].color,0,1001,procs[fg].color,1);
+		//SetPlotStyle(hists[fg],	 1,procs[fg].color,1,20,procs[fg].color,1,0,procs[fg].color,1);		
+		if(!isnan(hists[fg]->Integral())){
+			leg->AddEntry(hists[fg],procs[fg].title.c_str(),"lf");
+		}
+		
+	}//fg
+    
+	for(int fg=0; fg<int(hists.size()); fg++){
+		hists[fg]->Draw("hist:SAME");		
+	}
+	
+	gPad->RedrawAxis();
+	
+	// Canvas 2 //
+	
+	canv->cd(2);
+	
+	// creating ratio //
+	
+	vector<TH1D*> hrat;
+	
+	for(int ih=0; ih<int(hists.size()-1); ih++){
+		TH1D *h_temp = (TH1D*)hists[ih+1]->Clone();
+		h_temp->Divide(hists[0]);
+		h_temp->SetMinimum(0);
+		h_temp->SetMaximum(2);
+		SetAxisStyle(h_temp,true);
+		h_temp->GetYaxis()->SetTitle("4J3T/4J2T");
+		hrat.push_back(h_temp);
+	}
+	cout<<"hrat length "<<hrat.size()<<endl;
+	
+	TLine *line = new TLine(hrat[0]->GetBinLowEdge(1),1,hrat[0]->GetBinLowEdge(hrat[0]->GetNbinsX()+1),1);
+	line->SetLineColor(kBlack);
+	line->SetLineStyle(kDotted);
+	
+	gPad->SetLogy(0);
+	
+	hrat[0]->Draw("pe");
+	line->Draw("sames");
+	
+	for(int ih=0; ih<int(hrat.size()); ih++){
+	 hrat[ih]->Draw("SAME:E1X0");
+	}
+	
+	sprintf(name,"%s/%s.png",(output_filepath).c_str(),canv->GetName());
+	canv->SaveAs(name);
+	
+	hists.clear();
+	hists.shrink_to_fit();
+	
+	hrat.clear();
+	hrat.shrink_to_fit();
 	
 	canv->Close();
 	gSystem->ProcessEvents();

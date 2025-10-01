@@ -5,8 +5,11 @@
 
 using namespace std;
 
-void MC_Pileup_Calc(string filename, string year)
+void MC_Pileup_Calc(string year)
 {
+
+string sample = "TTto4Q_TuneCP5_13p6TeV_powheg-pythia8";
+string filename = "FILES_"+year+"/"+sample+".log";
 
 char outfile[1000];
 sprintf(outfile,"MC_Pileup_%s.root",year.c_str());
@@ -24,6 +27,7 @@ char datafile[1000];
 
 //cout <<"Give the input file name"<<endl;
 //cin>> rootfiles;
+
 sprintf(rootfiles,"%s",filename.c_str());
 
 ifstream file_db;
@@ -40,6 +44,7 @@ while(!(file_db.eof())){
 	cout<<"infile "<<infile<<endl;
 
 	TFile *fileIn = new TFile(infile,"read");
+	cout<<infile<<endl;
 
 	double sumweight = 0;
 	double sum_pos =0, sum_neg = 0;

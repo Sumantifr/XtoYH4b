@@ -9,15 +9,19 @@ char name[1000];
 
 string path, text;
 if(year=="2023"){
-path = "data/pileup/Collisions23/";
-text = "Collisions2023_366442_370790";
+path = "Analysis/data/pileup/Collisions23/";
+text = "Collisions2023_366403_369802_eraBC";
+}
+else if(year=="2023BPiX"){
+path = "Analysis/data/pileup/Collisions23/";
+text = "Collisions2023_369803_370790_eraD";
 }
 else if(year=="2022EE"){
-path = "data/pileup/Collisions22EE/";
+path = "Analysis/data/pileup/Collisions22EE/";
 text = "Collisions2022_359022_362760_eraEFG";
 }
 else{
-path = "data/pileup/Collisions22/";
+path = "Analysis/data/pileup/Collisions22/";
 text = "Collisions2022_355100_357900_eraBCD";
 }
 
@@ -31,7 +35,7 @@ sprintf(name,"%s/pileupHistogram-Cert_%s_GoldenJson-13p6TeV-66000ub-99bins.root 
 TFile *file_data_minus = new TFile(name,"read");
 TH1F *h_data_minus = (TH1F*)file_data_minus->Get("pileup");
 
-sprintf(name,"data/pileup/MC_Pileup_%s.root",year.c_str());
+sprintf(name,"Analysis/data/pileup/MC_Pileup_%s.root",year.c_str());
 TFile *file_mc = new TFile(name,"read");
 TH1F *h_mc = (TH1F*)file_mc->Get("pileup_true");
 
@@ -51,7 +55,7 @@ h_data->Divide(h_mc);
 h_data_plus->Divide(h_mc);
 h_data_minus->Divide(h_mc);
 
-sprintf(name,"data/pileup/RatioPileup-%s-99bins.root",year.c_str());
+sprintf(name,"Analysis/data/pileup/RatioPileup-%s-99bins.root",year.c_str());
 TFile *fileout = new TFile(name,"recreate");
 fileout->cd();
 h_data->SetName("pileup_weight");

@@ -1,0 +1,16 @@
+imax 1  number of channels
+jmax 6  number of backgrounds
+kmax *  number of nuisance parameters
+-------------------------------------
+bin channel1
+observation  0
+-------------------------------------
+bin channel1 channel1 channel1 channel1 channel1 channel1 channel1
+process NMSSM_XtoYHto4B_MX-4000_MY-400_TuneCP5_13p6TeV_madgraph-pythia8 TT ST Zto2Q Wto2Q Diboson QCD
+process 0 1 2 3 4 5 6
+rate 1.9147917851805687 91.26094237202778 4.56504223018419 49.34249571058899 1.1832126546651125 0.8885416387347504 2248.054935844615
+-------------------------------------
+shapes * NMSSM_XtoYHto4B_MX-4000_MY-400_TuneCP5_13p6TeV_madgraph-pythia8 h_MX_Comb_5_5_4_4_Inclusive TT h_MX_Comb_5_5_4_4_Inclusive ST h_MX_Comb_5_5_4_4_Inclusive Zto2Q h_MX_Comb_5_5_4_4_Inclusive Wto2Q h_MX_Comb_5_5_4_4_Inclusive Diboson h_MX_Comb_5_5_4_4_Inclusive QCD h_MX_Comb_5_5_4_4_Inclusive
+-------------------------------------
+luminosity  0.025    1    lnN
+bkg_norm    1.1      1    lnN

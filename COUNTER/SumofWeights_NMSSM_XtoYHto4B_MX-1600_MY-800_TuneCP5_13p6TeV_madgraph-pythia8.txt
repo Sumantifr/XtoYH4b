@@ -1,0 +1,1 @@
+NMSSM_XtoYHto4B_MX-1600_MY-800_TuneCP5_13p6TeV_madgraph-pythia8	67000	2.56366e+13 	2.56366e+13

@@ -431,9 +431,10 @@ float relExtraDY = 1.2;
 float extraOverCmsTextSize  = 0.76;
 
 TString lumi_13p6TeV_2022 		= "2022 7.98 fb^{-1}";
-TString lumi_13p6TeV_2022EE		= "2022EE 23.6 fb^{-1}";
-TString lumi_13p6TeV_2023 		= "2023 17.8 fb^{-1}";
+TString lumi_13p6TeV_2022EE		= "2022EE 26.7 fb^{-1}";
+TString lumi_13p6TeV_2023 		= "2023 11.2 fb^{-1}";
 TString lumi_13p6TeV_2023BPiX 	= "2023BPiX 9.45 fb^{-1}";
+TString lumi_13p6TeV_2024   = "2024 109 fb^{-1}";
 TString lumi_13TeV_EF = "2016EF 10.7 fb^{-1}";
 TString lumi_13TeV_BCD = "2016BCD 10.1 fb^{-1}";
 TString lumi_13TeV_GH = "2016GH 16.4 fb^{-1}";
@@ -600,6 +601,10 @@ CMS_lumi( TPad* pad, int iPeriod, int iPosX, bool SIM)
   }
   else if ( iPeriod==20 ){ 
       lumiText += lumi_13p6TeV_2023BPiX;
+      lumiText += " (13.6 TeV)";
+  }
+  else if ( iPeriod==21 ){
+      lumiText += lumi_13p6TeV_2024;
       lumiText += " (13.6 TeV)";
   }
   cout << lumiText << endl;

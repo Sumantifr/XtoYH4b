@@ -1,0 +1,11 @@
+#!/bin/bash
+FILE=$1
+
+ONNX_INCLUDE="/afs/desy.de/user/c/chatterj/work/tools/onnx_runtime_prebuilt/onnxruntime-linux-x64-1.17.1/include"
+ONNX_LIB="/afs/desy.de/user/c/chatterj/work/tools/onnx_runtime_prebuilt/onnxruntime-linux-x64-1.17.1/lib"
+
+XGB_INCLUDE="/afs/desy.de/user/c/chatterj/work/CMSSW_14_2_1/src/Analysis/HistoMaker/xgboost/include"
+XGB_LIB="/afs/desy.de/user/c/chatterj/work/CMSSW_14_2_1/src/Analysis/HistoMaker/xgboost/lib"
+
+echo ${FILE}
+g++ -std=c++17 -g -fno-stack-protector  `root-config --cflags` -I/usr/local/include $(correction config --cflags --ldflags --rpath) ${FILE}.C -o ${FILE}.exe `root-config --glibs` -lMinuit -I${ONNX_INCLUDE} -L${ONNX_LIB} -lonnxruntime   -I${XGB_INCLUDE} -L${XGB_LIB} -lxgboost 

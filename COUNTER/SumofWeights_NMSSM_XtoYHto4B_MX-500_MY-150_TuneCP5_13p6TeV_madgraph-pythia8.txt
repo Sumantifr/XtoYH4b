@@ -1,0 +1,1 @@
+NMSSM_XtoYHto4B_MX-500_MY-150_TuneCP5_13p6TeV_madgraph-pythia8	64000	3.94252e+15 	3.94252e+15

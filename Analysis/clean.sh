@@ -1,0 +1,12 @@
+rm -f execute*.csh
+rm -f submit*.sh
+rm -f submit*.sub
+rm -f FILELIST_args*.txt
+rm -f condor_submit*.sh 
+rm -f run_*.sh
+rm -f job_*.error
+rm -f job_*.out
+rm -f job_*.log
+rm -f logs/job_*.error
+rm -f logs/job_*.out
+rm -f logs/job_*.log

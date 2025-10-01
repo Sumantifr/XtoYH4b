@@ -1,0 +1,7 @@
+cp ParkingHH_Run2024C.log  Data_Run3_Run2024_C_ParkingHH.log
+cp ParkingHH_Run2024D.log  Data_Run3_Run2024_D_ParkingHH.log
+cp ParkingHH_Run2024E.log  Data_Run3_Run2024_E_ParkingHH.log
+cp ParkingHH_Run2024F.log  Data_Run3_Run2024_F_ParkingHH.log
+cp ParkingHH_Run2024G.log  Data_Run3_Run2024_G_ParkingHH.log
+cp ParkingHH_Run2024H.log  Data_Run3_Run2024_H_ParkingHH.log
+cp ParkingHH_Run2024I.log  Data_Run3_Run2024_I_ParkingHH.log

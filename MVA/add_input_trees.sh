@@ -1,0 +1,1 @@
+hadd -f /data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/2023BPiX/Tree_NMSSM_XtoYHto4B_AllSummed_TuneCP5_13p6TeV_madgraph-pythia8.root /data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/2023BPiX/Tree_NMSSM_XtoYHto4B_MX-*.root

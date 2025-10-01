@@ -324,3 +324,120 @@ double result = algo_sf->evaluate(inputs);
 return result;
 	
 }
+
+double getphi(TLorentzVector lep1, TLorentzVector lep2, TLorentzVector tmp_H)
+{
+        if(lep1.Eta()<-10 || lep2.Eta()<-10 || tmp_H.Eta()<-10) return -100;
+
+        TLorentzVector beam;
+        beam.SetPxPyPzE(0,0,6500,6500);
+
+        TLorentzVector V_mom = lep1+lep2;
+        TVector3 bVH = (lep1+lep2+tmp_H).BoostVector();
+
+        lep1.Boost(-bVH);
+        lep2.Boost(-bVH);
+        V_mom.Boost(-bVH);
+//      beam.Boost(-bVH);
+
+        TVector3 n_scatter = (beam.Vect().Unit().Cross(V_mom.Vect())).Unit();
+        TVector3 n_decay   = (lep1.Vect().Cross(lep2.Vect())).Unit();
+
+        double phi;
+        double sign_flip =  double(Sign((n_scatter.Cross(n_decay))*(V_mom.Vect())));
+        phi = sign_flip*acos(n_scatter.Dot(n_decay));
+       
+        return phi;
+}
+
+double getTheta(TLorentzVector lep1, TLorentzVector lep2, TLorentzVector tmp_H)
+{
+
+   if(lep1.Eta()<-10 || lep2.Eta()<-10 || tmp_H.Eta()<-10) return -100;
+
+   TLorentzVector beam;
+   beam.SetPxPyPzE(0,0,6500,6500);
+
+   TLorentzVector V_mom = lep1+lep2;
+   TVector3 bVH = (lep1+lep2+tmp_H).BoostVector();
+
+   V_mom.Boost(-bVH);
+//   beam.Boost(-bVH);
+
+   double Theta  = acos((V_mom.Vect().Unit()).Dot(beam.Vect().Unit()));
+
+   return Theta;
+
+}
+
+double gettheta(TLorentzVector lep1, TLorentzVector lep2, TLorentzVector tmp_H)
+{
+if(lep1.Eta()<-10 || lep2.Eta()<-10) return -100;
+
+TVector3 bVH = (lep1+lep2+tmp_H).BoostVector();
+
+TLorentzVector V_mom = lep1+lep2;
+
+V_mom.Boost(-bVH);
+lep1.Boost(-bVH);
+
+TVector3 bV = V_mom.BoostVector();
+lep1.Boost(-bV);
+
+double theta = (V_mom).Angle(lep1.Vect());
+return theta;
+}
+
+
+vector<float> get_Xto4b_angles(TLorentzVector b11, TLorentzVector b12, TLorentzVector b21, TLorentzVector b22)
+{
+	
+	TLorentzVector H1; H1 = b11+b12;
+	TLorentzVector H2; H2 = b21+b22;
+	
+	TLorentzVector beam;
+    beam.SetPxPyPzE(0,0,6500,6500);
+    
+    TVector3 bX = (H1+H2).BoostVector();
+    TVector3 bH1 = (H1).BoostVector();
+    TVector3 bH2 = (H2).BoostVector();
+    
+    // angles in H1 & H2 frames //
+    
+    TLorentzVector b11_H1, H2_H1, b21_H2, H1_H2;
+    b11_H1 = b11; b11_H1.Boost(-bH1);
+    H2_H1  = H2;  H2_H1.Boost(-bH1);
+    b21_H2 = b11; b21_H2.Boost(-bH2);
+    H1_H2  = H2;  H1_H2.Boost(-bH2);
+	
+	float theta_1 = acos(((-(H2_H1.Vect())).Unit()).Dot(b11_H1.Vect().Unit()));
+	float theta_2 = acos(((-(H1_H2.Vect())).Unit()).Dot(b21_H2.Vect().Unit()));
+	
+	// angles in X frames //
+	
+	H1.Boost(-bX); H2.Boost(-bX);
+	b11.Boost(-bX); b12.Boost(-bX); 
+	b21.Boost(-bX); b22.Boost(-bX); 
+	
+	TVector3 nH1 = ((b11.Vect()).Cross(b12.Vect()))/(((b11.Vect()).Cross(b12.Vect())).Unit());
+    TVector3 nH2 = ((b21.Vect()).Cross(b22.Vect()))/(((b21.Vect()).Cross(b22.Vect())).Unit());
+    
+	TVector3 n_scatter = (beam.Vect().Unit().Cross(H1.Vect())).Unit();
+	
+	float phi, phi1, sign_flip;
+    sign_flip  =  float(Sign((nH1.Cross(nH2))*(H1.Vect())));
+    phi = sign_flip*acos(nH1.Dot(nH2));
+    sign_flip  =  float(Sign((nH1.Cross(n_scatter))*(H1.Vect())));
+    phi1 = sign_flip*acos(nH1.Dot(n_scatter));
+    
+    TVector3 uH1 = H1.Vect().Unit();
+    float theta_star = uH1.Theta();
+    float phi_star = uH1.Phi();
+    
+    vector<float> angles;
+    
+    angles.push_back(theta_1,theta_2,phi,phi1,theta_star,phi_star);
+    
+    return angles;
+    
+}
