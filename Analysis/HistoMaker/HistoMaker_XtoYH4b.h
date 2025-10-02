@@ -242,8 +242,8 @@ using namespace std;
    //Float_t         JetAK4_btag_DeepFlav_SF[njetmax];   //[_s_nJetAK4]
    //Float_t         JetAK4_btag_DeepFlav_SF_up[njetmax];   //[_s_nJetAK4]
    //Float_t         JetAK4_btag_DeepFlav_SF_dn[njetmax];   //[_s_nJetAK4]
-   //vector<vector<float> > *JetAK4_JESup_split;
-   //vector<vector<float> > *JetAK4_JESdn_split;
+   vector<vector<float> > *JetAK4_JESup_split;
+   vector<vector<float> > *JetAK4_JESdn_split;
    Float_t	       Event_weight;
    Float_t	       Event_weight_nom;
    Bool_t          Flag_PNet_isSR_L;
@@ -310,6 +310,11 @@ using namespace std;
    Double_t        prefiringweightup;
    Double_t        prefiringweightdown;
    Float_t		   btag_PNet_weight;
+   vector<float>   *btag_PNet_weightup;
+   vector<float>   *btag_PNet_weightdown;
+   Float_t		   btag_UParT_weight;
+   vector<float>   *btag_UParT_weightup;
+   vector<float>   *btag_UParT_weightdown;
    Float_t		   btag_ParT_weight;
    Float_t		   triggersf_weight_pt;
    Float_t		   triggersf_weight_pt_err;
@@ -698,8 +703,10 @@ using namespace std;
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF", JetAK4_btag_DeepFlav_SF);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_up", JetAK4_btag_DeepFlav_SF_up);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_dn", JetAK4_btag_DeepFlav_SF_dn);
-   //fChain->SetBranchAddress("JetAK4_JESup_split", &JetAK4_JESup_split);
-   //fChain->SetBranchAddress("JetAK4_JESdn_split", &JetAK4_JESdn_split);
+   if(isSignal){
+	fChain->SetBranchAddress("JetAK4_JESup_split", &JetAK4_JESup_split);
+	fChain->SetBranchAddress("JetAK4_JESdn_split", &JetAK4_JESdn_split);
+   }
    /*
    fChain->SetBranchAddress("Flag_PNet_isSR_L", &Flag_PNet_isSR_L);
    fChain->SetBranchAddress("Flag_PNet_isSR_M", &Flag_PNet_isSR_M);
@@ -751,22 +758,38 @@ using namespace std;
    if(isMC){
    
    fChain->SetBranchAddress("Generator_weight", &Generator_weight);
+   
    fChain->SetBranchAddress("puWeight", &puWeight);
    fChain->SetBranchAddress("puWeightup", &puWeightup);
    fChain->SetBranchAddress("puWeightdown", &puWeightdown);
+   
    fChain->SetBranchAddress("leptonsf_weight", &leptonsf_weight);
    fChain->SetBranchAddress("leptonsf_weight_up", &leptonsf_weight_up);
    fChain->SetBranchAddress("leptonsf_weight_dn", &leptonsf_weight_dn);
    fChain->SetBranchAddress("leptonsf_weight_stat", &leptonsf_weight_stat);
    fChain->SetBranchAddress("leptonsf_weight_syst", &leptonsf_weight_syst);
+   
    fChain->SetBranchAddress("jetpuidsf_weight", &jetpuidsf_weight);
    fChain->SetBranchAddress("jetpuidsf_weight_stat", &jetpuidsf_weight_stat);
    fChain->SetBranchAddress("jetpuidsf_weight_syst", &jetpuidsf_weight_syst);
+   
    fChain->SetBranchAddress("prefiringweight", &prefiringweight);
    fChain->SetBranchAddress("prefiringweightup", &prefiringweightup);
    fChain->SetBranchAddress("prefiringweightdown", &prefiringweightdown);
+   
    fChain->SetBranchAddress("btag_PNet_weight", &btag_PNet_weight);
+   if(isSignal){
+	fChain->SetBranchAddress("btag_PNet_weightup", &btag_PNet_weightup);
+	fChain->SetBranchAddress("btag_PNet_weightdown", &btag_PNet_weightdown);
+   }
    fChain->SetBranchAddress("btag_ParT_weight", &btag_ParT_weight);
+   if(year=="2024"){
+   fChain->SetBranchAddress("btag_UParT_weight", &btag_UParT_weight);
+   if(isSignal){
+	fChain->SetBranchAddress("btag_UParT_weightup", &btag_UParT_weightup);
+	fChain->SetBranchAddress("btag_UParT_weightdown", &btag_UParT_weightdown);
+   }
+   }
    fChain->SetBranchAddress("triggersf_weight_pt", &triggersf_weight_pt);	
    fChain->SetBranchAddress("triggersf_weight_pt_err", &triggersf_weight_pt_err);	
    fChain->SetBranchAddress("triggersf_weight_btag", &triggersf_weight_btag);	
@@ -774,33 +797,37 @@ using namespace std;
    fChain->SetBranchAddress("triggersf_weight_L1HT", &triggersf_weight_L1HT);	
    fChain->SetBranchAddress("triggersf_weight_L1HT_err", &triggersf_weight_L1HT_err);	
 
-   fChain->SetBranchAddress("nGenLep", &nGenLep);
-   fChain->SetBranchAddress("GenLep_pt", GenLep_pt);
-   fChain->SetBranchAddress("GenLep_eta", GenLep_eta);
-   fChain->SetBranchAddress("GenLep_phi", GenLep_phi);
-   fChain->SetBranchAddress("GenLep_mass", GenLep_mass);
-   fChain->SetBranchAddress("GenLep_pdgId", GenLep_pdgId);
-   fChain->SetBranchAddress("GenLep_mompdgId", GenLep_mompdgId);
-   fChain->SetBranchAddress("GenLep_grmompdgId", GenLep_grmompdgId);
+   if(isSignal){
+
+	fChain->SetBranchAddress("nGenLep", &nGenLep);
+	fChain->SetBranchAddress("GenLep_pt", GenLep_pt);
+	fChain->SetBranchAddress("GenLep_eta", GenLep_eta);
+	fChain->SetBranchAddress("GenLep_phi", GenLep_phi);
+	fChain->SetBranchAddress("GenLep_mass", GenLep_mass);
+	fChain->SetBranchAddress("GenLep_pdgId", GenLep_pdgId);
+	fChain->SetBranchAddress("GenLep_mompdgId", GenLep_mompdgId);
+	fChain->SetBranchAddress("GenLep_grmompdgId", GenLep_grmompdgId);
    
-   fChain->SetBranchAddress("nGenNu", &nGenNu);
-   fChain->SetBranchAddress("GenNu_pt", GenNu_pt);
-   fChain->SetBranchAddress("GenNu_eta", GenNu_eta);
-   fChain->SetBranchAddress("GenNu_phi", GenNu_phi);
-   fChain->SetBranchAddress("GenNu_mass", GenNu_mass);
-   fChain->SetBranchAddress("GenNu_pdgId", GenNu_pdgId);
-   fChain->SetBranchAddress("GenNu_mompdgId", GenNu_mompdgId);
-   fChain->SetBranchAddress("GenNu_grmompdgId", GenNu_grmompdgId);
+	fChain->SetBranchAddress("nGenNu", &nGenNu);
+	fChain->SetBranchAddress("GenNu_pt", GenNu_pt);
+	fChain->SetBranchAddress("GenNu_eta", GenNu_eta);
+	fChain->SetBranchAddress("GenNu_phi", GenNu_phi);
+	fChain->SetBranchAddress("GenNu_mass", GenNu_mass);
+	fChain->SetBranchAddress("GenNu_pdgId", GenNu_pdgId);
+	fChain->SetBranchAddress("GenNu_mompdgId", GenNu_mompdgId);
+	fChain->SetBranchAddress("GenNu_grmompdgId", GenNu_grmompdgId);
    
-   fChain->SetBranchAddress("nGenBPart", &nGenBPart);
-   fChain->SetBranchAddress("GenBPart_pt", &GenBPart_pt);
-   fChain->SetBranchAddress("GenBPart_eta", &GenBPart_eta);
-   fChain->SetBranchAddress("GenBPart_phi", &GenBPart_phi);
-   fChain->SetBranchAddress("GenBPart_mass", &GenBPart_mass);
-   fChain->SetBranchAddress("GenBPart_pdgId", &GenBPart_pdgId);
-   fChain->SetBranchAddress("GenBPart_mompdgId", &GenBPart_mompdgId);
-   fChain->SetBranchAddress("GenBPart_grmompdgId", GenBPart_grmompdgId);
-   fChain->SetBranchAddress("GenBPart_fromResonance", GenBPart_fromResonance);
+	fChain->SetBranchAddress("nGenBPart", &nGenBPart);
+	fChain->SetBranchAddress("GenBPart_pt", &GenBPart_pt);
+	fChain->SetBranchAddress("GenBPart_eta", &GenBPart_eta);
+	fChain->SetBranchAddress("GenBPart_phi", &GenBPart_phi);
+	fChain->SetBranchAddress("GenBPart_mass", &GenBPart_mass);
+	fChain->SetBranchAddress("GenBPart_pdgId", &GenBPart_pdgId);
+	fChain->SetBranchAddress("GenBPart_mompdgId", &GenBPart_mompdgId);
+	fChain->SetBranchAddress("GenBPart_grmompdgId", GenBPart_grmompdgId);
+	fChain->SetBranchAddress("GenBPart_fromResonance", GenBPart_fromResonance);
+   
+   }
    
    fChain->SetBranchAddress("nLHETop", &nLHETop);
    fChain->SetBranchAddress("LHETop_pt", &LHETop_pt);
@@ -823,13 +850,16 @@ using namespace std;
    fChain->SetBranchAddress("Generator_id2", &Generator_id2);
    fChain->SetBranchAddress("Generator_scalePDF", &Generator_scalePDF);
    
-   fChain->SetBranchAddress("angle_theta_H_gen", &angle_theta_H_gen);
-   fChain->SetBranchAddress("angle_theta_Y_gen", &angle_theta_Y_gen);
-   fChain->SetBranchAddress("angle_phi_gen", &angle_phi_gen);
-   fChain->SetBranchAddress("angle_phi_prime_gen", &angle_phi_prime_gen);
-   fChain->SetBranchAddress("angle_theta_star_gen", &angle_theta_star_gen);
-   //fChain->SetBranchAddress("angle_phi_star_gen", &angle_phi_star_gen);
+   if(isSignal){
+   
+	fChain->SetBranchAddress("angle_theta_H_gen", &angle_theta_H_gen);
+	fChain->SetBranchAddress("angle_theta_Y_gen", &angle_theta_Y_gen);
+	fChain->SetBranchAddress("angle_phi_gen", &angle_phi_gen);
+	fChain->SetBranchAddress("angle_phi_prime_gen", &angle_phi_prime_gen);
+	fChain->SetBranchAddress("angle_theta_star_gen", &angle_theta_star_gen);
+	//fChain->SetBranchAddress("angle_phi_star_gen", &angle_phi_star_gen);
 	   
+   }
    }
    
 }

@@ -877,6 +877,8 @@
    float triggersf_weight_btag, triggersf_weight_btag_err;
    float triggersf_weight_L1HT, triggersf_weight_L1HT_err;
    float btag_PNet_weight, btag_ParT_weight, btag_UParT_weight;
+   vector<float> btag_PNet_weight_up, btag_PNet_weight_dn;
+   vector<float> btag_UParT_weight_up, btag_UParT_weight_dn;
    float xsec_weight, CrossSection;
    
    bool trigger_matching;
@@ -900,6 +902,22 @@
    float AK8_msdcut_boosted = 40.;
    float AK8_PNetmasscut_boosted = 60.;
    float AK8_Htagcut_boosted = 0.8;
+   
+   static const int nsrc = 24;
+   const char* jecsrcnames[nsrc] = {
+	"AbsoluteStat", "AbsoluteScale","AbsoluteMPFBias",
+    "FlavorQCD", "Fragmentation",
+    "PileUpDataMC",  "PileUpPtBB", "PileUpPtEC1", "PileUpPtEC2", //"PileUpPtHF",
+    "PileUpPtRef",
+    "RelativeFSR", "RelativeJEREC1", "RelativeJEREC2", //"RelativeJERHF",
+    "RelativePtBB", "RelativePtEC1", "RelativePtEC2", //"RelativePtHF", 
+    "RelativeBal", "RelativeSample", "RelativeStatEC", "RelativeStatFSR", //"RelativeStatHF", 
+    "SinglePionECAL", "SinglePionHCAL","TimePtEta",
+    "Total"
+   };
+
+   float raw_pt_cut = 15.; // for applying b jet energy regression 
+   float pt_cut_HT = 25.; // for HT calculation
    
    void readTree(TTree* fChain, bool isMC) {
     

@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
         {"eta", "#eta", {40, -2.5, 2.5}},
         {"phi", "#phi", {65, -M_PI, M_PI}},
         {"mass", "mass (GeV)", {40, 20, 220}},
-         {"charge_kappa_0p3", "Charge (#kappa=0.3)", {100,-2.5,2.5}},
+        {"charge_kappa_0p3", "Charge (#kappa=0.3)", {100,-2.5,2.5}},
         {"charge_kappa_0p6", "Charge (#kappa=0.6)", {100,-2.5,2.5}},
         {"charge_kappa_1p0", "Charge (#kappa=1.0)", {100,-2.5,2.5}}
  };
@@ -833,7 +833,8 @@ int main(int argc, char *argv[])
 	  Event_weight_nom *= Generator_weight;
 	   
 	  Event_weight_nom *= puWeight;
-	  Event_weight_nom *= btag_PNet_weight;
+	  if(year=="2024") { Event_weight_nom *= btag_UParT_weight;  }
+	  else             { Event_weight_nom *= btag_PNet_weight;  }
 	  Event_weight_nom *= triggersf_weight_L1HT;
 	  Event_weight_nom *= triggersf_weight_pt;
 	  Event_weight_nom *= triggersf_weight_btag;
@@ -884,6 +885,10 @@ int main(int argc, char *argv[])
   
 	float weight_nom;
 	
+	float btag_weight = 1.;
+	if(year=="2024") { btag_weight = btag_UParT_weight; }
+	else             { btag_weight = btag_PNet_weight;  }
+	
 	if(isMC){
 		
 		//if (isSignal) { weight_nom = 1.0; }
@@ -892,7 +897,7 @@ int main(int argc, char *argv[])
 		
 		weight_nom *= puWeight;
 		//weight_nom *= prefiringweight;
-		weight_nom *= btag_PNet_weight; // since using ParticleNet for offline event selection, need to be changed if offline selection is changed to ParT
+		weight_nom *= btag_weight; 
 		weight_nom *= triggersf_weight_L1HT;
 		weight_nom *= triggersf_weight_pt;
 		weight_nom *= triggersf_weight_btag;
@@ -927,11 +932,11 @@ int main(int argc, char *argv[])
    
    if(isMC){
 	   
-	h_nAK4jet_nobtagSF->Fill(nsmalljets,weight_nom*1./max(float(1.e-3),btag_PNet_weight));
-	h_HT_nobtagSF->Fill(HT_jets,weight_nom*1./max(float(1.e-3),btag_PNet_weight));
-	h_2D_HT_nAK4jet_nobtagSF->Fill(HT_jets,nsmalljets,weight_nom*1./max(float(1.e-3),btag_PNet_weight));
+	h_nAK4jet_nobtagSF->Fill(nsmalljets,weight_nom*1./max(float(1.e-3),btag_weight));
+	h_HT_nobtagSF->Fill(HT_jets,weight_nom*1./max(float(1.e-3),btag_weight));
+	h_2D_HT_nAK4jet_nobtagSF->Fill(HT_jets,nsmalljets,weight_nom*1./max(float(1.e-3),btag_weight));
 	
-	h_2D_nAK4jet_hadronflav_nobtagSF->Fill(njets_q, njets_b, weight_nom*1./max(float(1.e-3),btag_PNet_weight));
+	h_2D_nAK4jet_hadronflav_nobtagSF->Fill(njets_q, njets_b, weight_nom*1./max(float(1.e-3),btag_weight));
 	
    }
    else{
@@ -1010,7 +1015,7 @@ int main(int argc, char *argv[])
    if(isMC){
    h_HT_noSF->Fill(HT_jets,Generator_weight*xsec_weight);
    h_HT_puSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight);
-   h_HT_pubtagSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*btag_PNet_weight);
+   h_HT_pubtagSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*btag_weight);
    h_HT_putrignoptSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*triggersf_weight_L1HT*triggersf_weight_btag);
    h_HT_putrigSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*triggersf_weight_L1HT*triggersf_weight_btag*triggersf_weight_pt);
    }
