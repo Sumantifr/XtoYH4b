@@ -1073,6 +1073,7 @@ int main(int argc, char *argv[])
 	}
 	
    if(isSignal){
+	Tout->Branch("nJESSplit", &nJESSplit, "nJESSplit/I");
 	Tout->Branch("JetAK4_JESup_split",&_s_JetAK4_JESup_split);
 	Tout->Branch("JetAK4_JESdn_split",&_s_JetAK4_JESdn_split);
 	}
@@ -2621,8 +2622,13 @@ int main(int argc, char *argv[])
 		vector<float> _s_JESup_split, _s_JESdn_split;
 		get_JES_sys(Jets[ijet],_s_JESup_split,"up");
 		get_JES_sys(Jets[ijet],_s_JESdn_split,"down");
-		_s_JetAK4_JESup_split.push_back(_s_JESup_split);
-		_s_JetAK4_JESdn_split.push_back(_s_JESdn_split);
+		nJESSplit = _s_JESup_split.size();
+		for(int isp=0; isp<nJESSplit; isp++){
+			_s_JetAK4_JESup_split.push_back(_s_JESup_split[isp]);
+			_s_JetAK4_JESdn_split.push_back(_s_JESdn_split[isp]);
+		}
+		//_s_JetAK4_JESup_split.push_back(_s_JESup_split);
+		//_s_JetAK4_JESdn_split.push_back(_s_JESdn_split);
 		_s_JESup_split.clear(); _s_JESdn_split.clear(); 
 		
 		bool match_b = false; int match_b_idx = -1;

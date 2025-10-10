@@ -1,6 +1,7 @@
 #include "HistoMaker_XtoYH4b.h"
-#include <TH1.h>
-#include <TH2.h>
+#include "THDefs.h"
+#include "XsectionCalculator.h"
+
 #include <TStyle.h>
 #include <TCanvas.h>
 #include<iostream>
@@ -14,7 +15,6 @@
 //for BDT (xgboost) //
 #include <xgboost/c_api.h>
 #include <iostream>
-#include <vector>
 
 //#include <xgboost/c_api.h>     // for BoosterHandle if you need raw handles
 //#include <xgboost/learner.h>   // for Booster
@@ -27,6 +27,17 @@
 
 string input_path = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Analysis_NTuples/";
 string output_path = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/";
+
+
+// JES unc variables //
+
+static vector<float>* JetAK4_JESup_split = nullptr; 
+static vector<float>* JetAK4_JESdn_split = nullptr; 
+
+void setup_JES_branch(TTree* fChain) {
+    fChain->SetBranchAddress("JetAK4_JESup_split", &JetAK4_JESup_split);
+	fChain->SetBranchAddress("JetAK4_JESdn_split", &JetAK4_JESdn_split);
+}
 
 void initializeJetHistograms(vector<TH1F*>& histograms, const string& prefix, vector<tuple<string, string, tuple<int, double, double>>> histinfo, int njetmax, const string &regname) {
     
@@ -133,8 +144,8 @@ int main(int argc, char *argv[])
  
  if(isSignal){ input_path += "SIGNAL/" ; }
  
- TString inputFile= input_path+argv[3];	
- inputFile= input_path+argv[3];
+ TString inputFile = input_path+argv[3];	
+ inputFile = input_path+argv[3];
  
  isMC = (!isDATA);
 	
@@ -264,11 +275,15 @@ int main(int argc, char *argv[])
  TBranch *b_weight = tree->Branch("Event_weight_nom", &Event_weight_nom, "Event_weight_nom/F");
          
  // read branches //
+
  readTreePrescl(tree_prescl);
- readTree(tree, isMC, year);
-  
- use_sys = false;
-   
+
+ readTree(tree, isMC, isSignal, year);
+
+ if(isSignal){
+	setup_JES_branch(tree);
+ } 
+    
  // Declaration of histograms //
   
  final_file->cd();
@@ -531,6 +546,39 @@ int main(int argc, char *argv[])
 	}//ireg
  
  }//ich
+ 
+ vector<TH1F*> h_reg_MX_sys[nchoice][2*nsys];
+ vector<TH1F*> h_reg_MY_sys[nchoice][2*nsys];
+ vector<TH1F*> h_reg_MX_MY_sys[nchoice][2*nsys];
+ 
+ for(int ich=0; ich<nchoice; ich++){
+
+	 for(int jsys=0; jsys<2*nsys; jsys++){
+ 
+		for(int ireg=0; ireg<nregion; ireg++){
+			
+			char histname_reg[200];
+	 
+			char sys_dir[100];
+			if (jsys%2==0) { sprintf(sys_dir,"_up"); }
+			else           { sprintf(sys_dir,"_down"); }
+		
+			if(ich==0){ sprintf(histname_reg,"h_MX_%s_Sys_%s%s",region_names[ireg].c_str(),systematic_names[jsys/2].Data(),sys_dir); }
+			else 	  { sprintf(histname_reg,"h_MaxScore_MX_%s_Sys_%s%s",region_names[ireg].c_str(),systematic_names[jsys/2].Data(),sys_dir); }
+			h_reg_MX_sys[ich][jsys].push_back(getHisto1F(histname_reg, histname_reg, nmxbins, mxbins));
+	 
+			if(ich==0){ sprintf(histname_reg,"h_MY_%s_Sys_%s%s",region_names[ireg].c_str(),systematic_names[jsys/2].Data(),sys_dir); }
+			else 	  { sprintf(histname_reg,"h_MaxScore_MY_%s_Sys_%s%s",region_names[ireg].c_str(),systematic_names[jsys/2].Data(),sys_dir); }
+			h_reg_MY_sys[ich][jsys].push_back(getHisto1F(histname_reg, histname_reg, nmybins, mybins));
+	 
+			if(ich==0){ sprintf(histname_reg,"h_MX_MY_%s_Sys_%s%s",region_names[ireg].c_str(),systematic_names[jsys/2].Data(),sys_dir); }
+			else 	  { sprintf(histname_reg,"h_MaxScore_MX_MY_%s_Sys_%s%s",region_names[ireg].c_str(),systematic_names[jsys/2].Data(),sys_dir); }
+			h_reg_MX_MY_sys[ich][jsys].push_back(getHisto1F(histname_reg, histname_reg, mxybins.size()-1, mxybins.data()));
+		
+		}
+ 
+	}
+ }
  
  vector<TH1F*> h_reg_MX_bkg[nmasspoints];
  vector<TH1F*> h_reg_MY_bkg[nmasspoints];
@@ -958,9 +1006,9 @@ int main(int argc, char *argv[])
    // btag SF correction //
    
    // Following histograms demonstrate the impact of correction to undo effect of btag SF //
-    
+  
+   float *sfcorvalues;   
    if(isMC) {
-		float *sfcorvalues; 
 		if(year!="2024"){
 		   //sfcorvalues = read_btagSF_correction(file_btagSF_correction,HT_jets,nsmalljets);
 		   sfcorvalues = read_btagSF_correction_hadronflav(file_btagSF_correction,njets_q,njets_b);
@@ -970,6 +1018,55 @@ int main(int argc, char *argv[])
    
    h_nAK4jet_cor_nobsel->Fill(nsmalljets,weight_nom);
    h_HT_cor_nobsel->Fill(HT_jets,weight_nom);
+   
+   // store varied weights due to systematic uncs //
+   if(isSignal){
+	   
+		shape_weight_up.clear(); shape_weight_dn.clear(); shape_weight_nom.clear();  
+				
+		//pileup//
+		shape_weight_up.push_back(puWeightup); shape_weight_dn.push_back(puWeightdown); shape_weight_nom.push_back(puWeight);
+				
+		//btag SF//
+		if(year=="2024"){
+			for(int ibsys=0; ibsys<(*btag_UParT_weightup).size(); ibsys++){
+				shape_weight_up.push_back((*btag_UParT_weightup)[ibsys]); shape_weight_dn.push_back((*btag_UParT_weightdown)[ibsys]); shape_weight_nom.push_back(btag_UParT_weight);
+			}
+		}
+		else{
+			for(int ibsys=0; ibsys<(*btag_PNet_weightup).size(); ibsys++){
+				shape_weight_up.push_back((*btag_PNet_weightup)[ibsys]); shape_weight_dn.push_back((*btag_PNet_weightdown)[ibsys]); shape_weight_nom.push_back(btag_PNet_weight);
+			}
+		}
+		
+		//btag SF correction //
+		shape_weight_up.push_back(sfcorvalues[1]); shape_weight_dn.push_back(sfcorvalues[2]); shape_weight_nom.push_back(sfcorvalues[0]);
+		
+		//LHEScale//
+		float *LHEScale_errs = getTheoryEsystematics_Scale(nLHEScaleWeights,LHEScaleWeights);
+		float LHEScale_err_up = LHEScale_errs[0];
+		float LHEScale_err_dn = LHEScale_errs[1];
+        shape_weight_up.push_back(LHEScaleWeights[0]+LHEScale_err_up); shape_weight_dn.push_back(LHEScaleWeights[0]-LHEScale_err_dn); shape_weight_nom.push_back(LHEScaleWeights[0]);
+                
+        //LHEPDF//                
+		float LHEPDF_err = getTheoryEsystematics_PDF(nLHEPDFWeights,LHEPDFWeights,true);
+		shape_weight_up.push_back(LHEPDFWeights[0]+LHEPDF_err); shape_weight_dn.push_back(LHEPDFWeights[0]-LHEPDF_err); shape_weight_nom.push_back(LHEPDFWeights[0]);
+		
+		//AlphaS//
+		if(nLHEPDFWeights>nlhepdfmax){
+			shape_weight_up.push_back(LHEPDFWeights[nlhepdfmax]); shape_weight_dn.push_back(LHEPDFWeights[nlhepdfmax+1]); shape_weight_nom.push_back(LHEPDFWeights[0]);
+		}
+		else
+		{
+			shape_weight_up.push_back(1); shape_weight_dn.push_back(1); shape_weight_nom.push_back(1);
+		}
+		
+		//Parton shower//
+		//ISR//(indices need to be corrected)//
+		shape_weight_up.push_back(LHEPSWeights[0]); shape_weight_dn.push_back(LHEPSWeights[1]); shape_weight_nom.push_back(1);
+		//FSR//
+		shape_weight_up.push_back(LHEPSWeights[2]); shape_weight_dn.push_back(LHEPSWeights[3]); shape_weight_nom.push_back(1);
+	}		
    
    // all histograms filled for b tag SF correction //
    
@@ -1852,7 +1949,7 @@ int main(int argc, char *argv[])
 	       h_X_mass_highest_score_smallrange->Fill((Hcand_1[scoremax_comb]+Hcand_2[scoremax_comb]).M(),weight_nom); 
 		   
 	   }
-	   
+	  
 		if(nJetAK4>=4){
 						
 			bool reg_pass[nregion] = {false};
@@ -1963,6 +2060,70 @@ int main(int argc, char *argv[])
 						h_reg_MX_MY[jter][ireg]->Fill(unrol_mass,weight_nom); 
 						
 						h_reg_MX_MY_2D[jter][ireg]->Fill((Hcand_1[jxcomb]+Hcand_2[jxcomb]).M(),Ycand_mass_proxy,weight_nom); 
+						
+						if(isSignal){
+						
+							for(int jsys=0; jsys<nsys; jsys++){
+							
+								if(jsys<njecmax){
+									
+									TLorentzVector H1_b1_jes, H1_b2_jes, H2_b1_jes, H2_b2_jes;
+									
+									H1_b1_jes = jet_p4s[Hcand_1_b_1_p4_idx[jxcomb]];
+									H1_b2_jes = jet_p4s[Hcand_1_b_2_p4_idx[jxcomb]];
+									H2_b1_jes = jet_p4s[Hcand_2_b_1_p4_idx[jxcomb]];
+									H2_b2_jes = jet_p4s[Hcand_2_b_2_p4_idx[jxcomb]];
+								
+									H1_b1_jes *= (JetAK4_JESup_split->at(Hcand_1_b_1_idx[jxcomb]*nJESSplit+jsys));
+									H1_b2_jes *= (JetAK4_JESup_split->at(Hcand_1_b_2_idx[jxcomb]*nJESSplit+jsys));
+									H2_b1_jes *= (JetAK4_JESup_split->at(Hcand_2_b_1_idx[jxcomb]*nJESSplit+jsys));
+									H2_b2_jes *= (JetAK4_JESup_split->at(Hcand_2_b_2_idx[jxcomb]*nJESSplit+jsys));
+									
+									unrol_mass = (getbinid(Ycand_mass_proxy,nmybins,mybins)>=0)?((H1_b1_jes+H1_b2_jes+H2_b1_jes+H2_b2_jes).M()+getbinid(Ycand_mass_proxy,nmybins,mybins)*mxbins[nmxbins-1]):-100;
+								
+									h_reg_MX_sys[jter][2*(jsys)][ireg]->Fill((H1_b1_jes+H1_b2_jes+H2_b1_jes+H2_b2_jes).M(),weight_nom); 
+									h_reg_MY_sys[jter][2*(jsys)][ireg]->Fill(Ycand_mass_proxy,weight_nom); 
+									h_reg_MX_MY_sys[jter][2*(jsys)][ireg]->Fill(unrol_mass,weight_nom); 
+									
+									H1_b1_jes = jet_p4s[Hcand_1_b_1_p4_idx[jxcomb]];
+									H1_b2_jes = jet_p4s[Hcand_1_b_2_p4_idx[jxcomb]];
+									H2_b1_jes = jet_p4s[Hcand_2_b_1_p4_idx[jxcomb]];
+									H2_b2_jes = jet_p4s[Hcand_2_b_2_p4_idx[jxcomb]];
+									
+									unrol_mass = (getbinid(Ycand_mass_proxy,nmybins,mybins)>=0)?((H1_b1_jes+H1_b2_jes+H2_b1_jes+H2_b2_jes).M()+getbinid(Ycand_mass_proxy,nmybins,mybins)*mxbins[nmxbins-1]):-100;
+								
+									H1_b1_jes *= (JetAK4_JESdn_split->at(Hcand_1_b_1_idx[jxcomb]*nJESSplit+jsys));
+									H1_b2_jes *= (JetAK4_JESdn_split->at(Hcand_1_b_2_idx[jxcomb]*nJESSplit+jsys));
+									H2_b1_jes *= (JetAK4_JESdn_split->at(Hcand_2_b_1_idx[jxcomb]*nJESSplit+jsys));
+									H2_b2_jes *= (JetAK4_JESdn_split->at(Hcand_2_b_2_idx[jxcomb]*nJESSplit+jsys));
+									
+									h_reg_MX_sys[jter][2*(jsys)+1][ireg]->Fill((Hcand_1[jxcomb]+Hcand_2[jxcomb]).M(),weight_nom);
+									h_reg_MY_sys[jter][2*(jsys)+1][ireg]->Fill(Ycand_mass_proxy,weight_nom); 			
+									h_reg_MX_MY_sys[jter][2*(jsys)+1][ireg]->Fill(unrol_mass,weight_nom); 
+								
+								}
+							
+								else{
+							
+									int jsys1 = jsys-(njecmax);
+
+									float weight_up = weight_nom*shape_weight_up[jsys1]/TMath::Max(float(1.e-6),shape_weight_nom[jsys1]);
+									float weight_dn = weight_nom*shape_weight_dn[jsys1]/TMath::Max(float(1.e-6),shape_weight_nom[jsys1]);
+
+									h_reg_MX_sys[jter][2*(jsys)][ireg]->Fill((Hcand_1[jxcomb]+Hcand_2[jxcomb]).M(),weight_up); 
+									h_reg_MX_sys[jter][2*(jsys)+1][ireg]->Fill((Hcand_1[jxcomb]+Hcand_2[jxcomb]).M(),weight_dn); 
+								
+									h_reg_MY_sys[jter][2*(jsys)][ireg]->Fill(Ycand_mass_proxy,weight_up); 
+									h_reg_MY_sys[jter][2*(jsys)+1][ireg]->Fill(Ycand_mass_proxy,weight_dn); 
+								
+									h_reg_MX_MY_sys[jter][2*(jsys)][ireg]->Fill(unrol_mass,weight_up); 
+									h_reg_MX_MY_sys[jter][2*(jsys)+1][ireg]->Fill(unrol_mass,weight_dn); 
+	
+								}
+							
+							}//jsys
+						
+						}//isSignal
 					
 					}//reg_pass
 				

@@ -823,7 +823,9 @@
    std::vector <std::vector <float> >  _s_JetAK4_btag_RobustParTAK4B_SF_up, _s_JetAK4_btag_RobustParTAK4B_SF_dn;
    float _s_JetAK4_btag_UParTAK4B_SF[njetmx];
    std::vector <std::vector <float> >  _s_JetAK4_btag_UParTAK4B_SF_up, _s_JetAK4_btag_UParTAK4B_SF_dn;
-   std::vector <std::vector <float> >  _s_JetAK4_JESup_split, _s_JetAK4_JESdn_split;
+   //std::vector <std::vector <float> >  _s_JetAK4_JESup_split, _s_JetAK4_JESdn_split;
+   vector<float> _s_JetAK4_JESup_split, _s_JetAK4_JESdn_split;
+   int nJESSplit;
    
    int _s_nMuon;
    float _s_Muon_pt[njetmx], _s_Muon_eta[njetmx], _s_Muon_phi[njetmx], _s_Muon_mass[njetmx];

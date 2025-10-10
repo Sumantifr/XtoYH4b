@@ -19,8 +19,8 @@
 #include <string>
 
 // Header file for the classes stored in the TTree if any.
-#include "vector"
 
+#include "vector"
 #include <vector>
 
 #ifdef __MAKECINT__
@@ -31,6 +31,10 @@
     #pragma link C++ class std::vector<bool>+;
     #pragma link C++ class std::vector<std::vector<float> >+;
     
+#endif
+
+#ifdef __CLING__
+#pragma link C++ class std::vector<std::vector<float>>+;
 #endif
 
 struct BestPair {
@@ -50,7 +54,7 @@ using namespace std;
    static const int nlhepdfmax = 101;
    static const int nalpsmax = 3;
    static const int nlhepsmax = 8;
-
+  
    // Declaration of leaf types
    Int_t           irun;
    Int_t           ilumi;
@@ -242,8 +246,10 @@ using namespace std;
    //Float_t         JetAK4_btag_DeepFlav_SF[njetmax];   //[_s_nJetAK4]
    //Float_t         JetAK4_btag_DeepFlav_SF_up[njetmax];   //[_s_nJetAK4]
    //Float_t         JetAK4_btag_DeepFlav_SF_dn[njetmax];   //[_s_nJetAK4]
-   vector<vector<float> > *JetAK4_JESup_split;
-   vector<vector<float> > *JetAK4_JESdn_split;
+   //vector<vector<float>> JetAK4_JESup_split;
+   //vector<vector<float>> JetAK4_JESdn_split;
+   Int_t 			nJESSplit;
+  
    Float_t	       Event_weight;
    Float_t	       Event_weight_nom;
    Bool_t          Flag_PNet_isSR_L;
@@ -368,7 +374,7 @@ using namespace std;
    Int_t           nLHEScaleWeights;
    Float_t         LHEScaleWeights[nlhescalemax];   //[nLHEScaleWeights]
    Int_t           nLHEPDFWeights;
-   Float_t         LHEPDFWeights[nlhepdfmax];   //[nLHEPDFWeights]
+   Float_t         LHEPDFWeights[nlhepdfmax+2];   //[nLHEPDFWeights]
    Int_t           nLHEPSWeights;
    Float_t         LHEPSWeights[nlhepsmax];   //[nLHEPSWeights]
    Float_t         Generator_x1;
@@ -381,7 +387,7 @@ using namespace std;
    
    Int_t nfatjet_pass;
    
-   TString sysnames[] = {
+   TString systematic_names[] = {
 	 "JES_AbsoluteStat", "JES_AbsoluteScale","JES_AbsoluteMPFBias", 
 	 "JES_FlavorQCD", "JES_Fragmentation", 
 	 "JES_PileUpDataMC",  "JES_PileUpPtBB", "JES_PileUpPtEC1", "JES_PileUpPtEC2", 
@@ -393,16 +399,16 @@ using namespace std;
 	 "JES_Total",
 	 "JER",
 	 "PU",
-	 "LeptonSF_stat","LeptonSF_syst","LeptonSF_stat2",
-	 "LeptonSF_stat_mu","LeptonSF_syst_mu","LeptonSF_stat2_mu",
-	 "LeptonSF_stat_el","LeptonSF_syst_el","LeptonSF_stat2_el",
-	 "Prefire","PNbbSF","PNWSF","BTG",
-	 "TrigSF1","TrigSF2",
-	 "LHEScale","LHEPDF",
-	 "CR_SF"
+	 "Btag_SF_jes","Btag_SF_lf","Btag_SF_lfstats1","Btag_SF_lfstats2","Btag_SF_hf","Btag_SF_hfstats1","Btag_SF_hfstats2",
+	 "Btag_SF_correction",
+	 "LHEScale","LHEPDF","LHEAlphaS","PS_ISR","PS_FSR"
 	 }; 
 	 
-  int nsys = sizeof(sysnames)/sizeof(sysnames[0]);
+  int nsys = sizeof(systematic_names)/sizeof(systematic_names[0]);
+  
+  int njecmax = 25;
+  
+  vector<float> shape_weight_up; vector<float> shape_weight_dn; vector<float> shape_weight_nom; 
   
   bool isDATA, isMC, isSignal;
   string year;
@@ -414,7 +420,6 @@ using namespace std;
   
   string sample_tag;
   TFile *file_btagSF_correction;
-  
   
   //variables for jet pairing //
   
@@ -530,7 +535,7 @@ using namespace std;
   
   }
   
-  void readTree(TTree* fChain, bool isMC, string year="2022") {
+  void readTree(TTree* fChain, bool isMC, bool isSignal, string year="2022") {
   
    // Set branch addresses and branch pointers
   
@@ -703,9 +708,12 @@ using namespace std;
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF", JetAK4_btag_DeepFlav_SF);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_up", JetAK4_btag_DeepFlav_SF_up);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_dn", JetAK4_btag_DeepFlav_SF_dn);
+   //if(isSignal){
+   //fChain->SetBranchAddress("JetAK4_JESup_split", &JetAK4_JESup_split);
+   //fChain->SetBranchAddress("JetAK4_JESdn_split", &JetAK4_JESdn_split);
+   //}
    if(isSignal){
-	fChain->SetBranchAddress("JetAK4_JESup_split", &JetAK4_JESup_split);
-	fChain->SetBranchAddress("JetAK4_JESdn_split", &JetAK4_JESdn_split);
+	fChain->SetBranchAddress("nJESSplit", &nJESSplit);
    }
    /*
    fChain->SetBranchAddress("Flag_PNet_isSR_L", &Flag_PNet_isSR_L);
@@ -862,125 +870,6 @@ using namespace std;
    }
    }
    
-}
-
-TH1F* getHisto1F(const char *name, const char *title, int nbins, float low_edge, float up_edge)
-{
-TH1F *hout = new TH1F(name,title,nbins,low_edge,up_edge);
-hout->Sumw2();
-return hout;
-}
-
-TH1F* getHisto1F(string name, string title, int nbins, float low_edge, float up_edge)
-{
-TH1F *hout = new TH1F(name.c_str(),title.c_str(),nbins,low_edge,up_edge);
-hout->Sumw2();
-return hout;
-}
-
-TH2F* getHisto2F(const char *name, const char *title, int nbinsx, float low_edge_x, float up_edge_x, int nbinsy, float low_edge_y, float up_edge_y)
-{
-TH2F *hout = new TH2F(name,title,nbinsx,low_edge_x,up_edge_x,nbinsy,low_edge_y,up_edge_y);
-hout->Sumw2();
-return hout;
-}
-
-TH2F* getHisto2F(string name, string title, int nbinsx, float low_edge_x, float up_edge_x, int nbinsy, float low_edge_y, float up_edge_y)
-{
-TH2F *hout = new TH2F(name.c_str(),title.c_str(),nbinsx,low_edge_x,up_edge_x,nbinsy,low_edge_y,up_edge_y);
-hout->Sumw2();
-return hout;
-}
-
-TH1F* getHisto1F(const char *name, const char *title, int nbins, float *bins)
-{
-TH1F *hout = new TH1F(name,title,nbins,bins);
-hout->Sumw2();
-return hout;
-}
-
-TH1F* getHisto1F(string name, string title, int nbins, float *bins)
-{
-TH1F *hout = new TH1F(name.c_str(),title.c_str(),nbins,bins);
-hout->Sumw2();
-return hout;
-}
-
-TH2F* getHisto2F(const char *name, const char *title, int nbinsx, float *binx, int nbinsy, float *biny)
-{
-TH2F *hout = new TH2F(name,title,nbinsx,binx,nbinsy,biny);
-hout->Sumw2();
-return hout;
-}
-
-TH2F* getHisto2F(string name, string title, int nbinsx, float *binx, int nbinsy, float *biny)
-{
-TH2F *hout = new TH2F(name.c_str(),title.c_str(),nbinsx,binx,nbinsy,biny);
-hout->Sumw2();
-return hout;
-}
-
-struct SampleData {
-    double Entries;
-    double SumofLHEWeights;
-    double SumofGENWeights;
-    double XSec;
-    double XsecDB;
-    double XsecWeight;
-};
-
-std::string trim(const std::string& str) {
-    size_t first = str.find_first_not_of(' ');
-    size_t last = str.find_last_not_of(' ');
-    if (first == std::string::npos || last == std::string::npos) {
-        return "";
-    }
-    return str.substr(first, last - first + 1);
-}
-
-std::unordered_map<std::string, SampleData> CalculateXsecWeights(std::string& fileName, bool isSIGNAL = false, bool use_LHE_weights=false, bool use_xsecDB = false) 
-{
-	std::unordered_map<std::string, SampleData> sampleMap;
-
-	cout<<"Reading cross section weights from "<<fileName<<endl;
-	std::ifstream mc_info_file(fileName);
-	if (!mc_info_file.is_open()) {
-		std::cerr << "Error: Could not open file." << std::endl;
-	}
-
-    std::string line;
-    
-    while (getline(mc_info_file, line)) {
-        
-        istringstream iss(line);
-
-        string sample;
-        double entries, sumLHE, sumGEN, xsec, xsecDB;
-
-        // Read and parse the line
-        if (getline(iss, sample, '\t')) { // Read the sample name (until tab)
-			if(isSIGNAL){
-				iss >> entries >> sumLHE >> sumGEN; // Read the rest of the fields
-				xsec = 1.;
-				xsecDB = 1.;
-			}
-			else{
-				iss >> entries >> sumLHE >> sumGEN >> xsec >> xsecDB; // Read the rest of the fields
-			}
-            sample = trim(sample); // Trim any extra spaces from the sample name
-            // Store the data in the map
-            if(sumGEN<1.e-6) {   sumGEN = 1.e-6;  xsec = 0.; xsecDB = 0.; }
-            float xsecWeight = 1000*xsec/sumGEN;
-            if(use_LHE_weights) { xsecWeight = 1000*xsec/sumLHE; }
-            if(use_xsecDB) { xsecWeight = 1000*xsecDB/sumGEN; }
-            if(use_LHE_weights && use_xsecDB) { xsecWeight = 1000*xsecDB/sumLHE; }
-            sampleMap[sample] = {entries, sumLHE, sumGEN, xsec, xsecDB, xsecWeight};
-        }
-    }
-
-    mc_info_file.close();
-    
-    return sampleMap;
 }
 
 int extract_value(const std::string& str, const std::string& key) {
