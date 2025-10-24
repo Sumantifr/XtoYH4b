@@ -26,8 +26,10 @@
 //using namespace xgboost::data;
 
 string input_path = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Analysis_NTuples/";
-string output_path = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/";
 
+const char* user_c = std::getenv("USER");
+string user = user_c ? std::string(user_c) : std::string("unknown");
+string output_path = string("/data/dust/user/")+user+"/XToYHTo4b/SmallNtuples/Histograms/";
 
 // JES unc variables //
 
@@ -249,6 +251,14 @@ int main(int argc, char *argv[])
     }
 
  //end of xgboost //
+    
+ //creating/checking  output directory//
+ string dir_cmd = "mkdir -p "+output_path;
+ gSystem->Exec(dir_cmd.c_str());
+ 
+ //int status = gSystem->MakeDirectory(output_path.c_str());
+ //if (status == 0) { cout << "Created (or already exists): " << output_path << endl; }
+ //else { cout << "Error creating: " << output_path << endl;}
     
  char file_name[1000]; 
  sprintf(file_name,"%s/Histogram_%s",output_path.c_str(),argv[3]);
@@ -1047,7 +1057,19 @@ int main(int argc, char *argv[])
 		float LHEScale_err_up = LHEScale_errs[0];
 		float LHEScale_err_dn = LHEScale_errs[1];
         shape_weight_up.push_back(LHEScaleWeights[0]+LHEScale_err_up); shape_weight_dn.push_back(LHEScaleWeights[0]-LHEScale_err_dn); shape_weight_nom.push_back(LHEScaleWeights[0]);
-                
+                     
+        //LHEScale_muR//    
+        float *LHEScale_muR_errs = getTheoryEsystematics_Scale_muR(nLHEScaleWeights,LHEScaleWeights);
+		float LHEScale_muR_err_up = LHEScale_muR_errs[0];
+		float LHEScale_muR_err_dn = LHEScale_muR_errs[1];
+        shape_weight_up.push_back(LHEScaleWeights[0]+LHEScale_muR_err_up); shape_weight_dn.push_back(LHEScaleWeights[0]-LHEScale_muR_err_dn); shape_weight_nom.push_back(LHEScaleWeights[0]);
+                   
+        //LHEScale_muF//    
+        float *LHEScale_muF_errs = getTheoryEsystematics_Scale_muF(nLHEScaleWeights,LHEScaleWeights);
+		float LHEScale_muF_err_up = LHEScale_muF_errs[0];
+		float LHEScale_muF_err_dn = LHEScale_muF_errs[1];
+        shape_weight_up.push_back(LHEScaleWeights[0]+LHEScale_muF_err_up); shape_weight_dn.push_back(LHEScaleWeights[0]-LHEScale_muF_err_dn); shape_weight_nom.push_back(LHEScaleWeights[0]);
+                                  
         //LHEPDF//                
 		float LHEPDF_err = getTheoryEsystematics_PDF(nLHEPDFWeights,LHEPDFWeights,true);
 		shape_weight_up.push_back(LHEPDFWeights[0]+LHEPDF_err); shape_weight_dn.push_back(LHEPDFWeights[0]-LHEPDF_err); shape_weight_nom.push_back(LHEPDFWeights[0]);

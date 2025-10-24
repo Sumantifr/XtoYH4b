@@ -6,6 +6,7 @@
 //////////////////////////////////////////////////////////
 
 #include <TROOT.h>
+#include "TSystem.h"
 #include <TChain.h>
 #include <TFile.h>
 #include <math.h>
@@ -15,6 +16,7 @@
 
 #include "Functions.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
@@ -401,7 +403,7 @@ using namespace std;
 	 "PU",
 	 "Btag_SF_jes","Btag_SF_lf","Btag_SF_lfstats1","Btag_SF_lfstats2","Btag_SF_hf","Btag_SF_hfstats1","Btag_SF_hfstats2",
 	 "Btag_SF_correction",
-	 "LHEScale","LHEPDF","LHEAlphaS","PS_ISR","PS_FSR"
+	 "LHEScale","LHEScale_muR","LHEScale_muF","LHEPDF","LHEAlphaS","PS_ISR","PS_FSR"
 	 }; 
 	 
   int nsys = sizeof(systematic_names)/sizeof(systematic_names[0]);

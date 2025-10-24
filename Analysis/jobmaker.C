@@ -1,5 +1,8 @@
 #include<stdio.h>
 #include <bits/stdc++.h>
+#include <cstdlib>
+#include <iostream>
+
 using namespace std;
 
 vector<string> loadFilenames(const string &filename) {
@@ -24,7 +27,11 @@ void jobmaker(bool isDATA=0, bool isSIGNAL=0, string year="2022")
 
 string executable = "Anal_XtoYH4b";
 
-string file_path = "/afs/desy.de/user/c/chatterj/work/CMSSW_14_2_1/src/";
+string file_path;
+
+TString pwd_ = gSystem->pwd();
+file_path = gSystem->DirName(pwd_);
+file_path += "/";
 
 vector<string> Filenames_MC = loadFilenames(file_path+"MC_names.txt");
 if(year=="2024") { Filenames_MC = loadFilenames(file_path+"MC_names_2024.txt");   }

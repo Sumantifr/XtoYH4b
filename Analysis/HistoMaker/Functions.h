@@ -384,3 +384,142 @@ void print_memory_usage() {
         }
     }
 }
+
+float *getTheoryEsystematics_Scale(int nLHEScaleWeights, float* LHEScaleWeights, int extreme_comb_id_1 = 5, int extreme_comb_id_2 = 7)
+{
+	static float SFs[2];
+
+        float diff_up_max = 0;
+        float diff_dn_max = 0;
+
+        for(int ilhe=1; ilhe<nLHEScaleWeights; ilhe++){
+
+                if(ilhe==extreme_comb_id_1||ilhe==extreme_comb_id_2) continue; // (2,1/2) & (1/2,2) combinations
+
+                //cout<<"ilhe "<<ilhe<<" diff "<<(LHEScaleWeights[ilhe]-LHEScaleWeights[0])<<endl;
+
+                if((LHEScaleWeights[ilhe]-LHEScaleWeights[0])>0) {
+                        if(abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]))> diff_up_max){
+                                diff_up_max = abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]));
+                                }
+                }
+                else{
+                        if(abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]))> diff_dn_max){
+                                diff_dn_max = abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]));
+                                }
+                        }
+
+        }
+
+        SFs[0] = diff_up_max;
+        SFs[1] = diff_dn_max;
+
+        //cout<<"scale err "<<diff_up_max<<"\t"<<diff_dn_max<<endl;
+
+        return SFs;
+}
+
+float *getTheoryEsystematics_Scale_muR(int nLHEScaleWeights, float* LHEScaleWeights, int muR_comb_id_1 = 3, int muR_comb_id_2 = 6)
+{
+        static float SFs[2];
+
+        float diff_up_max = 0;
+        float diff_dn_max = 0;
+
+        for(int ilhe=1; ilhe<nLHEScaleWeights; ilhe++){
+
+                if(!(ilhe==muR_comb_id_1||ilhe==muR_comb_id_2)) continue; // (2,1) & (1/2,1) combinations
+
+                //cout<<"ilhe "<<ilhe<<" diff "<<(LHEScaleWeights[ilhe]-LHEScaleWeights[0])<<endl;
+
+                if((LHEScaleWeights[ilhe]-LHEScaleWeights[0])>0) {
+                        if(abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]))> diff_up_max){
+                                diff_up_max = abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]));
+                                }
+                }
+                else{
+                        if(abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]))> diff_dn_max){
+                                diff_dn_max = abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]));
+                                }
+                        }
+
+        }
+
+        SFs[0] = diff_up_max;
+        SFs[1] = diff_dn_max;
+
+        //cout<<"scale err "<<diff_up_max<<"\t"<<diff_dn_max<<endl;
+
+        return SFs;
+}
+
+float *getTheoryEsystematics_Scale_muF(int nLHEScaleWeights, float* LHEScaleWeights, int muF_comb_id_1 = 1, int muF_comb_id_2 = 2)
+{
+        static float SFs[2];
+
+        float diff_up_max = 0;
+        float diff_dn_max = 0;
+
+        for(int ilhe=1; ilhe<nLHEScaleWeights; ilhe++){
+
+                if(!(ilhe==muF_comb_id_1||ilhe==muF_comb_id_2)) continue; // (1,2) & (1,1/2) combinations
+
+                //cout<<"ilhe "<<ilhe<<" diff "<<(LHEScaleWeights[ilhe]-LHEScaleWeights[0])<<endl;
+
+                if((LHEScaleWeights[ilhe]-LHEScaleWeights[0])>0) {
+                        if(abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]))> diff_up_max){
+                                diff_up_max = abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]));
+                                }
+                }
+                else{
+                        if(abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]))> diff_dn_max){
+                                diff_dn_max = abs((LHEScaleWeights[ilhe]-LHEScaleWeights[0]));
+                                }
+                        }
+
+        }
+
+        SFs[0] = diff_up_max;
+        SFs[1] = diff_dn_max;
+
+        //cout<<"scale err "<<diff_up_max<<"\t"<<diff_dn_max<<endl;
+
+        return SFs;
+}
+
+float getTheoryEsystematics_PDF(int nLHEPDFWeights, float* LHEPDFWeights, bool isHessian, int nPDFmax=101)
+{
+        // ref: https://arxiv.org/pdf/1510.03865.pdf  (Eqs. 20-22) //
+
+        float pdferr=0;
+
+	int npdfweights = min(nLHEPDFWeights,nPDFmax); 
+	// since often alphaS weights are included as last two elements of PDF weights
+
+        if(isHessian){
+                for(int ilhe=1; ilhe<npdfweights; ilhe++){
+                        pdferr +=  pow(abs(LHEPDFWeights[ilhe]-LHEPDFWeights[0]),2);
+                }
+        }
+        else{
+
+                float pdfmean = 0;
+                for(int ilhe=1; ilhe<npdfweights; ilhe++){
+                        pdfmean += LHEPDFWeights[ilhe];
+                }
+                pdfmean *= 1./(nLHEPDFWeights-1);   // nLHEPDFWeights-1 is used since nLHEPDFWeights includes the central value
+
+                for(int ilhe=1; ilhe<npdfweights; ilhe++){
+                        pdferr +=  pow(abs(LHEPDFWeights[ilhe]-pdfmean),2);
+                }
+                pdferr *= 1./(nLHEPDFWeights-2.);  // nLHEPDFWeights-2 is used since nLHEPDFWeights includes the central value
+
+                }
+
+        pdferr = sqrt(pdferr);
+
+        //cout<<"PDF err "<<pdferr/LHEPDFWeights[0]<<endl;
+
+        return pdferr;
+}
+

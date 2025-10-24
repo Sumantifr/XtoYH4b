@@ -1,5 +1,6 @@
 import os
 import argparse
+import getpass
 
 parser = argparse.ArgumentParser(description="Arguments: YEAR, isDATA, isDL")
 
@@ -7,8 +8,10 @@ parser.add_argument('--YEAR', default="2022", type=str, help="Which era?")
 
 args = parser.parse_args()
 
-in_path="/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
-out_path="/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+username = getpass.getuser()
+
+in_path="/data/dust/user/"+username+"/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+out_path="/data/dust/user/"+username+"/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
 
 if not os.path.exists(out_path):
     os.makedirs(out_path)
