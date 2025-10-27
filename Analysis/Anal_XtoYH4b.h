@@ -921,7 +921,7 @@
    float raw_pt_cut = 15.; // for applying b jet energy regression 
    float pt_cut_HT = 25.; // for HT calculation
    
-   void readTree(TTree* fChain, bool isMC) {
+   void readTree(TTree* fChain, bool isMC, string YEAR="2022") {
     
    fChain->SetBranchAddress("irun", &irun);
    fChain->SetBranchAddress("ilumi", &ilumi);
@@ -1196,19 +1196,23 @@
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4CvB", PFJetAK4_btagRobustParTAK4CvB);
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4CvL", PFJetAK4_btagRobustParTAK4CvL);
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4QG", PFJetAK4_btagRobustParTAK4QG);
+   if(YEAR=="2024"){
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4B", PFJetAK4_btagUParTAK4B);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4CvB", PFJetAK4_btagUParTAK4CvB);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4CvL", PFJetAK4_btagUParTAK4CvL);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4QG", PFJetAK4_btagUParTAK4QG);
+   }
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawCorr", PFJetAK4_PNetRegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawCorrNeutrino", PFJetAK4_PNetRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawRes", PFJetAK4_PNetRegPtRawRes);
+   if(YEAR=="2024"){
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawCorr", PFJetAK4_UParTRegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawCorrNeutrino", PFJetAK4_UParTRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawRes", PFJetAK4_UParTRegPtRawRes);
    fChain->SetBranchAddress("PFJetAK4_UParTV1RegPtRawCorr", PFJetAK4_UParTV1RegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_UParTV1RegPtRawCorrNeutrino", PFJetAK4_UParTV1RegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_UParTV1RegPtRawRes", PFJetAK4_UParTV1RegPtRawRes);
+   }
    fChain->SetBranchAddress("PFJetAK4_JEC", PFJetAK4_JEC);
    fChain->SetBranchAddress("PFJetAK4_JER", PFJetAK4_JER);
    fChain->SetBranchAddress("PFJetAK4_JERup", PFJetAK4_JERup);

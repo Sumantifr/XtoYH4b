@@ -1342,7 +1342,7 @@ int main(int argc, char *argv[])
    fChain = (TTree*)fl->Get("Events");
    
    // read input tree //
-   readTree(fChain,isMC);
+   readTree(fChain,isMC,year);
    
    // generating a random number if needed //
    gRandom = new TRandom3();
