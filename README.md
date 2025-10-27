@@ -46,6 +46,9 @@ Once jobs are finished:
 1. Add ntuples: ```python3 ntuple_adder.py --YEAR YEAR --isDATA isDATA --isSIGNAL isSIGNAL```
 2. Add histograms: ```python3 hist_ntuple_adder.py `python3 ntuple_adder.py --YEAR YEAR --isDATA isDATA```
 
+Optional (recommended): Clean the directory (i.e., remove submission scripts and output log files):
+`sh clean.sh`
+
 ### Runnig histogram maker
 
 1. Go to `HistoMaker` directory (within Analysis directory): `cd HistoMaker/`
@@ -59,6 +62,9 @@ Once jobs are finished:
 5. Check job status using `condor_q`
 
 6. After jobs are finished, add histograms: ```python3 hist_adder.py --YEAR YEAR --isDATA isDATA```  (not needed for signal)
+
+7. Clean the directory (i.e., remove submission scripts and output log files):
+`sh clean.sh`
 
 ### Making plots
 
