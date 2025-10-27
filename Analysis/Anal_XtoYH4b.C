@@ -1602,6 +1602,8 @@ int main(int argc, char *argv[])
 		else {  jet.JEC_bReg = jet.JEC; }
 	}
 	
+	
+	
 	// end of b jet energy regression //
     
     //LeptonJet_cleaning(Jets,vleptons,AK4jet_pt_cut,absetacut);
@@ -2017,54 +2019,54 @@ int main(int argc, char *argv[])
 		}
 		// Lepton SF //
 	    // (Not needed since we're not using leptons) //
-	    /*
-		for(unsigned lep=0; lep<vleptons.size(); lep++){
-			if(abs(vleptons[lep].pdgId)==11) { 
-				float *sfvalues = Electron_SF(file_el_sf, vleptons[lep].pt, vleptons[lep].eta);
-				leptonsf_weight *= sfvalues[0];
-				leptonsf_weight_up *= sfvalues[1];
-				leptonsf_weight_dn *= sfvalues[2];
-				leptonsf_weight_stat *= (sfvalues[0] + sqrt(sfvalues[3]*sfvalues[3] + sfvalues[4]*sfvalues[4]));  // like this for time being 
-				leptonsf_weight_syst *= (sfvalues[0] + sqrt(sfvalues[5]*sfvalues[5] + sfvalues[6]*sfvalues[6] + sfvalues[7]*sfvalues[7] + sfvalues[8]*sfvalues[8]));  // like this for time being 
-			}
-			if(abs(vleptons[lep].pdgId)==13) { 
-				float *sfvalues;
-				sfvalues = Muon_SF(file_mu_sf, muon_id_name, vleptons[lep].pt, vleptons[lep].eta);
-				leptonsf_weight *= *(sfvalues+0);
-				leptonsf_weight_up *= *(sfvalues+1);
-				leptonsf_weight_dn *= *(sfvalues+2);
-				leptonsf_weight_stat *= *(sfvalues+3);
-				leptonsf_weight_syst *= *(sfvalues+4);
-			}
-		}//lep
-	    */
+	    
+		//for(unsigned lep=0; lep<vleptons.size(); lep++){
+		//	if(abs(vleptons[lep].pdgId)==11) { 
+		//		float *sfvalues = Electron_SF(file_el_sf, vleptons[lep].pt, vleptons[lep].eta);
+		//		leptonsf_weight *= sfvalues[0];
+		//		leptonsf_weight_up *= sfvalues[1];
+		//		leptonsf_weight_dn *= sfvalues[2];
+		//		leptonsf_weight_stat *= (sfvalues[0] + sqrt(sfvalues[3]*sfvalues[3] + sfvalues[4]*sfvalues[4]));  // like this for time being 
+		//		leptonsf_weight_syst *= (sfvalues[0] + sqrt(sfvalues[5]*sfvalues[5] + sfvalues[6]*sfvalues[6] + sfvalues[7]*sfvalues[7] + sfvalues[8]*sfvalues[8]));  // like this for time being 
+		//	}
+		//	if(abs(vleptons[lep].pdgId)==13) { 
+		//		float *sfvalues;
+		//		sfvalues = Muon_SF(file_mu_sf, muon_id_name, vleptons[lep].pt, vleptons[lep].eta);
+		//		leptonsf_weight *= *(sfvalues+0);
+		//		leptonsf_weight_up *= *(sfvalues+1);
+		//		leptonsf_weight_dn *= *(sfvalues+2);
+		//		leptonsf_weight_stat *= *(sfvalues+3);
+		//		leptonsf_weight_syst *= *(sfvalues+4);
+		//	}
+		//}//lep
+	   
 	    // pileup jet ID SF //
 	    //(not available in Run 3)//
-	    /*	
-		for(unsigned ijet=0; ijet<Jets.size(); ijet++){
+	    
+		//for(unsigned ijet=0; ijet<Jets.size(); ijet++){
 			
-			double dR_ij = 9999.9;
+		//	double dR_ij = 9999.9;
 			
-			for(unsigned gjet=0; gjet<genJets.size(); gjet++)
-			{
-				double temp_dR = delta2R(Jets[ijet].y,Jets[ijet].phi,genJets[gjet].p4.Rapidity(),genJets[gjet].phi) ;
-				if (temp_dR < dR_ij )
-				{
-					dR_ij = temp_dR;
-				}
-			}
+		//	for(unsigned gjet=0; gjet<genJets.size(); gjet++)
+		//	{
+		//		double temp_dR = delta2R(Jets[ijet].y,Jets[ijet].phi,genJets[gjet].p4.Rapidity(),genJets[gjet].phi) ;
+		//		if (temp_dR < dR_ij )
+		//		{
+		//			dR_ij = temp_dR;
+		//		}
+		//	}
 			
-			if(dR_ij < 0.4)
-			{
-				float *sfvalues;
-				sfvalues =  Jet_PUID_SF(file_jet_puid_SF, Jets[ijet].pt, Jets[ijet].eta, year, "T");
-				jetpuidsf_weight	 *= *(sfvalues);
-				jetpuidsf_weight_stat *= *(sfvalues+1); // only unc(SF), not SF + unc(SF)
-				jetpuidsf_weight_syst *= *(sfvalues+2); // only unc(SF), not SF + unc(SF)
-			}
+		//	if(dR_ij < 0.4)
+		//	{
+		//		float *sfvalues;
+		//		sfvalues =  Jet_PUID_SF(file_jet_puid_SF, Jets[ijet].pt, Jets[ijet].eta, year, "T");
+		//		jetpuidsf_weight	 *= *(sfvalues);
+		//		jetpuidsf_weight_stat *= *(sfvalues+1); // only unc(SF), not SF + unc(SF)
+		//		jetpuidsf_weight_syst *= *(sfvalues+2); // only unc(SF), not SF + unc(SF)
+		//	}
 			
-		}//jet
-	    */
+		//}//jet
+	   
 	    
 	    // Reading trigger SF //
 	    if(Jets.size()>=4)
@@ -2712,48 +2714,48 @@ int main(int argc, char *argv[])
    
    bp4s.clear();
    
-   /*
+   
    // store muons passing standard criteria //
    
-   _s_nMuon = 0;
+   //_s_nMuon = 0;
    
-   for(unsigned imuon=0; imuon<vmuons.size(); imuon++){
+   //for(unsigned imuon=0; imuon<vmuons.size(); imuon++){
 	
-		_s_Muon_pt[_s_nMuon] = vmuons[imuon].pt;
-		_s_Muon_eta[_s_nMuon] = vmuons[imuon].eta;
-		_s_Muon_phi[_s_nMuon] = vmuons[imuon].phi;
-	    _s_Muon_mass[_s_nMuon] = vmuons[imuon].mass;
-	    _s_Muon_ID[_s_nMuon] = vmuons[imuon].isLoose + 2*vmuons[imuon].isMed + 4*vmuons[imuon].TightID;
-	    _s_Muon_minisoall[_s_nMuon] = vmuons[imuon].minisoall;
-		_s_Muon_pfiso[_s_nMuon] = vmuons[imuon].pfiso;
+  //		_s_Muon_pt[_s_nMuon] = vmuons[imuon].pt;
+  //		_s_Muon_eta[_s_nMuon] = vmuons[imuon].eta;
+  //		_s_Muon_phi[_s_nMuon] = vmuons[imuon].phi;
+  //	    _s_Muon_mass[_s_nMuon] = vmuons[imuon].mass;
+  //	    _s_Muon_ID[_s_nMuon] = vmuons[imuon].isLoose + 2*vmuons[imuon].isMed + 4*vmuons[imuon].TightID;
+  //	    _s_Muon_minisoall[_s_nMuon] = vmuons[imuon].minisoall;
+  //		_s_Muon_pfiso[_s_nMuon] = vmuons[imuon].pfiso;
 		
-		_s_nMuon++;
+  //		_s_nMuon++;
 		
-		if(_s_nMuon >= nMuon_max) break;
-   }
+  //		if(_s_nMuon >= nMuon_max) break;
+  // }
    
    // store electrons passing standard criteria //
    
-   _s_nElectron = 0;
+   // _s_nElectron = 0;
    
-   for(unsigned iel=0; iel<velectrons.size(); iel++){
+   // for(unsigned iel=0; iel<velectrons.size(); iel++){
 	
-		_s_Electron_pt[_s_nElectron] = velectrons[iel].pt;
-		_s_Electron_eta[_s_nElectron] = velectrons[iel].eta;
-		_s_Electron_phi[_s_nElectron] = velectrons[iel].phi;
-	    _s_Electron_mass[_s_nElectron] = velectrons[iel].mass;
-	    _s_Electron_Fallv2WP90_noIso[_s_nElectron] = velectrons[iel].Fallv2WP90_noIso;
-	    _s_Electron_Fallv2WP80_noIso[_s_nElectron] = velectrons[iel].Fallv2WP80_noIso;
-	    _s_Electron_Fallv2WP90[_s_nElectron] = velectrons[iel].Fallv2WP90;
-	    _s_Electron_Fallv2WP80[_s_nElectron] = velectrons[iel].Fallv2WP80;
-	    _s_Electron_minisoall[_s_nElectron] = velectrons[iel].minisoall;
-		_s_Electron_pfiso_eacor[_s_nElectron] = velectrons[iel].pfiso_eacor;
+   //		_s_Electron_pt[_s_nElectron] = velectrons[iel].pt;
+   //		_s_Electron_eta[_s_nElectron] = velectrons[iel].eta;
+   //		_s_Electron_phi[_s_nElectron] = velectrons[iel].phi;
+  //	    _s_Electron_mass[_s_nElectron] = velectrons[iel].mass;
+  //	    _s_Electron_Fallv2WP90_noIso[_s_nElectron] = velectrons[iel].Fallv2WP90_noIso;
+  //	    _s_Electron_Fallv2WP80_noIso[_s_nElectron] = velectrons[iel].Fallv2WP80_noIso;
+  //	    _s_Electron_Fallv2WP90[_s_nElectron] = velectrons[iel].Fallv2WP90;
+  //	    _s_Electron_Fallv2WP80[_s_nElectron] = velectrons[iel].Fallv2WP80;
+  //	    _s_Electron_minisoall[_s_nElectron] = velectrons[iel].minisoall;
+  //		_s_Electron_pfiso_eacor[_s_nElectron] = velectrons[iel].pfiso_eacor;
 		
-		_s_nElectron++;
+  //		_s_nElectron++;
 		
-		if(_s_nElectron >= nElectron_max) break;
-   }
-   */
+  //		if(_s_nElectron >= nElectron_max) break;
+  // }
+   
     
     // ========== Now choose RECO objects for different candidates store  & store their information  ========= //
 	
