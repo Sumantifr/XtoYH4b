@@ -21,7 +21,7 @@ Now lone the repository
 Setup environment
 ```
 cd XtoYH4b/
-source ~/.basrc
+source ~/.bashrc
 cmsenv
 ```
 ### Running analysis code
