@@ -488,6 +488,9 @@ output_filepath += "NoBtagSF/";
 */
 cout<<"Starting ..."<<endl;
 
+string dir_cmd = "mkdir -p "+output_filepath;
+gSystem->Exec(dir_cmd.c_str());
+
 float ptrange = 1000;
 			
 float scale_factor[nsamples];
