@@ -43,8 +43,8 @@ cmsenv
 5. Check job status using `condor_q` 
 
 Once jobs are finished:
-1. Add ntuples: ```python3 ntuple_adder.py --YEAR YEAR --isDATA isDATA --isSIGNAL isSIGNAL```
-2. Add histograms: ```python3 hist_ntuple_adder.py `python3 ntuple_adder.py --YEAR YEAR --isDATA isDATA```
+1. Add ntuples: ```python3 ntuple_adder.py --YEAR YEAR [--isDATA --isSIGNAL]```
+2. Add histograms: ```python3 hist_ntuple_adder.py `python3 ntuple_adder.py --YEAR YEAR [--isDATA]```
 
 Optional (recommended): Clean the directory (i.e., remove submission scripts and output log files):
 `sh clean.sh`
@@ -61,7 +61,7 @@ Optional (recommended): Clean the directory (i.e., remove submission scripts and
 
 5. Check job status using `condor_q`
 
-6. After jobs are finished, add histograms: ```python3 hist_adder.py --YEAR YEAR --isDATA isDATA```  (not needed for signal)
+6. After jobs are finished, add histograms: ```python3 hist_adder.py --YEAR YEAR [--isDATA]```  (not needed for signal)
 
 7. Clean the directory (i.e., remove submission scripts and output log files):
 `sh clean.sh`
@@ -70,7 +70,9 @@ Optional (recommended): Clean the directory (i.e., remove submission scripts and
 
 1. Go back to the parent director and then `cd Plotter` 
 
-2. Run Control_Plotter.C: ```root -l -b -q 'Control_Plotter.C(year,show_data,test_run,show_signal)'```
+2. Open `Control_Plotter.C` and change the `filepath`. It should be the path where histograms are present (w/o year)
+
+3. Run Control_Plotter.C: ```root -l -b -q 'Control_Plotter.C(year,show_data,test_run,show_signal)'```
    ```
    year="2022"/"2022EE"/"2023"/"2023BPiX"/"2024" (default:"2022") 
    show_data=0/1 (default:0) 
