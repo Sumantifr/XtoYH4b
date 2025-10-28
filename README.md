@@ -43,8 +43,13 @@ cmsenv
 5. Check job status using `condor_q` 
 
 Once jobs are finished:
-1. Add ntuples: ```python3 ntuple_adder.py --YEAR YEAR [--isDATA --isSIGNAL]```
-2. Add histograms: ```python3 hist_ntuple_adder.py `python3 ntuple_adder.py --YEAR YEAR [--isDATA]```
+1. Add ntuples: ```python3 ntuple_adder.py --YEAR YEAR [--isDATA isDATA --isSIGNAL isSignal]```
+2. If needed, add histograms (for deriving btag SF correction): ```python3 hist_ntuple_adder.py --YEAR YEAR [--isDATA isDATA]```
+3. If needed, derive b tag SF correction: 
+```
+cd HistoMaker/ 
+python3 create_btagSF_correction.py --YEAR YEAR
+```
 
 Optional (recommended): Clean the directory (i.e., remove submission scripts and output log files):
 `sh clean.sh`
@@ -61,7 +66,7 @@ Optional (recommended): Clean the directory (i.e., remove submission scripts and
 
 5. Check job status using `condor_q`
 
-6. After jobs are finished, add histograms: ```python3 hist_adder.py --YEAR YEAR [--isDATA]```  (not needed for signal)
+6. After jobs are finished, add histograms: ```python3 hist_adder.py --YEAR YEAR [--isDATA isDATA]```  (not needed for signal)
 
 7. Clean the directory (i.e., remove submission scripts and output log files):
 `sh clean.sh`
