@@ -19,7 +19,7 @@ vector<string> loadFilenames(const string &filename) {
     return filenames;
 }
 
-void histjobmaker(bool isDATA=0, bool isSIGNAL=0, string year="2022")
+void histjobmaker(bool isDATA=0, bool isSIGNAL=0, string year="2022", string jobflavor="tomorrow")
 {
 
 string executable = "HistoMaker_XtoYH4b";
@@ -115,7 +115,7 @@ file1 << "RequestMemory = 4000\n";
 if((files[ii].find("TTto4Q") != std::string::npos)||(files[ii].find("Data_Run3") != std::string::npos)){
 file1<< "+MaxRuntime = 100800\n";
 file1<< "#+RequestWalltime = 100800\n";
-file1 << "+JobFlavour = \"tomorrow\"\n";
+file1 << "+JobFlavour = \""<<jobflavor<<"\"\n";
 }
 file1 << "queue\n";
 cout<<"sub created successfully." << endl;

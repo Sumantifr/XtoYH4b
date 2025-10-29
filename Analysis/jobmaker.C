@@ -22,7 +22,7 @@ vector<string> loadFilenames(const string &filename) {
     return filenames;
 }
 
-void jobmaker(bool isDATA=0, bool isSIGNAL=0, string year="2022")
+void jobmaker(bool isDATA=0, bool isSIGNAL=0, string year="2022", string jobflavor="workday")
 {
 
 string executable = "Anal_XtoYH4b";
@@ -177,7 +177,7 @@ file1 << "RequestMemory = 4000\n";
 file1 << "max_materialize = 250\n";
 }
 if((files[ii].find("TTto4Q") != std::string::npos)||(files[ii].find("Data_Run3") != std::string::npos)){
-file1 << "+JobFlavour = \"workday\"\n";
+file1 << "+JobFlavour = \""<<jobflavor<<"\"\n";
 //file1<< "+MaxRuntime = 100000\n";
 }
 file1 << "queue args from "<<name_buffer<<"\n";

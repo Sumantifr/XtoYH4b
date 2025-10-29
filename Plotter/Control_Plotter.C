@@ -6,7 +6,10 @@ vector <sample_info> sigs;
 
 string signal_process = " ";	
 
-string filepath = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/";
+const char* user_c = std::getenv("USER");
+string user = user_c ? std::string(user_c) : std::string("unknown");
+
+string filepath = string("/data/dust/user/")+user+"/XToYHTo4b/SmallNtuples/Histograms/";
 string output_filepath = "Control_plots/";		
 
 void Control_Plotter(string year="2022", bool show_data = false, bool test_run=false, bool show_signal=false, bool singleH=true, bool ispostfit=false)
