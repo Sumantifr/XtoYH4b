@@ -1476,14 +1476,14 @@ int main(int argc, char *argv[])
     //Make lepton collection from electrons & muons (using only common variables)
     vector <Lepton> vleptons;
     getLeptons(vleptons,vmuons,velectrons,lepton_pt_cut);    
-    
+   
     //a fix added for 2022EE//
 	if(year=="2022EE") { 
 		for(int ijet=0; ijet<nPFJetAK4; ijet++) {  PFJetAK4_jetID[ijet] = true; } 
 		for(int ijet=0; ijet<nPFJetAK8; ijet++) {  PFJetAK8_jetID[ijet] = true; } 
 	}
 	// end of fix //
-    
+   
     //Here you get AK4 jets with your criteria
     vector <AK4Jet> Jets;
     getAK4jets(Jets,AK4jet_pt_cut,absetacut,isMC,puidcuts,50);

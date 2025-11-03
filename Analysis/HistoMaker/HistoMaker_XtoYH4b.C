@@ -200,13 +200,13 @@ int main(int argc, char *argv[])
  BoosterHandle booster;
   
  const char* model_path = nullptr;
- if(mass_frac<1.5) 							{ model_path =  "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_0p48_1p50/bdt_model.json"; }
- else if (mass_frac>=1.5 && mass_frac<2.0)  { model_path =  "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_1p50_2p00/bdt_model.json"; }
- else if (mass_frac>=2.0 && mass_frac<2.5)  { model_path =  "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p00_2p50/bdt_model.json"; }
- else if (mass_frac>=2.5 && mass_frac<3.0)  { model_path =  "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p50_3p00/bdt_model.json"; }
- else 										{ model_path =  "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_3p00_100p00/bdt_model.json"; }
+ if(mass_frac<1.5) 							{ model_path =  "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_0p48_1p50/bdt_model.json"; }
+ else if (mass_frac>=1.5 && mass_frac<2.0)  { model_path =  "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_1p50_2p00/bdt_model.json"; }
+ else if (mass_frac>=2.0 && mass_frac<2.5)  { model_path =  "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p00_2p50/bdt_model.json"; }
+ else if (mass_frac>=2.5 && mass_frac<3.0)  { model_path =  "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p50_3p00/bdt_model.json"; }
+ else 										{ model_path =  "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_3p00_100p00/bdt_model.json"; }
 
- if(!isSignal) { model_path =  "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_3p00_100p00/bdt_model.json"; }
+ if(!isSignal) { model_path =  "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_3p00_100p00/bdt_model.json"; }
 
  if (XGBoosterCreate(nullptr, 0, &booster) != 0 || XGBoosterLoadModel(booster, model_path) != 0) {
         std::cerr << "Failed to load xgboost model." << std::endl;
@@ -219,11 +219,11 @@ int main(int argc, char *argv[])
  
  
  std::vector<const char*> model_paths = {
-    "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_0p48_1p50/bdt_model.json",
-    "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_1p50_2p00/bdt_model.json",
-    "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p00_2p50/bdt_model.json",
-    "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p50_3p00/bdt_model.json",
-    "/afs/desy.de/user/p/passotlo/public/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_3p00_100p00/bdt_model.json"
+    "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_0p48_1p50/bdt_model.json",
+    "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_1p50_2p00/bdt_model.json",
+    "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p00_2p50/bdt_model.json",
+    "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_2p50_3p00/bdt_model.json",
+    "/data/dust/user/chatterj/XToYHTo4b/Oza/Models/AllSummed/Minimum_Mass_Fraction/MassSplit_3p00_100p00/bdt_model.json"
 };
 
  std::vector<BoosterHandle> boosters(model_paths.size());
@@ -1085,9 +1085,9 @@ int main(int argc, char *argv[])
 		
 		//Parton shower//
 		//ISR//(indices need to be corrected)//
-		shape_weight_up.push_back(LHEPSWeights[0]); shape_weight_dn.push_back(LHEPSWeights[1]); shape_weight_nom.push_back(1);
+		shape_weight_up.push_back(LHEPSWeights[22]); shape_weight_dn.push_back(LHEPSWeights[23]); shape_weight_nom.push_back(1);
 		//FSR//
-		shape_weight_up.push_back(LHEPSWeights[2]); shape_weight_dn.push_back(LHEPSWeights[3]); shape_weight_nom.push_back(1);
+		shape_weight_up.push_back(LHEPSWeights[0]); shape_weight_dn.push_back(LHEPSWeights[1]); shape_weight_nom.push_back(1);
 	}		
    
    // all histograms filled for b tag SF correction //

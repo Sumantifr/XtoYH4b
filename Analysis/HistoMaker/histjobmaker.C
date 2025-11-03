@@ -92,7 +92,7 @@ if(!file)
 
 fstream file1;
 char name_buffer1[512];
-sprintf(name_buffer1,"submit_%s.sh",files[ii].c_str());
+sprintf(name_buffer1,"submit_%s.sub",files[ii].c_str());
 file1.open(name_buffer1,ios::out);
    if(!file1)
    {
@@ -114,6 +114,7 @@ file1 << "RequestMemory = 4000\n";
 }
 if((files[ii].find("TTto4Q") != std::string::npos)||(files[ii].find("Data_Run3") != std::string::npos)){
 file1<< "+MaxRuntime = 100800\n";
+file1 << "#+RequestRuntime=36000\n";
 file1<< "#+RequestWalltime = 100800\n";
 file1 << "+JobFlavour = \""<<jobflavor<<"\"\n";
 }

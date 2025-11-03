@@ -55,7 +55,7 @@ using namespace std;
    static const int nlhescalemax = 9;
    static const int nlhepdfmax = 101;
    static const int nalpsmax = 3;
-   static const int nlhepsmax = 8;
+   static const int nlhepsmax = 44;
   
    // Declaration of leaf types
    Int_t           irun;
