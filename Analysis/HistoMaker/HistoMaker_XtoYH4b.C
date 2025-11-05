@@ -349,7 +349,19 @@ int main(int argc, char *argv[])
  // # of AK8 jets //
  TH1F *h_nAK8jet_pass	= getHisto1F("h_nfatjets_H_pass","# of AK8 jets (passing H conditions)",5,-0.5,4.5) ;
  
+ // Additional jets //
+ 
+ TH1F *h_nAK4jet_add	= getHisto1F("h_njets_add","# of additional AK4 jets",4,-0.5,3.5) ;
+ TH1F *h_nAK4jet_add_btag	= getHisto1F("h_njets_add_btag","# of additional AK4 jets (loose b-tagged)",4,-0.5,3.5) ;
+ TH1F *h_HT_add			= getHisto1F("h_HTjets_additional","H_T (GeV) [additional jets]",50,100,2100) ;
+ 
+ TH1F *h_jet_add_pt		= getHisto1F("Jet_additional_pt","p_{T} (GeV)",40, 20, 1020) ;
+ TH1F *h_jet_add_eta	= getHisto1F("Jet_additional_eta","#eta",40, -M_PI, M_PI) ;
+ TH1F *h_jet_add_phi	= getHisto1F("Jet_additional_phi","#phi",65, -M_PI, M_PI) ;
+ TH1F *h_jet_add_mass	= getHisto1F("Jet_additional_mass","mass (GeV)",40, 20, 220) ;
+ 
  // AK4 jet features //
+ 
  vector<TH1F*> h_AK4jets;
  vector<tuple<string, string, tuple<int, double, double>>> jetInfo = {
         {"pt", "p_{T} (GeV)", {40, 20, 1020}},
@@ -822,6 +834,13 @@ int main(int argc, char *argv[])
  
  Tree_JetInfo->Branch("Hcand_mass_bkg", &Hcand_mass_bkg);
  Tree_JetInfo->Branch("Ycand_mass_bkg", &Ycand_mass_bkg);
+ 
+ Tree_JetInfo->Branch("njets_add", &njets_add);
+ Tree_JetInfo->Branch("HT_add", &HT_add);
+ Tree_JetInfo->Branch("JetAK4_add_pt", &JetAK4_add_pt);
+ Tree_JetInfo->Branch("JetAK4_add_eta", &JetAK4_add_eta);
+ Tree_JetInfo->Branch("JetAK4_add_phi", &JetAK4_add_phi);
+ Tree_JetInfo->Branch("JetAK4_add_mass", &JetAK4_add_mass);
  
  // end of trees //
  
@@ -1407,9 +1426,30 @@ int main(int argc, char *argv[])
    
    vector<TLorentzVector> jet_p4s_btag;
    vector<int> jet_idx_btag;
+   vector<int> additional_jet_idx;
    
    if(year=="2024") {  jet_p4s_btag = jet_p4s_UParT; jet_idx_btag = jet_idx_UParT; }
    else 			{  jet_p4s_btag = jet_p4s_PNet;  jet_idx_btag = jet_idx_PNet;  }
+   
+   for(int ijet=0; ijet<nJetAK4; ijet++)
+   {
+	   
+	   bool add_jet_tag = true;
+	   
+	   for(int ibjet=0; ibjet<min(int(jet_idx_btag.size()),4); ibjet++){
+	   
+			if(ijet==jet_idx_btag[ibjet]){
+	   
+				add_jet_tag = false;
+				break;
+			
+			}
+	   
+		}
+		
+		if(add_jet_tag) { additional_jet_idx.push_back(ijet); }
+		
+	}
    
    // filling histogram for # of loose b-tagged jets //
    h_nAK4jets_loosbtag->Fill(int(jet_p4s_btag.size()),weight_nom);
@@ -1419,6 +1459,51 @@ int main(int argc, char *argv[])
    int scoremax_comb = -1 ;
    int Hmin_comb = -1; 
    int true_comb = -1;
+   
+   njets_add =  int(additional_jet_idx.size());  
+   
+   njets_add_btag = 0;
+   for(unsigned iadjet=0; iadjet<additional_jet_idx.size(); iadjet++){
+	if(year=="2024") { if (JetAK4_btag_UParTAK4B_WP[additional_jet_idx[iadjet]]>=1) { njets_add_btag ++; } }
+	else { if (JetAK4_btag_PNetB_WP[additional_jet_idx[iadjet]]>=1) { njets_add_btag ++; } }
+   }
+   
+   // Get the leading additional jet here //
+	
+   int addjet_lead = -1; float pt_add_max = 0.;
+   HT_add = 0;
+   
+   for(unsigned iadjet=0; iadjet<additional_jet_idx.size(); iadjet++){
+	
+		float add_pt = JetAK4_pt[additional_jet_idx[iadjet]];
+	
+		if(add_pt>pt_add_max) { addjet_lead = additional_jet_idx[iadjet]; pt_add_max = add_pt; }
+	   
+		HT_add += JetAK4_pt[additional_jet_idx[iadjet]];
+   
+   }
+   
+   // Fill additional jet histograms //
+   
+   h_nAK4jet_add->Fill(njets_add,weight_nom);
+   h_nAK4jet_add_btag->Fill(njets_add_btag,weight_nom);
+   h_HT_add->Fill(HT_add,weight_nom);
+   
+   if(addjet_lead>=0){
+	
+	JetAK4_add_pt   =  JetAK4_pt[addjet_lead];
+	JetAK4_add_eta  =  JetAK4_eta[addjet_lead];
+	JetAK4_add_phi  =  JetAK4_phi[addjet_lead];
+	JetAK4_add_mass =  JetAK4_mass[addjet_lead];
+	
+	h_jet_add_pt->Fill(JetAK4_add_pt,weight_nom);
+	h_jet_add_eta->Fill(JetAK4_add_eta,weight_nom);
+	h_jet_add_phi->Fill(JetAK4_add_phi,weight_nom);
+	h_jet_add_mass->Fill(JetAK4_add_mass,weight_nom);
+	   
+   }
+      
+   // end of additional jet //
    
    if(jet_idx_btag.size()>=4){
 	   

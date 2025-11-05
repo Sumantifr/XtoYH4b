@@ -487,6 +487,10 @@ using namespace std;
   float Hcand_mass_proxy, Ycand_mass_proxy; 
   vector<float> Hcand_mass_bkg, Ycand_mass_bkg;
   
+  int njets_add, njets_add_btag; 
+  float HT_add;
+  float JetAK4_add_pt, JetAK4_add_eta, JetAK4_add_phi, JetAK4_add_mass;
+  
   const int nmasspoints = 300;
     
   TTree *Tree_Pairing ;
