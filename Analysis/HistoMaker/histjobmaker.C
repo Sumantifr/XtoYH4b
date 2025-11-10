@@ -114,7 +114,7 @@ file1 << "RequestMemory = 4000\n";
 }
 if((files[ii].find("TTto4Q") != std::string::npos)||(files[ii].find("Data_Run3") != std::string::npos)){
 file1<< "+MaxRuntime = 100800\n";
-file1 << "#+RequestRuntime=36000\n";
+file1 << "+RequestRuntime=72000\n";
 file1<< "#+RequestWalltime = 100800\n";
 file1 << "+JobFlavour = \""<<jobflavor<<"\"\n";
 }

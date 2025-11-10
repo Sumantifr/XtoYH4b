@@ -339,6 +339,48 @@ vars.push_back({"Jet_pt_3_Comb_3_3_2_2_Inclusive_VR","3rd jet p_{T} (GeV)"});
 vars.push_back({"Jet_eta_3_Comb_3_3_2_2_Inclusive_CR","3rd jet #eta"});
 vars.push_back({"Jet_eta_3_Comb_3_3_2_2_Inclusive_VR","3rd jet #eta"});
 
+if(year!="2024"){
+if(!show_data){vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive_mHcut","1st jet PNet CvB score",true});}
+vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive_CR","1st jet PNet CvB score",true});
+vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive_VR","1st jet PNet CvB score",true});
+if(!show_data){vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive_mHcut","2nd jet PNet CvB score",true});}
+vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive_CR","2nd jet PNet CvB score",true});
+vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive_VR","2nd jet PNet CvB score",true});
+if(!show_data){vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive_mHcut","3rd jet PNet CvB score",true});}
+vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive_CR","3rd jet PNet CvB score",true});
+vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive_VR","3rd jet PNet CvB score",true});
+if(!show_data){vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive_mHcut","4th jet PNet CvB score",true});}
+vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive_CR","4th jet PNet CvB score",true});
+vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive_VR","4th jet PNet CvB score",true});
+
+if(!show_data){vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive_mHcut","1st jet PNet CvL score",true});}
+vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive_CR","1st jet PNet CvL score",true});
+vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive_VR","1st jet PNet CvL score",true});
+if(!show_data){vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive_mHcut","2nd jet PNet CvL score",true});}
+vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive_CR","2nd jet PNet CvL score",true});
+vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive_VR","2nd jet PNet CvL score",true});
+if(!show_data){vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive_mHcut","3rd jet PNet CvL score",true});}
+vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive_CR","3rd jet PNet CvL score",true});
+vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive_VR","3rd jet PNet CvL score",true});
+if(!show_data){vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive_mHcut","4th jet PNet CvL score",true});}
+vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive_CR","4th jet PNet CvL score",true});
+vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive_VR","4th jet PNet CvL score",true});
+
+if(!show_data){vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive_mHcut","1st jet PNet QG score",true});}
+vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive_CR","1st jet PNet QG score",true});
+vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive_VR","1st jet PNet QG score",true});
+if(!show_data){vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive_mHcut","2nd jet PNet QG score",true});}
+vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive_CR","2nd jet PNet QG score",true});
+vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive_VR","2nd jet PNet QG score",true});
+if(!show_data){vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive_mHcut","3rd jet PNet QG score",true});}
+vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive_CR","3rd jet PNet QG score",true});
+vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive_VR","3rd jet PNet QG score",true});
+if(!show_data){vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive_mHcut","4th jet PNet QG score",true});}
+vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive_CR","4th jet PNet QG score",true});
+vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive_VR","4th jet PNet QG score",true});
+
+}
+
 // Highest score pairing //
 
 if(year=="2023BPiX"){
@@ -383,6 +425,13 @@ vars.push_back({"h_angle_cos_theta_Y_lab_prime","cos#theta_{Y}"});
 if(year=="2024"|| year=="2023BPiX"){
 vars.push_back({"h_nAK4jets_loose_btag","# of loose b-tagged jets"});
 }
+
+//additional jet info//
+vars.push_back({"h_njets_add","# of additional AK4 jets"});
+vars.push_back({"h_njets_add_btag","# of additional AK4 jets (loose b-tagged)"});
+vars.push_back({"h_HTjets_additional","H_{T} (GeV) [additional jets]"});
+vars.push_back({"Jet_additional_pt","p_{T} (GeV)"});
+vars.push_back({"Jet_additional_eta","#eta"});
 
 if(!show_data){
 	
