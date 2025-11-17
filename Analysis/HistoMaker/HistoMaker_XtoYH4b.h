@@ -477,11 +477,11 @@ using namespace std;
   
   float SM_H_mass = 125.;
   
-  float JetAK4_pt_1, JetAK4_eta_1, JetAK4_phi_1, JetAK4_mass_1, JetAK4_btag_PNetB_1, JetAK4_btag_PNetCvB_1, JetAK4_btag_PNetCvL_1, JetAK4_btag_PNetQG_1, JetAK4_charge_kappa_0p3_1, JetAK4_charge_kappa_0p6_1, JetAK4_charge_kappa_1p0_1;
-  float JetAK4_pt_2, JetAK4_eta_2, JetAK4_phi_2, JetAK4_mass_2, JetAK4_btag_PNetB_2, JetAK4_btag_PNetCvB_2, JetAK4_btag_PNetCvL_2, JetAK4_btag_PNetQG_2, JetAK4_charge_kappa_0p3_2, JetAK4_charge_kappa_0p6_2, JetAK4_charge_kappa_1p0_2;
-  float JetAK4_pt_3, JetAK4_eta_3, JetAK4_phi_3, JetAK4_mass_3, JetAK4_btag_PNetB_3, JetAK4_btag_PNetCvB_3, JetAK4_btag_PNetCvL_3, JetAK4_btag_PNetQG_3, JetAK4_charge_kappa_0p3_3, JetAK4_charge_kappa_0p6_3, JetAK4_charge_kappa_1p0_3;
-  float JetAK4_pt_4, JetAK4_eta_4, JetAK4_phi_4, JetAK4_mass_4, JetAK4_btag_PNetB_4, JetAK4_btag_PNetCvB_4, JetAK4_btag_PNetCvL_4, JetAK4_btag_PNetQG_4, JetAK4_charge_kappa_0p3_4, JetAK4_charge_kappa_0p6_4, JetAK4_charge_kappa_1p0_4;
-  int JetAK4_btag_PNetB_WP_1, JetAK4_btag_PNetB_WP_2, JetAK4_btag_PNetB_WP_3, JetAK4_btag_PNetB_WP_4;
+  float JetAK4_pt_1, JetAK4_eta_1, JetAK4_phi_1, JetAK4_mass_1, JetAK4_btag_B_1, JetAK4_btag_CvB_1, JetAK4_btag_CvL_1, JetAK4_btag_QG_1, JetAK4_charge_kappa_0p3_1, JetAK4_charge_kappa_0p6_1, JetAK4_charge_kappa_1p0_1;
+  float JetAK4_pt_2, JetAK4_eta_2, JetAK4_phi_2, JetAK4_mass_2, JetAK4_btag_B_2, JetAK4_btag_CvB_2, JetAK4_btag_CvL_2, JetAK4_btag_QG_2, JetAK4_charge_kappa_0p3_2, JetAK4_charge_kappa_0p6_2, JetAK4_charge_kappa_1p0_2;
+  float JetAK4_pt_3, JetAK4_eta_3, JetAK4_phi_3, JetAK4_mass_3, JetAK4_btag_B_3, JetAK4_btag_CvB_3, JetAK4_btag_CvL_3, JetAK4_btag_QG_3, JetAK4_charge_kappa_0p3_3, JetAK4_charge_kappa_0p6_3, JetAK4_charge_kappa_1p0_3;
+  float JetAK4_pt_4, JetAK4_eta_4, JetAK4_phi_4, JetAK4_mass_4, JetAK4_btag_B_4, JetAK4_btag_CvB_4, JetAK4_btag_CvL_4, JetAK4_btag_QG_4, JetAK4_charge_kappa_0p3_4, JetAK4_charge_kappa_0p6_4, JetAK4_charge_kappa_1p0_4;
+  int JetAK4_btag_B_WP_1, JetAK4_btag_B_WP_2, JetAK4_btag_B_WP_3, JetAK4_btag_B_WP_4;
   int JetAK4_Hcand_index_1, JetAK4_Hcand_index_2, JetAK4_Hcand_index_3, JetAK4_Hcand_index_4;
   float Hcand_mass, Ycand_mass; 
   float Hcand_mass_proxy, Ycand_mass_proxy; 

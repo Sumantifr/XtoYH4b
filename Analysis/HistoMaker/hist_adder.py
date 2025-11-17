@@ -28,8 +28,12 @@ if args.isDATA:
     elif args.YEAR=="2023BPiX":
         command = "hadd -f %s/Output_Data_Parking.root %s/Histogram_Data_Run3_Run2023_D_ParkingHH*.root"%(out_path,in_path)
         os.system(command)
+        command = "hadd -f %s/Tree_Data_Parking.root %s/Tree_Data_Run3_Run2023_D_ParkingHH*.root"%(out_path,in_path)
+        os.system(command)
     else:
         command = "hadd -f %s/Output_Data_Parking.root %s/Histogram_Data_Run3_Run%s*.root"%(out_path,in_path,args.YEAR)
+        os.system(command)
+        command = "hadd -f %s/Tree_Data_Parking.root %s/Tree_Data_Run3_Run%s*.root"%(out_path,in_path,args.YEAR)
         os.system(command)
 else:
      

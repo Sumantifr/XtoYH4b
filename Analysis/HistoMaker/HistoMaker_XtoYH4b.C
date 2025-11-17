@@ -777,56 +777,56 @@ int main(int argc, char *argv[])
  Tree_JetInfo->Branch("JetAK4_eta_1", &JetAK4_eta_1, "JetAK4_eta_1/F");
  Tree_JetInfo->Branch("JetAK4_phi_1", &JetAK4_phi_1, "JetAK4_phi_1/F");
  Tree_JetInfo->Branch("JetAK4_mass_1", &JetAK4_mass_1, "JetAK4_mass_1/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_1", &JetAK4_btag_PNetB_1, "JetAK4_btag_PNetB_1/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvB_1", &JetAK4_btag_PNetCvB_1, "JetAK4_btag_PNetCvB_1/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvL_1", &JetAK4_btag_PNetCvL_1, "JetAK4_btag_PNetCvL_1/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetQG_1", &JetAK4_btag_PNetQG_1, "JetAK4_btag_PNetQG_1/F");
+ Tree_JetInfo->Branch("JetAK4_btag_B_1", &JetAK4_btag_B_1, "JetAK4_btag_B_1/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvB_1", &JetAK4_btag_CvB_1, "JetAK4_btag_CvB_1/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvL_1", &JetAK4_btag_CvL_1, "JetAK4_btag_CvL_1/F");
+ Tree_JetInfo->Branch("JetAK4_btag_QG_1", &JetAK4_btag_QG_1, "JetAK4_btag_QG_1/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p3_1", &JetAK4_charge_kappa_0p3_1, "JetAK4_charge_kappa_0p3_1/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p6_1", &JetAK4_charge_kappa_0p6_1, "JetAK4_charge_kappa_0p6_1/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_1p0_1", &JetAK4_charge_kappa_1p0_1, "JetAK4_charge_kappa_1p0_1/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_WP_1", &JetAK4_btag_PNetB_WP_1, "JetAK4_btag_PNetB_WP_1/I");
+ Tree_JetInfo->Branch("JetAK4_btag_B_WP_1", &JetAK4_btag_B_WP_1, "JetAK4_btag_B_WP_1/I");
  Tree_JetInfo->Branch("JetAK4_Hcand_index_1", &JetAK4_Hcand_index_1, "JetAK4_Hcand_index_1/I");
  
  Tree_JetInfo->Branch("JetAK4_pt_2", &JetAK4_pt_2, "JetAK4_pt_2/F");
  Tree_JetInfo->Branch("JetAK4_eta_2", &JetAK4_eta_2, "JetAK4_eta_2/F");
  Tree_JetInfo->Branch("JetAK4_phi_2", &JetAK4_phi_2, "JetAK4_phi_2/F");
  Tree_JetInfo->Branch("JetAK4_mass_2", &JetAK4_mass_2, "JetAK4_mass_2/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_2", &JetAK4_btag_PNetB_2, "JetAK4_btag_PNetB_2/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvB_2", &JetAK4_btag_PNetCvB_2, "JetAK4_btag_PNetCvB_2/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvL_2", &JetAK4_btag_PNetCvL_2, "JetAK4_btag_PNetCvL_2/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetQG_2", &JetAK4_btag_PNetQG_2, "JetAK4_btag_PNetQG_2/F");
+ Tree_JetInfo->Branch("JetAK4_btag_B_2", &JetAK4_btag_B_2, "JetAK4_btag_B_2/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvB_2", &JetAK4_btag_CvB_2, "JetAK4_btag_CvB_2/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvL_2", &JetAK4_btag_CvL_2, "JetAK4_btag_CvL_2/F");
+ Tree_JetInfo->Branch("JetAK4_btag_QG_2", &JetAK4_btag_QG_2, "JetAK4_btag_QG_2/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p3_2", &JetAK4_charge_kappa_0p3_2, "JetAK4_charge_kappa_0p3_2/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p6_2", &JetAK4_charge_kappa_0p6_2, "JetAK4_charge_kappa_0p6_2/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_1p0_2", &JetAK4_charge_kappa_1p0_2, "JetAK4_charge_kappa_1p0_2/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_WP_2", &JetAK4_btag_PNetB_WP_2, "JetAK4_btag_PNetB_WP_2/I");
+ Tree_JetInfo->Branch("JetAK4_btag_B_WP_2", &JetAK4_btag_B_WP_2, "JetAK4_btag_B_WP_2/I");
  Tree_JetInfo->Branch("JetAK4_Hcand_index_2", &JetAK4_Hcand_index_2, "JetAK4_Hcand_index_2/I");
  
  Tree_JetInfo->Branch("JetAK4_pt_3", &JetAK4_pt_3, "JetAK4_pt_3/F");
  Tree_JetInfo->Branch("JetAK4_eta_3", &JetAK4_eta_3, "JetAK4_eta_3/F");
  Tree_JetInfo->Branch("JetAK4_phi_3", &JetAK4_phi_3, "JetAK4_phi_3/F");
  Tree_JetInfo->Branch("JetAK4_mass_3", &JetAK4_mass_3, "JetAK4_mass_3/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_3", &JetAK4_btag_PNetB_3, "JetAK4_btag_PNetB_3/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvB_3", &JetAK4_btag_PNetCvB_3, "JetAK4_btag_PNetCvB_3/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvL_3", &JetAK4_btag_PNetCvL_3, "JetAK4_btag_PNetCvL_3/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetQG_3", &JetAK4_btag_PNetQG_3, "JetAK4_btag_PNetQG_3/F");
+ Tree_JetInfo->Branch("JetAK4_btag_B_3", &JetAK4_btag_B_3, "JetAK4_btag_B_3/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvB_3", &JetAK4_btag_CvB_3, "JetAK4_btag_CvB_3/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvL_3", &JetAK4_btag_CvL_3, "JetAK4_btag_CvL_3/F");
+ Tree_JetInfo->Branch("JetAK4_btag_QG_3", &JetAK4_btag_QG_3, "JetAK4_btag_QG_3/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p3_3", &JetAK4_charge_kappa_0p3_3, "JetAK4_charge_kappa_0p3_3/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p6_3", &JetAK4_charge_kappa_0p6_3, "JetAK4_charge_kappa_0p6_3/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_1p0_3", &JetAK4_charge_kappa_1p0_3, "JetAK4_charge_kappa_1p0_3/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_WP_3", &JetAK4_btag_PNetB_WP_3, "JetAK4_btag_PNetB_WP_3/I");
+ Tree_JetInfo->Branch("JetAK4_btag_B_WP_3", &JetAK4_btag_B_WP_3, "JetAK4_btag_B_WP_3/I");
  Tree_JetInfo->Branch("JetAK4_Hcand_index_3", &JetAK4_Hcand_index_3, "JetAK4_Hcand_index_3/I");
  
  Tree_JetInfo->Branch("JetAK4_pt_4", &JetAK4_pt_4, "JetAK4_pt_4/F");
  Tree_JetInfo->Branch("JetAK4_eta_4", &JetAK4_eta_4, "JetAK4_eta_4/F");
  Tree_JetInfo->Branch("JetAK4_phi_4", &JetAK4_phi_4, "JetAK4_phi_4/F");
  Tree_JetInfo->Branch("JetAK4_mass_4", &JetAK4_mass_4, "JetAK4_mass_4/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_4", &JetAK4_btag_PNetB_4, "JetAK4_btag_PNetB_4/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvB_4", &JetAK4_btag_PNetCvB_4, "JetAK4_btag_PNetCvB_4/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetCvL_4", &JetAK4_btag_PNetCvL_4, "JetAK4_btag_PNetCvL_4/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetQG_4", &JetAK4_btag_PNetQG_4, "JetAK4_btag_PNetQG_4/F");
+ Tree_JetInfo->Branch("JetAK4_btag_B_4", &JetAK4_btag_B_4, "JetAK4_btag_B_4/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvB_4", &JetAK4_btag_CvB_4, "JetAK4_btag_CvB_4/F");
+ Tree_JetInfo->Branch("JetAK4_btag_CvL_4", &JetAK4_btag_CvL_4, "JetAK4_btag_CvL_4/F");
+ Tree_JetInfo->Branch("JetAK4_btag_QG_4", &JetAK4_btag_QG_4, "JetAK4_btag_QG_4/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p3_4", &JetAK4_charge_kappa_0p3_4, "JetAK4_charge_kappa_0p3_4/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_0p6_4", &JetAK4_charge_kappa_0p6_4, "JetAK4_charge_kappa_0p6_4/F");
  Tree_JetInfo->Branch("JetAK4_charge_kappa_1p0_4", &JetAK4_charge_kappa_1p0_4, "JetAK4_charge_kappa_1p0_4/F");
- Tree_JetInfo->Branch("JetAK4_btag_PNetB_WP_4", &JetAK4_btag_PNetB_WP_4, "JetAK4_btag_PNetB_WP_4/I");
+ Tree_JetInfo->Branch("JetAK4_btag_B_WP_4", &JetAK4_btag_B_WP_4, "JetAK4_btag_B_WP_4/I");
  Tree_JetInfo->Branch("JetAK4_Hcand_index_4", &JetAK4_Hcand_index_4, "JetAK4_Hcand_index_4/I");
  
  Tree_JetInfo->Branch("Hcand_mass", &Hcand_mass, "Hcand_mass/F");
@@ -1469,9 +1469,11 @@ int main(int argc, char *argv[])
    }
    
    // Get the leading additional jet here //
-	
+
+   HT_add = JetAK4_add_pt = JetAK4_add_eta = JetAK4_add_phi = JetAK4_add_mass = -100.;
+
    int addjet_lead = -1; float pt_add_max = 0.;
-   HT_add = 0;
+   if(additional_jet_idx.size()>0) { HT_add = 0; }
    
    for(unsigned iadjet=0; iadjet<additional_jet_idx.size(); iadjet++){
 	
@@ -1982,16 +1984,16 @@ int main(int argc, char *argv[])
 				JetAK4_pt_4 = JetAK4_pt[3]; JetAK4_eta_4 = JetAK4_eta[3]; JetAK4_phi_4 = JetAK4_phi[3]; JetAK4_mass_4 = JetAK4_mass[3]; JetAK4_charge_kappa_0p3_4 = JetAK4_charge_kappa_0p3[3]; JetAK4_charge_kappa_0p6_4 = JetAK4_charge_kappa_0p6[3]; JetAK4_charge_kappa_1p0_4 = JetAK4_charge_kappa_1p0[3];
 			
 				if(year!="2024"){
-				JetAK4_btag_PNetB_1 = JetAK4_btag_PNetB[0]; JetAK4_btag_PNetCvB_1 = JetAK4_btag_PNetCvB[0]; JetAK4_btag_PNetCvL_1 = JetAK4_btag_PNetCvL[0]; JetAK4_btag_PNetQG_1 = JetAK4_btag_PNetQG[0];   JetAK4_btag_PNetB_WP_1 = JetAK4_btag_PNetB_WP[0];
-				JetAK4_btag_PNetB_2 = JetAK4_btag_PNetB[1]; JetAK4_btag_PNetCvB_2 = JetAK4_btag_PNetCvB[1]; JetAK4_btag_PNetCvL_2 = JetAK4_btag_PNetCvL[1]; JetAK4_btag_PNetQG_2 = JetAK4_btag_PNetQG[1];   JetAK4_btag_PNetB_WP_2 = JetAK4_btag_PNetB_WP[1];
-				JetAK4_btag_PNetB_3 = JetAK4_btag_PNetB[2]; JetAK4_btag_PNetCvB_3 = JetAK4_btag_PNetCvB[2]; JetAK4_btag_PNetCvL_3 = JetAK4_btag_PNetCvL[2]; JetAK4_btag_PNetQG_3 = JetAK4_btag_PNetQG[2];   JetAK4_btag_PNetB_WP_3 = JetAK4_btag_PNetB_WP[2];
-				JetAK4_btag_PNetB_4 = JetAK4_btag_PNetB[3]; JetAK4_btag_PNetCvB_4 = JetAK4_btag_PNetCvB[3]; JetAK4_btag_PNetCvL_4 = JetAK4_btag_PNetCvL[3]; JetAK4_btag_PNetQG_4 = JetAK4_btag_PNetQG[3];   JetAK4_btag_PNetB_WP_4 = JetAK4_btag_PNetB_WP[3];
+				JetAK4_btag_B_1 = JetAK4_btag_PNetB[0]; JetAK4_btag_CvB_1 = JetAK4_btag_PNetCvB[0]; JetAK4_btag_CvL_1 = JetAK4_btag_PNetCvL[0]; JetAK4_btag_QG_1 = JetAK4_btag_PNetQG[0];   JetAK4_btag_B_WP_1 = JetAK4_btag_PNetB_WP[0];
+				JetAK4_btag_B_2 = JetAK4_btag_PNetB[1]; JetAK4_btag_CvB_2 = JetAK4_btag_PNetCvB[1]; JetAK4_btag_CvL_2 = JetAK4_btag_PNetCvL[1]; JetAK4_btag_QG_2 = JetAK4_btag_PNetQG[1];   JetAK4_btag_B_WP_2 = JetAK4_btag_PNetB_WP[1];
+				JetAK4_btag_B_3 = JetAK4_btag_PNetB[2]; JetAK4_btag_CvB_3 = JetAK4_btag_PNetCvB[2]; JetAK4_btag_CvL_3 = JetAK4_btag_PNetCvL[2]; JetAK4_btag_QG_3 = JetAK4_btag_PNetQG[2];   JetAK4_btag_B_WP_3 = JetAK4_btag_PNetB_WP[2];
+				JetAK4_btag_B_4 = JetAK4_btag_PNetB[3]; JetAK4_btag_CvB_4 = JetAK4_btag_PNetCvB[3]; JetAK4_btag_CvL_4 = JetAK4_btag_PNetCvL[3]; JetAK4_btag_QG_4 = JetAK4_btag_PNetQG[3];   JetAK4_btag_B_WP_4 = JetAK4_btag_PNetB_WP[3];
 				}
 				else{
-				JetAK4_btag_PNetB_1 = JetAK4_btag_UParTAK4B[0]; JetAK4_btag_PNetCvB_1 = JetAK4_btag_UParTAK4CvB[0]; JetAK4_btag_PNetCvL_1 = JetAK4_btag_UParTAK4CvL[0]; JetAK4_btag_PNetQG_1 = JetAK4_btag_UParTAK4QG[0];   JetAK4_btag_PNetB_WP_1 = JetAK4_btag_UParTAK4B_WP[0];
-				JetAK4_btag_PNetB_2 = JetAK4_btag_UParTAK4B[1]; JetAK4_btag_PNetCvB_2 = JetAK4_btag_UParTAK4CvB[1]; JetAK4_btag_PNetCvL_2 = JetAK4_btag_UParTAK4CvL[1]; JetAK4_btag_PNetQG_2 = JetAK4_btag_UParTAK4QG[1];   JetAK4_btag_PNetB_WP_2 = JetAK4_btag_UParTAK4B_WP[1];
-				JetAK4_btag_PNetB_3 = JetAK4_btag_UParTAK4B[2]; JetAK4_btag_PNetCvB_3 = JetAK4_btag_UParTAK4CvB[2]; JetAK4_btag_PNetCvL_3 = JetAK4_btag_UParTAK4CvL[2]; JetAK4_btag_PNetQG_3 = JetAK4_btag_UParTAK4QG[2];   JetAK4_btag_PNetB_WP_3 = JetAK4_btag_UParTAK4B_WP[2];
-				JetAK4_btag_PNetB_4 = JetAK4_btag_UParTAK4B[3]; JetAK4_btag_PNetCvB_4 = JetAK4_btag_UParTAK4CvB[3]; JetAK4_btag_PNetCvL_4 = JetAK4_btag_UParTAK4CvL[3]; JetAK4_btag_PNetQG_4 = JetAK4_btag_UParTAK4QG[3];   JetAK4_btag_PNetB_WP_4 = JetAK4_btag_UParTAK4B_WP[3];
+				JetAK4_btag_B_1 = JetAK4_btag_UParTAK4B[0]; JetAK4_btag_CvB_1 = JetAK4_btag_UParTAK4CvB[0]; JetAK4_btag_CvL_1 = JetAK4_btag_UParTAK4CvL[0]; JetAK4_btag_QG_1 = JetAK4_btag_UParTAK4QG[0];   JetAK4_btag_B_WP_1 = JetAK4_btag_UParTAK4B_WP[0];
+				JetAK4_btag_B_2 = JetAK4_btag_UParTAK4B[1]; JetAK4_btag_CvB_2 = JetAK4_btag_UParTAK4CvB[1]; JetAK4_btag_CvL_2 = JetAK4_btag_UParTAK4CvL[1]; JetAK4_btag_QG_2 = JetAK4_btag_UParTAK4QG[1];   JetAK4_btag_B_WP_2 = JetAK4_btag_UParTAK4B_WP[1];
+				JetAK4_btag_B_3 = JetAK4_btag_UParTAK4B[2]; JetAK4_btag_CvB_3 = JetAK4_btag_UParTAK4CvB[2]; JetAK4_btag_CvL_3 = JetAK4_btag_UParTAK4CvL[2]; JetAK4_btag_QG_3 = JetAK4_btag_UParTAK4QG[2];   JetAK4_btag_B_WP_3 = JetAK4_btag_UParTAK4B_WP[2];
+				JetAK4_btag_B_4 = JetAK4_btag_UParTAK4B[3]; JetAK4_btag_CvB_4 = JetAK4_btag_UParTAK4CvB[3]; JetAK4_btag_CvL_4 = JetAK4_btag_UParTAK4CvL[3]; JetAK4_btag_QG_4 = JetAK4_btag_UParTAK4QG[3];   JetAK4_btag_B_WP_4 = JetAK4_btag_UParTAK4B_WP[3];
 				}
 			
 				if(Hcand_1_b_1_idx[icomb]==0 || Hcand_1_b_2_idx[icomb]==0) { JetAK4_Hcand_index_1 = 1;  } else { JetAK4_Hcand_index_1 = 2; }
