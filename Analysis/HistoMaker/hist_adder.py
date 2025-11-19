@@ -37,10 +37,10 @@ if args.isDATA:
         os.system(command)
 else:
      
-    command = "hadd -f %s/Output_Zto2Q.root %s/Histogram_Zto2Q-2Jets_PTQQ-*.root"%(out_path,in_path)
+    command = "hadd -f %s/Output_Zto2Q.root %s/Histogram_Zto2Q-2Jets*.root"%(out_path,in_path)
     os.system(command)
 
-    command = "hadd -f %s/Output_Wto2Q.root %s/Histogram_Wto2Q-2Jets_PTQQ-*.root"%(out_path,in_path)
+    command = "hadd -f %s/Output_Wto2Q.root %s/Histogram_Wto2Q-2Jets*.root"%(out_path,in_path)
     os.system(command)
 
     command = "hadd -f %s/Output_TT.root %s/Histogram_TTto*.root"%(out_path,in_path)

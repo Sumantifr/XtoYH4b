@@ -68,7 +68,10 @@ adder(glob.glob(in_path+"QCD-4Jets_HT-*.root"),"QCD")
 adder(glob.glob(in_path+"Zto2Q*.root"),"Zto2Q")
 adder(glob.glob(in_path+"Wto2Q*.root"),"Wto2Q")
 adder(glob.glob(in_path+"TTto*.root"),"TT")
-adder(glob.glob(in_path+"WW*.root")+glob.glob(in_path+"WZ*.root")+glob.glob(in_path+"ZZ*.root"),"Diboson")
+if args.YEAR=="2024":
+    adder(glob.glob(in_path+"WW_*.root")+glob.glob(in_path+"WZ_*.root")+glob.glob(in_path+"ZZ_*.root"),"Diboson")
+else:
+    adder(glob.glob(in_path+"WW*.root")+glob.glob(in_path+"WZ*.root")+glob.glob(in_path+"ZZ*.root"),"Diboson")
 adder(glob.glob(in_path+"Tb*.root")+glob.glob(in_path+"TB*.root")+glob.glob(in_path+"TW*.root"),"ST")
 
 adder(glob.glob(in_path+"GluGluHto2B*.root")+glob.glob(in_path+"VBFHto2B*.root")+glob.glob(in_path+"WplusH_Hto2B*.root")+glob.glob(in_path+"WminusH_Hto2B*.root")+glob.glob(in_path+"ZH_Hto2B*.root"),"SingleH")
