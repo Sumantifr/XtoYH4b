@@ -725,6 +725,8 @@
    string btagSF_file_correctionlib;
    string jec_file_correctionlib;
    string jec_tag;
+   string pu_file_correctionlib;
+   string pu_tag;
    
    // new variables (to store in output tree) //
    TFile *fileout;

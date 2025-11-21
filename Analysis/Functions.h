@@ -325,6 +325,21 @@ return result;
 	
 }
 
+float* read_pu_weight_fromCorrectiolib(const unique_ptr<correction::CorrectionSet>& cset, string putag, int npu)
+{
+
+correction::Correction::Ref algo_sf = cset->at(putag);
+
+static float puweight[3] = {0,0,0};
+
+puweight[0] = algo_sf->evaluate({double(min(npu,100)), "nominal"});
+puweight[1] = algo_sf->evaluate({double(min(npu,100)), "up"});
+puweight[2] = algo_sf->evaluate({double(min(npu,100)), "down"});
+
+return puweight;
+	
+}
+
 double getphi(TLorentzVector lep1, TLorentzVector lep2, TLorentzVector tmp_H)
 {
         if(lep1.Eta()<-10 || lep2.Eta()<-10 || tmp_H.Eta()<-10) return -100;

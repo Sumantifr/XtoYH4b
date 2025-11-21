@@ -1321,7 +1321,7 @@ int main(int argc, char *argv[])
    cout<<"Auxiliary files used \n";
    //cout<<file_mu_sf->GetName()<<endl;
    //cout<<file_el_sf->GetName()<<endl;
-   cout<<file_pu_ratio->GetName()<<endl;
+   //cout<<file_pu_ratio->GetName()<<endl;
    //cout<<file_jet_puid_SF->GetName()<<endl;
    if(year=="2022"||year=="2022EE"){
    for (int ieta=0; ieta<ntrigger_etas; ieta++){ for(int ijet=0; ijet<ntrigger_jets; ijet++){ cout<<file_trigger_SF_jet[ieta][ijet]->GetName()<<endl; } }
@@ -1369,11 +1369,15 @@ int main(int argc, char *argv[])
    unique_ptr<correction::CorrectionSet> cset_jec;
    cset_jec = correction::CorrectionSet::from_file(jec_file_correctionlib);
    
+   // reading pileup weights from correctionlib //
+   pu_file_correctionlib = "data/pileup/"+year+"/puWeights.json.gz";
+   unique_ptr<correction::CorrectionSet> cset_pu;
+   cset_pu = correction::CorrectionSet::from_file(pu_file_correctionlib);
+      
    // generating combinations for b tag scorex //
    vector<Combination> validCombinations = generateValidCombinations();
    map<Combination, int> indexMapping = createIndexMapping(validCombinations);
 		
-  
    int nentries = fChain->GetEntries();
    cout<<"nentries "<<nentries<<endl;
    
@@ -2020,15 +2024,34 @@ int main(int argc, char *argv[])
 		
 	}
 	
+    if(isMC){
+		    
+		float *puweights;
 		
-    if(isMC){    
+		if(year=="2022EE")	 	 { pu_tag = "Collisions2022_359022_362760_eraEFG_GoldenJson"; }
+		else if(year=="2023")	 { pu_tag = "Collisions2023_366403_369802_eraBC_GoldenJson"; }
+		else if(year=="2023BPiX"){ pu_tag = "Collisions2023_369803_370790_eraD_GoldenJson"; }
+		else if(year=="2024")	 { pu_tag = "Collisions2024_378981_386951_GoldenJson"; }
+		else 					 { pu_tag = "Collisions2022_355100_357900_eraBCD_GoldenJson"; }
 		
-		if(npu_vert_true>=0 && npu_vert_true<100){
-			float *puweights = Get_PU_Weights(file_pu_ratio, npu_vert_true);
-			puWeight = puweights[0];
-			puWeightup = puweights[1];
-			puWeightdown = puweights[2];
-		}
+		//if(year=="2024"){
+		puweights = read_pu_weight_fromCorrectiolib(cset_pu, pu_tag, npu_vert_true);
+		//}
+		//else{
+		//	if(npu_vert_true>=0 && npu_vert_true<100){
+		//		puweights = Get_PU_Weights(file_pu_ratio, npu_vert_true);
+		//	}
+		//}
+		//comment: 
+		//we could equally use the pileup ratio files we produced ourselves. 
+		//just using the correctionlib files to be safe (easier for object review)
+		
+		puWeight = puweights[0];
+		puWeightup = puweights[1];
+		puWeightdown = puweights[2];
+		
+		//cout<<"puWeight "<<puWeight<<" "<<puWeightup<<" "<<puWeightdown<<endl;
+		
 		// Lepton SF //
 	    // (Not needed since we're not using leptons) //
 	    
