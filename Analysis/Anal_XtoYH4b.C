@@ -1556,7 +1556,7 @@ int main(int argc, char *argv[])
 				else if(year=="2023") 	  { jec_tag = "Summer23Prompt23_V1_MC"; }
 				else if(year=="2023BPiX") { jec_tag = "Summer23BPixPrompt23_V1_MC"; }
 				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V1_MC"; }
-				else 					  { jec_tag = "Summer24_22Sep2023_V1_MC"; }
+				else 					  { jec_tag = "Summer22_22Sep2023_V2_MC"; }
 			}
 		
 			float JEC_L2 = 1.;
