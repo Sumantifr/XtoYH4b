@@ -835,13 +835,46 @@ int main(int argc, char *argv[])
  Tree_JetInfo->Branch("Hcand_mass_bkg", &Hcand_mass_bkg);
  Tree_JetInfo->Branch("Ycand_mass_bkg", &Ycand_mass_bkg);
  
- Tree_JetInfo->Branch("njets_add", &njets_add);
- Tree_JetInfo->Branch("HT_add", &HT_add);
- Tree_JetInfo->Branch("JetAK4_add_pt", &JetAK4_add_pt);
- Tree_JetInfo->Branch("JetAK4_add_eta", &JetAK4_add_eta);
- Tree_JetInfo->Branch("JetAK4_add_phi", &JetAK4_add_phi);
- Tree_JetInfo->Branch("JetAK4_add_mass", &JetAK4_add_mass);
+ Tree_JetInfo->Branch("njets_add", &njets_add, "njets_add/I");
+ Tree_JetInfo->Branch("HT_add", &HT_add, "HT_add/F");
+ Tree_JetInfo->Branch("JetAK4_add_pt", &JetAK4_add_pt, "JetAK4_add_pt/F");
+ Tree_JetInfo->Branch("JetAK4_add_eta", &JetAK4_add_eta, "JetAK4_add_eta/F");
+ Tree_JetInfo->Branch("JetAK4_add_phi", &JetAK4_add_phi, "JetAK4_add_phi/F");
+ Tree_JetInfo->Branch("JetAK4_add_mass", &JetAK4_add_mass, "JetAK4_add_mass/F");
  
+ Tree_JetInfo->Branch("Hcand_1_pt", &Hcand_1_pt, "Hcand_1_pt/F");
+ Tree_JetInfo->Branch("Hcand_1_eta", &Hcand_1_eta, "Hcand_1_eta/F");
+ Tree_JetInfo->Branch("Hcand_1_phi", &Hcand_1_phi, "Hcand_1_phi/F");
+ Tree_JetInfo->Branch("Hcand_1_mass", &Hcand_1_mass, "Hcand_1_mass/F");
+ 
+ Tree_JetInfo->Branch("Hcand_2_pt", &Hcand_2_pt, "Hcand_2_pt/F");
+ Tree_JetInfo->Branch("Hcand_2_eta", &Hcand_2_eta, "Hcand_2_eta/F");
+ Tree_JetInfo->Branch("Hcand_2_phi", &Hcand_2_phi, "Hcand_2_phi/F");
+ Tree_JetInfo->Branch("Hcand_2_mass", &Hcand_2_mass, "Hcand_2_mass/F");
+ 
+ Tree_JetInfo->Branch("H1_b1b2_deta", &H1_b1b2_deta, "H1_b1b2_deta/F");
+ Tree_JetInfo->Branch("H1_b1b2_dphi", &H1_b1b2_dphi, "H1_b1b2_dphi/F");
+ Tree_JetInfo->Branch("H1_b1b2_dR", &H1_b1b2_dR, "H1_b1b2_dR/F");
+ 
+ Tree_JetInfo->Branch("H2_b1b2_deta", &H2_b1b2_deta, "H2_b1b2_deta/F");
+ Tree_JetInfo->Branch("H2_b1b2_dphi", &H2_b1b2_dphi, "H2_b1b2_dphi/F");
+ Tree_JetInfo->Branch("H2_b1b2_dR", &H2_b1b2_dR, "H2_b1b2_dR/F");
+ 
+ Tree_JetInfo->Branch("H1H2_pt", &H1H2_pt, "H1H2_pt/F");
+ Tree_JetInfo->Branch("H1H2_eta", &H1H2_eta, "H1H2_eta/F");
+ Tree_JetInfo->Branch("H1H2_phi", &H1H2_phi, "H1H2_phi/F");
+ Tree_JetInfo->Branch("H1H2_mass", &H1H2_mass, "H1H2_mass/F");
+ Tree_JetInfo->Branch("H1H2_deta", &H1H2_deta, "H1H2_deta/F");
+ Tree_JetInfo->Branch("H1H2_dphi", &H1H2_dphi, "H1H2_dphi/F");
+ Tree_JetInfo->Branch("H1H2_dR", &H1H2_dR, "H1H2_dR/F");
+ 
+ Tree_JetInfo->Branch("HT_4j", &HT_4j, "HT_4j/F");
+ Tree_JetInfo->Branch("HT_allj", &HT_allj, "HT_allj/F");
+ 
+ Tree_JetInfo->Branch("angle_CS_theta_H1", &angle_CS_theta_H1, "angle_CS_theta_H1/F");
+ Tree_JetInfo->Branch("angle_CS_theta_H2", &angle_CS_theta_H2, "angle_CS_theta_H2/F");
+ Tree_JetInfo->Branch("angle_CS_theta_H1H2", &angle_CS_theta_H1H2, "angle_CS_theta_H1H2/F");
+
  // end of trees //
  
  string btagSFcor_filename = "BTagSFCorrection/"+year+"/BtagSF_correction_"+sample_tag+".root";		
@@ -897,6 +930,8 @@ int main(int argc, char *argv[])
    
   float sum_weights = 0;
   
+  if(isMC){
+ 
   for(Long64_t jentry =0; jentry < tree->GetEntries() ; jentry++)
   {
 	  tree->GetEntry(jentry);
@@ -904,7 +939,7 @@ int main(int argc, char *argv[])
 	  //sum_weights += Event_weight;
 	   
 	  Event_weight_nom = 1.;
-	  
+	  	  
 	  // applying all corrections to event weight one-by-one //
 	   
 	  Event_weight_nom *= Generator_weight;
@@ -921,27 +956,30 @@ int main(int argc, char *argv[])
 	  // Redundant now since the product of weights is now stored in 'Event_weight' branch of input tree ('Tout') //
 	  // Event_weight_nom = Event_weight; //
 	 
-	  if(isMC) {  
-		int njets_b = 0;
-		int njets_q = 0;
-		for(unsigned ijet=0; ijet<nsmalljets; ijet++){
-			if (abs(JetAK4_hadronflav[ijet])==5) { njets_b++; }
-			//else if (abs(JetAK4_hadronflav[ijet])==4) { njets_c++; }
-			else { njets_q++; }
-		}
+	  int njets_b = 0;
+	  int njets_q = 0;
+	  for(unsigned ijet=0; ijet<nsmalljets; ijet++){
+		if (abs(JetAK4_hadronflav[ijet])==5) { njets_b++; }
+		//else if (abs(JetAK4_hadronflav[ijet])==4) { njets_c++; }
+		else { njets_q++; }
+	  }
    
-		float *sfcorvalues;
-	        if(year!="2024"){	
-		   //sfcorvalues = read_btagSF_correction(file_btagSF_correction,HT_jets,nsmalljets);
+	  float *sfcorvalues;
+	    if(year!="2024"){	
+		 //sfcorvalues = read_btagSF_correction(file_btagSF_correction,HT_jets,nsmalljets);
 		   sfcorvalues = read_btagSF_correction_hadronflav(file_btagSF_correction,njets_q,njets_b);
 		   Event_weight_nom *= sfcorvalues[0];
 		}
-	   }
 	   
-	   sum_weights += Event_weight_nom;
+	  
 	   
-	   b_weight->Fill();
+	  sum_weights += Event_weight_nom;
+	   
+	  b_weight->Fill();
+   
    }
+   
+   }//isMC
    
    //tree->Write("", TObject::kOverwrite);
 
@@ -958,7 +996,7 @@ int main(int argc, char *argv[])
 		if(verbose) { print_time(); print_memory_usage(); }
 	}
   
-	//if(jentry>=20) break;
+	//if(jentry>=200) break;
   
 	float weight_nom;
 	
@@ -1177,6 +1215,21 @@ int main(int argc, char *argv[])
    std::sort(pt_indices.begin(), pt_indices.end(), [&](int i1, int i2) {
         return JetAK4_pt[i1] > JetAK4_pt[i2]; // Descending order
    });
+   
+   // btag ordering of AK4 jets //
+   
+   std::vector<int> btag_indices(nJetAK4);
+   for (int ix = 0; ix < btag_indices.size(); ++ix) {
+        btag_indices[ix] = ix;
+   }
+   std::sort(btag_indices.begin(), btag_indices.end(), [&](int i1, int i2) {
+	   if(year=="2024"){
+			return JetAK4_btag_UParTAK4B[i1] > JetAK4_btag_UParTAK4B[i2]; // Descending order
+	   }
+	   else{
+		    return JetAK4_btag_PNetB[i1] > JetAK4_btag_PNetB[i2]; // Descending order
+	   }
+   });
       
    for(int ijet=0; ijet<min(nJetAK4,njetmax); ijet++){
 	   
@@ -1382,41 +1435,43 @@ int main(int argc, char *argv[])
    
    for(int ijet=0; ijet<nJetAK4; ijet++){
 	   
-	   // apply regression correction only at this stage of pair (H/Y) formation //
-	   if(JetAK4_applyReg[ijet]) { JetAK4_pt[ijet] *= JetAK4_RegCorr[ijet]; }
+	   int kjet = btag_indices[ijet];
 	   
-	   if(JetAK4_btag_PNetB_WP[ijet]>=1) { // loose WP
-		    if(isSignal && !JetAK4_isMatchB[ijet]) { continue; } // b quark matching condition for signal
+	   // apply regression correction only at this stage of pair (H/Y) formation //
+	   if(JetAK4_applyReg[kjet]) { JetAK4_pt[kjet] *= JetAK4_RegCorr[ijet]; }
+	   
+	   if(JetAK4_btag_PNetB_WP[kjet]>=1) { // loose WP
+		    if(isSignal && !JetAK4_isMatchB[kjet]) { continue; } // b quark matching condition for signal
 			TLorentzVector p4_cand;
-			p4_cand.SetPtEtaPhiM(JetAK4_pt[ijet],JetAK4_eta[ijet],JetAK4_phi[ijet],JetAK4_mass[ijet]);
+			p4_cand.SetPtEtaPhiM(JetAK4_pt[kjet],JetAK4_eta[kjet],JetAK4_phi[kjet],JetAK4_mass[kjet]);
 			// apply special JEC for regressed jets //
-			if(JetAK4_applyReg[ijet]) {  p4_cand *= (JetAK4_JEC_bReg[ijet]/JetAK4_JEC[ijet]);  }  
+			if(JetAK4_applyReg[kjet]) {  p4_cand *= (JetAK4_JEC_bReg[kjet]/JetAK4_JEC[kjet]);  }  
 			jet_p4s_PNet.push_back(p4_cand);
-			jet_idx_PNet.push_back(ijet);
+			jet_idx_PNet.push_back(kjet);
 	   }
 	   
-	   if(JetAK4_btag_RobustParTAK4B_WP[ijet]>=1) { // loose WP
-		    if(isSignal && !JetAK4_isMatchB[ijet]) { continue; } // b quark matching condition for signal
+	   if(JetAK4_btag_RobustParTAK4B_WP[kjet]>=1) { // loose WP
+		    if(isSignal && !JetAK4_isMatchB[kjet]) { continue; } // b quark matching condition for signal
 			TLorentzVector p4_cand;
-			p4_cand.SetPtEtaPhiM(JetAK4_pt[ijet],JetAK4_eta[ijet],JetAK4_phi[ijet],JetAK4_mass[ijet]);
+			p4_cand.SetPtEtaPhiM(JetAK4_pt[kjet],JetAK4_eta[kjet],JetAK4_phi[kjet],JetAK4_mass[kjet]);
 			// apply special JEC for regressed jets //
-			if(JetAK4_applyReg[ijet]) {  p4_cand *= (JetAK4_JEC_bReg[ijet]/JetAK4_JEC[ijet]);  }   
+			if(JetAK4_applyReg[kjet]) {  p4_cand *= (JetAK4_JEC_bReg[kjet]/JetAK4_JEC[kjet]);  }   
 			jet_p4s_PartT.push_back(p4_cand);
-			jet_idx_PartT.push_back(ijet);
+			jet_idx_PartT.push_back(kjet);
 	   }
 	
 	  // 2024 //
 	   if(year=="2024")
 	   {
 		// b tagger changed to UParT in 2024 //	  
-	    if(JetAK4_btag_UParTAK4B_WP[ijet]>=1) { // loose WP
-		    if(isSignal && !JetAK4_isMatchB[ijet]) { continue; } // b quark matching condition for signal
+	    if(JetAK4_btag_UParTAK4B_WP[kjet]>=1) { // loose WP
+		    if(isSignal && !JetAK4_isMatchB[kjet]) { continue; } // b quark matching condition for signal
 			TLorentzVector p4_cand;
-			p4_cand.SetPtEtaPhiM(JetAK4_pt[ijet],JetAK4_eta[ijet],JetAK4_phi[ijet],JetAK4_mass[ijet]);
+			p4_cand.SetPtEtaPhiM(JetAK4_pt[kjet],JetAK4_eta[kjet],JetAK4_phi[kjet],JetAK4_mass[kjet]);
 			// apply special JEC for regressed jets //
-			if(JetAK4_applyReg[ijet]) {  p4_cand *= (JetAK4_JEC_bReg[ijet]/JetAK4_JEC[ijet]);  }   
+			if(JetAK4_applyReg[kjet]) {  p4_cand *= (JetAK4_JEC_bReg[kjet]/JetAK4_JEC[kjet]);  }   
 			jet_p4s_UParT.push_back(p4_cand);
-			jet_idx_UParT.push_back(ijet);
+			jet_idx_UParT.push_back(kjet);
 	   }
 	  }//2024
 		
@@ -1513,10 +1568,10 @@ int main(int argc, char *argv[])
 	   
 	   if(nJetAK4>=4){
 			if(year=="2024"){
-				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[0]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[1]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[2]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[3];
+				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[btag_indices[0]]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[btag_indices[1]]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[btag_indices[2]]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[btag_indices[3]];
 			}
 			else{
-				jet_btag_1 = JetAK4_btag_PNetB_WP[0]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[1]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[2]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[3];
+				jet_btag_1 = JetAK4_btag_PNetB_WP[btag_indices[0]]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[btag_indices[1]]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[btag_indices[2]]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[btag_indices[3]];
 			}
 	   }
 	   
@@ -1766,7 +1821,12 @@ int main(int argc, char *argv[])
 		    combination_index = icomb;
 		    
 		    event_weight_value = weight_nom;
+		    if(isMC){
 		    event_weight_scaled = weight_nom*1./sum_weights;
+			}
+			else{
+				event_weight_scaled = weight_nom*1./tree->GetEntries();
+			}
 		    
 		    H1_mass_vec.push_back(mass_H1);
 		    H2_mass_vec.push_back(mass_H2);
@@ -1967,7 +2027,7 @@ int main(int argc, char *argv[])
 		Hcand_mass_bkg.resize(nsig); Ycand_mass_bkg.resize(nsig); 
 				
 		JetAK4_Hcand_index_1 = 1; JetAK4_Hcand_index_2 = -1; JetAK4_Hcand_index_3 = -1; JetAK4_Hcand_index_4 = -1;
-		
+				
 		for(int icomb=0; icomb<ncomb; icomb++){
 			
 			if(icomb==scoremax_comb) {
@@ -1978,29 +2038,66 @@ int main(int argc, char *argv[])
 					 { Hcand_mass = Hcand_1[icomb].M();  Ycand_mass = Hcand_2[icomb].M();  }
 				else { Hcand_mass = Hcand_2[icomb].M();  Ycand_mass = Hcand_1[icomb].M();  }
 			
-				JetAK4_pt_1 = JetAK4_pt[0]; JetAK4_eta_1 = JetAK4_eta[0]; JetAK4_phi_1 = JetAK4_phi[0]; JetAK4_mass_1 = JetAK4_mass[0]; JetAK4_charge_kappa_0p3_1 = JetAK4_charge_kappa_0p3[0]; JetAK4_charge_kappa_0p6_1 = JetAK4_charge_kappa_0p6[0]; JetAK4_charge_kappa_1p0_1 = JetAK4_charge_kappa_1p0[0];
-				JetAK4_pt_2 = JetAK4_pt[1]; JetAK4_eta_2 = JetAK4_eta[1]; JetAK4_phi_2 = JetAK4_phi[1]; JetAK4_mass_2 = JetAK4_mass[1]; JetAK4_charge_kappa_0p3_2 = JetAK4_charge_kappa_0p3[1]; JetAK4_charge_kappa_0p6_2 = JetAK4_charge_kappa_0p6[1]; JetAK4_charge_kappa_1p0_2 = JetAK4_charge_kappa_1p0[1]; 
-				JetAK4_pt_3 = JetAK4_pt[2]; JetAK4_eta_3 = JetAK4_eta[2]; JetAK4_phi_3 = JetAK4_phi[2]; JetAK4_mass_3 = JetAK4_mass[2]; JetAK4_charge_kappa_0p3_3 = JetAK4_charge_kappa_0p3[2]; JetAK4_charge_kappa_0p6_3 = JetAK4_charge_kappa_0p6[2]; JetAK4_charge_kappa_1p0_3 = JetAK4_charge_kappa_1p0[2];
-				JetAK4_pt_4 = JetAK4_pt[3]; JetAK4_eta_4 = JetAK4_eta[3]; JetAK4_phi_4 = JetAK4_phi[3]; JetAK4_mass_4 = JetAK4_mass[3]; JetAK4_charge_kappa_0p3_4 = JetAK4_charge_kappa_0p3[3]; JetAK4_charge_kappa_0p6_4 = JetAK4_charge_kappa_0p6[3]; JetAK4_charge_kappa_1p0_4 = JetAK4_charge_kappa_1p0[3];
+				JetAK4_pt_1 = JetAK4_pt[Hcand_1_b_1_idx[icomb]]; JetAK4_eta_1 = JetAK4_eta[Hcand_1_b_1_idx[icomb]]; JetAK4_phi_1 = JetAK4_phi[Hcand_1_b_1_idx[icomb]]; JetAK4_mass_1 = JetAK4_mass[Hcand_1_b_1_idx[icomb]]; JetAK4_charge_kappa_0p3_1 = JetAK4_charge_kappa_0p3[Hcand_1_b_1_idx[icomb]]; JetAK4_charge_kappa_0p6_1 = JetAK4_charge_kappa_0p6[Hcand_1_b_1_idx[icomb]]; JetAK4_charge_kappa_1p0_1 = JetAK4_charge_kappa_1p0[Hcand_1_b_1_idx[icomb]];
+				JetAK4_pt_2 = JetAK4_pt[Hcand_1_b_2_idx[icomb]]; JetAK4_eta_2 = JetAK4_eta[Hcand_1_b_2_idx[icomb]]; JetAK4_phi_2 = JetAK4_phi[Hcand_1_b_2_idx[icomb]]; JetAK4_mass_2 = JetAK4_mass[Hcand_1_b_2_idx[icomb]]; JetAK4_charge_kappa_0p3_2 = JetAK4_charge_kappa_0p3[Hcand_1_b_2_idx[icomb]]; JetAK4_charge_kappa_0p6_2 = JetAK4_charge_kappa_0p6[Hcand_1_b_2_idx[icomb]]; JetAK4_charge_kappa_1p0_2 = JetAK4_charge_kappa_1p0[Hcand_1_b_2_idx[icomb]]; 
+				JetAK4_pt_3 = JetAK4_pt[Hcand_2_b_1_idx[icomb]]; JetAK4_eta_3 = JetAK4_eta[Hcand_2_b_1_idx[icomb]]; JetAK4_phi_3 = JetAK4_phi[Hcand_2_b_1_idx[icomb]]; JetAK4_mass_3 = JetAK4_mass[Hcand_2_b_1_idx[icomb]]; JetAK4_charge_kappa_0p3_3 = JetAK4_charge_kappa_0p3[Hcand_2_b_1_idx[icomb]]; JetAK4_charge_kappa_0p6_3 = JetAK4_charge_kappa_0p6[Hcand_2_b_1_idx[icomb]]; JetAK4_charge_kappa_1p0_3 = JetAK4_charge_kappa_1p0[Hcand_2_b_1_idx[icomb]];
+				JetAK4_pt_4 = JetAK4_pt[Hcand_2_b_2_idx[icomb]]; JetAK4_eta_4 = JetAK4_eta[Hcand_2_b_2_idx[icomb]]; JetAK4_phi_4 = JetAK4_phi[Hcand_2_b_2_idx[icomb]]; JetAK4_mass_4 = JetAK4_mass[Hcand_2_b_2_idx[icomb]]; JetAK4_charge_kappa_0p3_4 = JetAK4_charge_kappa_0p3[Hcand_2_b_2_idx[icomb]]; JetAK4_charge_kappa_0p6_4 = JetAK4_charge_kappa_0p6[Hcand_2_b_2_idx[icomb]]; JetAK4_charge_kappa_1p0_4 = JetAK4_charge_kappa_1p0[Hcand_2_b_2_idx[icomb]];
 			
 				if(year!="2024"){
-				JetAK4_btag_B_1 = JetAK4_btag_PNetB[0]; JetAK4_btag_CvB_1 = JetAK4_btag_PNetCvB[0]; JetAK4_btag_CvL_1 = JetAK4_btag_PNetCvL[0]; JetAK4_btag_QG_1 = JetAK4_btag_PNetQG[0];   JetAK4_btag_B_WP_1 = JetAK4_btag_PNetB_WP[0];
-				JetAK4_btag_B_2 = JetAK4_btag_PNetB[1]; JetAK4_btag_CvB_2 = JetAK4_btag_PNetCvB[1]; JetAK4_btag_CvL_2 = JetAK4_btag_PNetCvL[1]; JetAK4_btag_QG_2 = JetAK4_btag_PNetQG[1];   JetAK4_btag_B_WP_2 = JetAK4_btag_PNetB_WP[1];
-				JetAK4_btag_B_3 = JetAK4_btag_PNetB[2]; JetAK4_btag_CvB_3 = JetAK4_btag_PNetCvB[2]; JetAK4_btag_CvL_3 = JetAK4_btag_PNetCvL[2]; JetAK4_btag_QG_3 = JetAK4_btag_PNetQG[2];   JetAK4_btag_B_WP_3 = JetAK4_btag_PNetB_WP[2];
-				JetAK4_btag_B_4 = JetAK4_btag_PNetB[3]; JetAK4_btag_CvB_4 = JetAK4_btag_PNetCvB[3]; JetAK4_btag_CvL_4 = JetAK4_btag_PNetCvL[3]; JetAK4_btag_QG_4 = JetAK4_btag_PNetQG[3];   JetAK4_btag_B_WP_4 = JetAK4_btag_PNetB_WP[3];
+				JetAK4_btag_B_1 = JetAK4_btag_PNetB[Hcand_1_b_1_idx[icomb]]; JetAK4_btag_CvB_1 = JetAK4_btag_PNetCvB[Hcand_1_b_1_idx[icomb]]; JetAK4_btag_CvL_1 = JetAK4_btag_PNetCvL[Hcand_1_b_1_idx[icomb]]; JetAK4_btag_QG_1 = JetAK4_btag_PNetQG[Hcand_1_b_1_idx[icomb]];   JetAK4_btag_B_WP_1 = JetAK4_btag_PNetB_WP[Hcand_1_b_1_idx[icomb]];
+				JetAK4_btag_B_2 = JetAK4_btag_PNetB[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_CvB_2 = JetAK4_btag_PNetCvB[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_CvL_2 = JetAK4_btag_PNetCvL[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_QG_2 = JetAK4_btag_PNetQG[Hcand_2_b_1_idx[icomb]];   JetAK4_btag_B_WP_2 = JetAK4_btag_PNetB_WP[Hcand_2_b_1_idx[icomb]];
+				JetAK4_btag_B_3 = JetAK4_btag_PNetB[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_CvB_3 = JetAK4_btag_PNetCvB[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_CvL_3 = JetAK4_btag_PNetCvL[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_QG_3 = JetAK4_btag_PNetQG[Hcand_2_b_1_idx[icomb]];   JetAK4_btag_B_WP_3 = JetAK4_btag_PNetB_WP[Hcand_2_b_1_idx[icomb]];
+				JetAK4_btag_B_4 = JetAK4_btag_PNetB[Hcand_2_b_2_idx[icomb]]; JetAK4_btag_CvB_4 = JetAK4_btag_PNetCvB[Hcand_2_b_2_idx[icomb]]; JetAK4_btag_CvL_4 = JetAK4_btag_PNetCvL[Hcand_2_b_2_idx[icomb]]; JetAK4_btag_QG_4 = JetAK4_btag_PNetQG[Hcand_2_b_2_idx[icomb]];   JetAK4_btag_B_WP_4 = JetAK4_btag_PNetB_WP[Hcand_2_b_2_idx[icomb]];
 				}
 				else{
-				JetAK4_btag_B_1 = JetAK4_btag_UParTAK4B[0]; JetAK4_btag_CvB_1 = JetAK4_btag_UParTAK4CvB[0]; JetAK4_btag_CvL_1 = JetAK4_btag_UParTAK4CvL[0]; JetAK4_btag_QG_1 = JetAK4_btag_UParTAK4QG[0];   JetAK4_btag_B_WP_1 = JetAK4_btag_UParTAK4B_WP[0];
-				JetAK4_btag_B_2 = JetAK4_btag_UParTAK4B[1]; JetAK4_btag_CvB_2 = JetAK4_btag_UParTAK4CvB[1]; JetAK4_btag_CvL_2 = JetAK4_btag_UParTAK4CvL[1]; JetAK4_btag_QG_2 = JetAK4_btag_UParTAK4QG[1];   JetAK4_btag_B_WP_2 = JetAK4_btag_UParTAK4B_WP[1];
-				JetAK4_btag_B_3 = JetAK4_btag_UParTAK4B[2]; JetAK4_btag_CvB_3 = JetAK4_btag_UParTAK4CvB[2]; JetAK4_btag_CvL_3 = JetAK4_btag_UParTAK4CvL[2]; JetAK4_btag_QG_3 = JetAK4_btag_UParTAK4QG[2];   JetAK4_btag_B_WP_3 = JetAK4_btag_UParTAK4B_WP[2];
-				JetAK4_btag_B_4 = JetAK4_btag_UParTAK4B[3]; JetAK4_btag_CvB_4 = JetAK4_btag_UParTAK4CvB[3]; JetAK4_btag_CvL_4 = JetAK4_btag_UParTAK4CvL[3]; JetAK4_btag_QG_4 = JetAK4_btag_UParTAK4QG[3];   JetAK4_btag_B_WP_4 = JetAK4_btag_UParTAK4B_WP[3];
+				JetAK4_btag_B_1 = JetAK4_btag_UParTAK4B[Hcand_1_b_1_idx[icomb]]; JetAK4_btag_CvB_1 = JetAK4_btag_UParTAK4CvB[Hcand_1_b_1_idx[icomb]]; JetAK4_btag_CvL_1 = JetAK4_btag_UParTAK4CvL[Hcand_1_b_1_idx[icomb]]; JetAK4_btag_QG_1 = JetAK4_btag_UParTAK4QG[Hcand_1_b_1_idx[icomb]];   JetAK4_btag_B_WP_1 = JetAK4_btag_UParTAK4B_WP[Hcand_1_b_1_idx[icomb]];
+				JetAK4_btag_B_2 = JetAK4_btag_UParTAK4B[Hcand_1_b_2_idx[icomb]]; JetAK4_btag_CvB_2 = JetAK4_btag_UParTAK4CvB[Hcand_1_b_2_idx[icomb]]; JetAK4_btag_CvL_2 = JetAK4_btag_UParTAK4CvL[Hcand_1_b_2_idx[icomb]]; JetAK4_btag_QG_2 = JetAK4_btag_UParTAK4QG[Hcand_1_b_2_idx[icomb]];   JetAK4_btag_B_WP_2 = JetAK4_btag_UParTAK4B_WP[Hcand_1_b_2_idx[icomb]];
+				JetAK4_btag_B_3 = JetAK4_btag_UParTAK4B[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_CvB_3 = JetAK4_btag_UParTAK4CvB[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_CvL_3 = JetAK4_btag_UParTAK4CvL[Hcand_2_b_1_idx[icomb]]; JetAK4_btag_QG_3 = JetAK4_btag_UParTAK4QG[Hcand_2_b_1_idx[icomb]];   JetAK4_btag_B_WP_3 = JetAK4_btag_UParTAK4B_WP[Hcand_2_b_1_idx[icomb]];
+				JetAK4_btag_B_4 = JetAK4_btag_UParTAK4B[Hcand_2_b_2_idx[icomb]]; JetAK4_btag_CvB_4 = JetAK4_btag_UParTAK4CvB[Hcand_2_b_2_idx[icomb]]; JetAK4_btag_CvL_4 = JetAK4_btag_UParTAK4CvL[Hcand_2_b_2_idx[icomb]]; JetAK4_btag_QG_4 = JetAK4_btag_UParTAK4QG[Hcand_2_b_2_idx[icomb]];   JetAK4_btag_B_WP_4 = JetAK4_btag_UParTAK4B_WP[Hcand_2_b_2_idx[icomb]];
 				}
 			
+				/*
 				if(Hcand_1_b_1_idx[icomb]==0 || Hcand_1_b_2_idx[icomb]==0) { JetAK4_Hcand_index_1 = 1;  } else { JetAK4_Hcand_index_1 = 2; }
 				if(Hcand_1_b_1_idx[icomb]==1 || Hcand_1_b_2_idx[icomb]==1) { JetAK4_Hcand_index_2 = 1;  } else { JetAK4_Hcand_index_2 = 2; }
 				if(Hcand_1_b_1_idx[icomb]==2 || Hcand_1_b_2_idx[icomb]==2) { JetAK4_Hcand_index_3 = 1;  } else { JetAK4_Hcand_index_3 = 2; }
 				if(Hcand_1_b_1_idx[icomb]==3 || Hcand_1_b_2_idx[icomb]==3) { JetAK4_Hcand_index_4 = 1;  } else { JetAK4_Hcand_index_4 = 2; }
+				*/
 				
+				JetAK4_Hcand_index_1 = JetAK4_Hcand_index_2 = 1;
+				JetAK4_Hcand_index_3 = JetAK4_Hcand_index_4 = 2;
+				
+				TLorentzVector H1_Cand, H2_Cand;
+				TLorentzVector H1_Cand_b1, H1_Cand_b2, H2_Cand_b1, H2_Cand_b2;
+				
+				//if(JetAK4_Hcand_index_1*JetAK4_Hcand_index_2*JetAK4_Hcand_index_3*JetAK4_Hcand_index_4==4){
+				
+				H1_Cand = Hcand_1[icomb]; H2_Cand = Hcand_2[icomb]; 
+				
+				H1_Cand_b1.SetPtEtaPhiM(JetAK4_pt[Hcand_1_b_1_idx[icomb]],JetAK4_eta[Hcand_1_b_1_idx[icomb]], JetAK4_phi[Hcand_1_b_1_idx[icomb]], JetAK4_mass[Hcand_1_b_1_idx[icomb]]); 
+				H1_Cand_b2.SetPtEtaPhiM(JetAK4_pt[Hcand_1_b_2_idx[icomb]],JetAK4_eta[Hcand_1_b_2_idx[icomb]], JetAK4_phi[Hcand_1_b_2_idx[icomb]], JetAK4_mass[Hcand_1_b_2_idx[icomb]]);
+					
+				H2_Cand_b1.SetPtEtaPhiM(JetAK4_pt[Hcand_2_b_1_idx[icomb]],JetAK4_eta[Hcand_2_b_1_idx[icomb]], JetAK4_phi[Hcand_2_b_1_idx[icomb]], JetAK4_mass[Hcand_2_b_1_idx[icomb]]); 
+				H2_Cand_b2.SetPtEtaPhiM(JetAK4_pt[Hcand_2_b_2_idx[icomb]],JetAK4_eta[Hcand_2_b_2_idx[icomb]], JetAK4_phi[Hcand_2_b_2_idx[icomb]], JetAK4_mass[Hcand_2_b_2_idx[icomb]]);
+				
+				Hcand_1_pt = H1_Cand.Pt(); Hcand_1_eta = H1_Cand.Eta(); Hcand_1_phi = H1_Cand.Eta(); Hcand_1_mass = H1_Cand.M();
+				Hcand_2_pt = H2_Cand.Pt(); Hcand_2_eta = H2_Cand.Eta(); Hcand_2_phi = H2_Cand.Eta(); Hcand_2_mass = H2_Cand.M();
+					
+				H1_b1b2_deta = (H1_Cand_b1.Eta()-H1_Cand_b2.Eta()); H1_b1b2_dphi = PhiInRange(H1_Cand_b1.Phi()-H1_Cand_b2.Phi()); H1_b1b2_dR = H1_Cand_b1.DeltaR(H1_Cand_b2);  
+				H2_b1b2_deta = (H2_Cand_b1.Eta()-H2_Cand_b2.Eta()); H2_b1b2_dphi = PhiInRange(H2_Cand_b1.Phi()-H2_Cand_b2.Phi()); H2_b1b2_dR = H2_Cand_b1.DeltaR(H2_Cand_b2);  
+					
+				H1H2_deta = (H1_Cand.Eta()-H2_Cand.Eta()); H1H2_dphi = PhiInRange(H1_Cand.Phi()-H2_Cand.Phi()); H1H2_dR = H1_Cand.DeltaR(H2_Cand);
+				H1H2_pt = (H1_Cand+H2_Cand).Pt();  H1H2_eta = (H1_Cand+H2_Cand).Eta();   H1H2_phi = (H1_Cand+H2_Cand).Phi(); H1H2_mass = (H1_Cand+H2_Cand).M();      
+					
+				HT_4j = (JetAK4_pt_1+JetAK4_pt_2+JetAK4_pt_3+JetAK4_pt_4);
+				HT_allj = (HT_add<0)?HT_4j:(HT_4j+HT_add);
+					
+				vector<float> angles_CS_comb;
+				angles_CS_comb = get_Xto4b_angles(H1_Cand_b1,H1_Cand_b2,H2_Cand_b1,H2_Cand_b2);
+				angle_CS_theta_H1H2 = angles_CS_comb[4];
+				angle_CS_theta_H1   = angles_CS_comb[0];
+				angle_CS_theta_H2   = angles_CS_comb[1];
+				
+				//}
 				
 				break;
 				
@@ -2066,7 +2163,7 @@ int main(int argc, char *argv[])
 			//cout<<"btag scores: "<<JetAK4_btag_UParTAK4B_WP[0]<<" "<<JetAK4_btag_UParTAK4B_WP[1]<<" "<<JetAK4_btag_UParTAK4B_WP[2]<<" "<<JetAK4_btag_UParTAK4B_WP[3]<<endl;
 			
 			if(year=="2024"){
-				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[0]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[1]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[2]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[3];
+				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[btag_indices[0]]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[btag_indices[1]]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[btag_indices[2]]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[btag_indices[3]];
 			}
 			else{
 				jet_btag_1 = JetAK4_btag_PNetB_WP[0]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[1]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[2]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[3];

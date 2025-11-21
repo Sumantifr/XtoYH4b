@@ -491,6 +491,18 @@ using namespace std;
   float HT_add;
   float JetAK4_add_pt, JetAK4_add_eta, JetAK4_add_phi, JetAK4_add_mass;
   
+  float Hcand_1_pt, Hcand_1_eta, Hcand_1_phi, Hcand_1_mass;
+  float Hcand_2_pt, Hcand_2_eta, Hcand_2_phi, Hcand_2_mass;
+  
+  float H1_b1b2_deta, H1_b1b2_dphi, H1_b1b2_dR;
+  float H2_b1b2_deta, H2_b1b2_dphi, H2_b1b2_dR;
+  
+  float H1H2_deta, H1H2_dphi, H1H2_dR, H1H2_pt, H1H2_eta, H1H2_phi, H1H2_mass;
+  
+  float HT_4j, HT_allj;
+  
+  float angle_CS_theta_H1H2, angle_CS_theta_H1, angle_CS_theta_H2;
+  
   const int nmasspoints = 300;
     
   TTree *Tree_Pairing ;

@@ -996,19 +996,7 @@ int main(int argc, char *argv[])
    Tout->Branch("JetAK4_btag_DeepFlavQG",_s_JetAK4_btag_DeepFlavQG,"_s_JetAK4_btag_DeepFlavQG[_s_nJetAK4]/F");
    Tout->Branch("JetAK4_btag_DeepFlavB_WP",_s_JetAK4_btag_DeepFlavB_WP,"_s_JetAK4_btag_DeepFlavB_WP[_s_nJetAK4]/I");
    }
-   if(year!="2024"){//since BTV only supports UParT in 2024
-   Tout->Branch("JetAK4_btag_PNetB",_s_JetAK4_btag_PNetB,"_s_JetAK4_btag_PNetB[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_PNetCvB",_s_JetAK4_btag_PNetCvB,"_s_JetAK4_btag_PNetCvB[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_PNetCvL",_s_JetAK4_btag_PNetCvL,"_s_JetAK4_btag_PNetCvL[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_PNetCvNotB",_s_JetAK4_btag_PNetCvNotB,"_s_JetAK4_btag_PNetCvNotB[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_PNetQG",_s_JetAK4_btag_PNetQG,"_s_JetAK4_btag_PNetQG[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_PNetB_WP",_s_JetAK4_btag_PNetB_WP,"_s_JetAK4_btag_PNetB_WP[_s_nJetAK4]/I");
-   Tout->Branch("JetAK4_btag_RobustParTAK4B",_s_JetAK4_btag_RobustParTAK4B,"_s_JetAK4_btag_RobustParTAK4B[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_RobustParTAK4CvB",_s_JetAK4_btag_RobustParTAK4CvB,"_s_JetAK4_btag_RobustParTAK4CvB[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_RobustParTAK4CvL",_s_JetAK4_btag_RobustParTAK4CvL,"_s_JetAK4_btag_RobustParTAK4CvL[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_RobustParTAK4QG",_s_JetAK4_btag_RobustParTAK4QG,"_s_JetAK4_btag_RobustParTAK4QG[_s_nJetAK4]/F");
-   Tout->Branch("JetAK4_btag_RobustParTAK4B_WP",_s_JetAK4_btag_RobustParTAK4B_WP,"_s_JetAK4_btag_RobustParTAK4B_WP[_s_nJetAK4]/I");
-   }
+   
    else{
    Tout->Branch("JetAK4_btag_UParTAK4B",_s_JetAK4_btag_UParTAK4B,"_s_JetAK4_btag_UParTAK4B[_s_nJetAK4]/F");
    Tout->Branch("JetAK4_btag_UParTAK4CvB",_s_JetAK4_btag_UParTAK4CvB,"_s_JetAK4_btag_UParTAK4CvB[_s_nJetAK4]/F");
@@ -1016,6 +1004,30 @@ int main(int argc, char *argv[])
    Tout->Branch("JetAK4_btag_UParTAK4QG",_s_JetAK4_btag_UParTAK4QG,"_s_JetAK4_btag_UParTAK4QG[_s_nJetAK4]/F");
    Tout->Branch("JetAK4_btag_UParTAK4B_WP",_s_JetAK4_btag_UParTAK4B_WP,"_s_JetAK4_btag_UParTAK4B_WP[_s_nJetAK4]/I");
    }
+   
+   if(year=="2024"){//since BTV only supports UParT in 2024 //   
+	Tout->Branch("JetAK4_btag_UParTAK4B",_s_JetAK4_btag_UParTAK4B,"_s_JetAK4_btag_UParTAK4B[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_UParTAK4CvB",_s_JetAK4_btag_UParTAK4CvB,"_s_JetAK4_btag_UParTAK4CvB[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_UParTAK4CvL",_s_JetAK4_btag_UParTAK4CvL,"_s_JetAK4_btag_UParTAK4CvL[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_UParTAK4QG",_s_JetAK4_btag_UParTAK4QG,"_s_JetAK4_btag_UParTAK4QG[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_UParTAK4B_WP",_s_JetAK4_btag_UParTAK4B_WP,"_s_JetAK4_btag_UParTAK4B_WP[_s_nJetAK4]/I");
+   }
+   else{
+	Tout->Branch("JetAK4_btag_RobustParTAK4B",_s_JetAK4_btag_RobustParTAK4B,"_s_JetAK4_btag_RobustParTAK4B[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_RobustParTAK4CvB",_s_JetAK4_btag_RobustParTAK4CvB,"_s_JetAK4_btag_RobustParTAK4CvB[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_RobustParTAK4CvL",_s_JetAK4_btag_RobustParTAK4CvL,"_s_JetAK4_btag_RobustParTAK4CvL[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_RobustParTAK4QG",_s_JetAK4_btag_RobustParTAK4QG,"_s_JetAK4_btag_RobustParTAK4QG[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_RobustParTAK4B_WP",_s_JetAK4_btag_RobustParTAK4B_WP,"_s_JetAK4_btag_RobustParTAK4B_WP[_s_nJetAK4]/I");   
+   }
+   if(year!="2024" || !isMC){//storing PNet scores in data for safety
+	Tout->Branch("JetAK4_btag_PNetB",_s_JetAK4_btag_PNetB,"_s_JetAK4_btag_PNetB[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_PNetCvB",_s_JetAK4_btag_PNetCvB,"_s_JetAK4_btag_PNetCvB[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_PNetCvL",_s_JetAK4_btag_PNetCvL,"_s_JetAK4_btag_PNetCvL[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_PNetCvNotB",_s_JetAK4_btag_PNetCvNotB,"_s_JetAK4_btag_PNetCvNotB[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_PNetQG",_s_JetAK4_btag_PNetQG,"_s_JetAK4_btag_PNetQG[_s_nJetAK4]/F");
+	Tout->Branch("JetAK4_btag_PNetB_WP",_s_JetAK4_btag_PNetB_WP,"_s_JetAK4_btag_PNetB_WP[_s_nJetAK4]/I");
+   }
+   
    if(year!="2024"){//since BTV  & JME only supports UParT in 2024
    Tout->Branch("JetAK4_PNetRegPtRawCorr",_s_JetAK4_PNetRegPtRawCorr,"_s_JetAK4_PNetRegPtRawCorr[_s_nJetAK4]/F");
    Tout->Branch("JetAK4_PNetRegPtRawCorrNeutrino",_s_JetAK4_PNetRegPtRawCorrNeutrino,"_s_JetAK4_PNetRegPtRawCorrNeutrino[_s_nJetAK4]/F");
@@ -2526,6 +2538,16 @@ int main(int argc, char *argv[])
 	_s_JetAK4_btag_UParTAK4B_SF_up.clear(); _s_JetAK4_btag_UParTAK4B_SF_dn.clear();
 	
 	vector<TLorentzVector> bp4s;
+	
+	//sort acccording to b tag score (YEAR dependent) //
+	
+	if(year=="2024"){
+		std::sort(Jets.begin(), Jets.end(), [](const AK4Jet& a, const AK4Jet& b) { return a.btag_UParTAK4B > b.btag_UParTAK4B; });
+	}
+	else{
+	//redundant (still doing for sake of consistency //
+		std::sort(Jets.begin(), Jets.end(), [](const AK4Jet& a, const AK4Jet& b) { return a.btag_PNetB > b.btag_PNetB; });
+	}
 
     for(unsigned ijet=0; ijet<Jets.size(); ijet++){
 
