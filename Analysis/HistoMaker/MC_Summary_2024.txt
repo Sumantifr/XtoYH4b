@@ -8,6 +8,14 @@ TWminustoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8				2.87624e+07	1.03505e+09 		1.035
 TWminusto4Q_TuneCP5_13p6TeV_powheg-pythia8				2.39e+07	3.91984e+08 		3.91984e+08	20.08		35.99
 TbarBQto2Q-t-channel-4FS_TuneCP5_13p6TeV_powheg-madspin-pythia8		4.32791e+07	2.02623e+09 		2.02623e+09	46.73		50.56
 TBbarQto2Q-t-channel-4FS_TuneCP5_13p6TeV_powheg-madspin-pythia8		8.7152e+07	6.76313e+09 		6.76313e+09	77.26		82.95
+Wto2Q-2Jets_Bin-PTQQ-100_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		3.71998e+08	2.11582e+13 		2.11582e+13	2.047e+04	2.047e+04
+Wto2Q-2Jets_Bin-PTQQ-200_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		1.55542e+08	2.82787e+11 		2.82787e+11	7.357e+02	7.357e+02
+Wto2Q-2Jets_Bin-PTQQ-400_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		4.66481e+07	5.65479e+09 		5.65479e+09	2.074e+01	2.074e+01
+Wto2Q-2Jets_Bin-PTQQ-600_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		5.11128e+07	2.56131e+08 		2.56131e+08	2.230e+00	2.230e+00
+Zto2Q-2Jets_Bin-PTQQ-100_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		3.28938e+08	6.73026e+12 		6.73026e+12	7.298e+03	7.298e+03
+Zto2Q-2Jets_Bin-PTQQ-200_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		7.02952e+07	5.41809e+10 		5.41809e+10	3.107e+02	3.107e+02
+Zto2Q-2Jets_Bin-PTQQ-400_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		5.32263e+07	1.12825e+09 		1.12825e+09	8.832e+00	8.832e+00
+Zto2Q-2Jets_Bin-PTQQ-600_TuneCP5_13p6TeV_amcatnloFXFX-pythia8		5.00129e+07	1.11781e+08 		1.11781e+08	9.457e-01	9.457e-01
 WW_TuneCP5_13p6TeV_pythia8						6.39471e+07	7.31951e+266 		6.39476e+07	80.23		80.23
 WWto4Q_TuneCP5_13p6TeV_powheg-pythia8					1.52114e+08	7.72588e+09 		7.72588e+09	50.79		50.79
 WZ_TuneCP5_13p6TeV_pythia8						3.05471e+07	9.00668e+280 		3.05471e+07	29.1		29.1
@@ -28,3 +36,4 @@ VBFH-Hto2B_Par-M-125_TuneCP5_13p6TeV_powheg-pythia8			1.99903e+07	8.35416e+07 		
 WminusH-Wto2Q-Hto2B_Par-M-125_TuneCP5_13p6TeV_powhegMINLO-pythia8	3.96691e+06	1.58656e+06 		1.58656e+06	0.2231		0.2231
 WplusH-Wto2Q-Hto2B_Par-M-125_TuneCP5_13p6TeV_powhegMINLO-pythia8	6.26182e+06	5.05325e+06 		5.05325e+06	0.3532		0.3532
 ZH-Zto2Q-Hto2B_Par-M-125_TuneCP5_13p6TeV_powhegMINLO-pythia8		2.87759e+06	1.71523e+06 		1.71523e+06	0.3883		0.3883
+GluGlutoHHto4B_kl-1p00_kt-1p00_c2-0p00_TuneCP5_13p6TeV_powheg-pythia8	1.98768e+06	58875.6 		58875.6		0.0117		0.02964

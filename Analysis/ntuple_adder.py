@@ -39,7 +39,7 @@ def batch_hadd(out_path,out_name, in_path, input_files, batch_size=50):
     print(f"Merging {len(batch_outputs)} batches into final file: {final_output}")
     final_output = out_path+"/"+out_name+".root"
     cmd = ["hadd", "-f", final_output] + batch_outputs
-    cmd = ["hadd", "-f -O -k", final_output] + batch_outputs
+    cmd = ["hadd", "-fk", final_output] + batch_outputs
     subprocess.check_call(cmd)
 
     #cleanup
@@ -95,7 +95,7 @@ if args.isDATA:
     elif args.YEAR == "2022EE":
         samples = samples_data_2022EE
     elif args.YEAR == "2024":
-        samples = read_sample_names('../Data_names_2024_1.txt')
+        samples = read_sample_names('../Data_names_2024.txt')
     else:
         samples = samples_data_2022
 else:
@@ -115,12 +115,13 @@ else:
 
 for sam in samples:
     if args.YEAR=="2024":
-        #if "TTto4Q" not in sam:
-        #    continue
-        #else:
-        pattern = os.path.join(in_path, sam+"*.root")
-        input_files = glob.glob(pattern)
-        batch_hadd(out_path, sam, in_path, input_files)
+        #if "TTto4Q" in sam:
+        if "QCD" not in sam:
+            continue
+        else:
+            pattern = os.path.join(in_path, sam+"*.root")
+            input_files = glob.glob(pattern)
+            batch_hadd(out_path, sam, in_path, input_files)
     else:
         #if "MX-3000_MY-80" not in sam:
         #    continue

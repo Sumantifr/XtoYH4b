@@ -44,6 +44,82 @@ struct BestPair {
     float score;
 };
 
+struct Pair{
+
+ TLorentzVector H1_b1;
+ TLorentzVector H1_b2;
+ TLorentzVector H2_b1;
+ TLorentzVector H2_b2;
+
+ float DR_b1b2_H1;
+ float DEta_b1b2_H1;
+ float DPhi_b1b2_H1;
+ float pT_ratio_b1b2_H1;
+ float charge_kappa_0p3_product_b1b2_H1;
+ float charge_kappa_0p6_product_b1b2_H1;
+ float charge_kappa_1p0_product_b1b2_H1;
+ float charge_kappa_0p3_sum_b1b2_H1;
+ float charge_kappa_0p6_sum_b1b2_H1;
+ float charge_kappa_1p0_sum_b1b2_H1;
+ float mass_H1;
+ 
+ float DR_b1b2_H2;
+ float DEta_b1b2_H2;
+ float DPhi_b1b2_H2;
+ float pT_ratio_b1b2_H2;
+ float charge_kappa_0p3_product_b1b2_H2;
+ float charge_kappa_0p6_product_b1b2_H2;
+ float charge_kappa_1p0_product_b1b2_H2;
+ float charge_kappa_0p3_sum_b1b2_H2;
+ float charge_kappa_0p6_sum_b1b2_H2;
+ float charge_kappa_1p0_sum_b1b2_H2;
+ float mass_H2; 
+  
+ float mass_H1H2;
+  
+ float pT_ratio_H1H2; 
+ float DR_H1H2; 
+ float DEta_H1H2; 
+ float DPhi_H1H2;
+
+ float angle_theta_H1H2;
+ float angle_theta_H1;
+ float angle_theta_H2;
+ 
+ // In X frame //
+ 
+ float pT_ratio_H1H2_Xframe; 
+ float DR_H1H2_Xframe; 
+ float DEta_H1H2_Xframe; 
+ float DPhi_H1H2_Xframe;
+ 
+ float DEta_b1b2_H1_Xframe; 
+ float DPhi_b1b2_H1_Xframe; 
+ float DR_b1b2_H1_Xframe;
+ 
+ float DEta_b1b2_H2_Xframe;
+ float DPhi_b1b2_H2_Xframe;
+ float DR_b1b2_H2_Xframe;
+ 
+ // GEN-level quantities //
+ 
+ bool H1_pairing_truth;
+ int H1_b1_pdgId;
+ int H1_b2_pdgId;
+ int H1_b1_mom_pdgId;
+ int H1_b2_mom_pdgId;
+ 
+ bool H2_pairing_truth;
+ int H2_b1_pdgId;
+ int H2_b2_pdgId;
+ int H2_b1_mom_pdgId;
+ int H2_b2_mom_pdgId;
+ 
+ //
+ float score;
+  
+};
+
 using namespace std;
 
 
@@ -541,16 +617,23 @@ using namespace std;
   //vector<vector<float>> score_pairing_bkg(nsig, vector<float>(ncomb));
   //vector<int> comb_pairing_bkg;
   vector<BestPair> comb_pairing_bkg; 
+  
+  vector<Pair> pairs;
    
   bool verbose = false; 
+  
+  bool readAK8jets = false;
+  
+  bool skip_score_eval_allsig = true;
    
-  void readTreePrescl(TTree* fChain) {
+  void readTreePrescl(TTree* fChain, bool isMC) {
 	   
    fChain->SetBranchAddress("ncuts", &ncuts);
    fChain->SetBranchAddress("Flag_event_cuts", Flag_event_cuts);
    
+   if(isMC){
    fChain->SetBranchAddress("Generator_weight", &Generator_weight_prescl);
-  
+   }
   }
   
   void readTree(TTree* fChain, bool isMC, bool isSignal, string year="2022") {
@@ -616,6 +699,7 @@ using namespace std;
    }
    fChain->SetBranchAddress("HT_jets", &HT_jets);
    
+   if(readAK8jets){
    fChain->SetBranchAddress("nPFJetAK8", &nPFJetAK8);
    fChain->SetBranchAddress("PFJetAK8_pt", PFJetAK8_pt);
    fChain->SetBranchAddress("PFJetAK8_eta", PFJetAK8_eta);
@@ -623,6 +707,7 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_mass", PFJetAK8_mass);
    fChain->SetBranchAddress("PFJetAK8_jetID_tightlepveto", PFJetAK8_jetID_tightlepveto);
    fChain->SetBranchAddress("PFJetAK8_msoftdrop", PFJetAK8_msoftdrop);
+   }
    if(year!="2024"){
    fChain->SetBranchAddress("PFJetAK8_JESup", PFJetAK8_JESup);
    fChain->SetBranchAddress("PFJetAK8_JESdn", PFJetAK8_JESdn);
@@ -643,7 +728,9 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNet_HbbvsQCD", PFJetAK8_DeepTag_PNet_HbbvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNet_HccvsQCD", PFJetAK8_DeepTag_PNet_HccvsQCD);
    }
+   if(readAK8jets){
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XbbvsQCD", PFJetAK8_DeepTag_PNetMD_XbbvsQCD);
+   }
    if(year!="2024"){
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XccvsQCD", PFJetAK8_DeepTag_PNetMD_XccvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XqqvsQCD", PFJetAK8_DeepTag_PNetMD_XqqvsQCD);
@@ -658,10 +745,11 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PartT_TvsQCD", PFJetAK8_DeepTag_PartT_TvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PartT_WvsQCD", PFJetAK8_DeepTag_PartT_WvsQCD);
 	}
+   if(readAK8jets){	
    fChain->SetBranchAddress("PFJetAK8_particleNet_massCorr", PFJetAK8_particleNet_massCorr);
    fChain->SetBranchAddress("PFJetAK8_partT_massCorr_generic", PFJetAK8_partT_massCorr_generic);
    fChain->SetBranchAddress("PFJetAK8_partT_massCorr_twoprong", PFJetAK8_partT_massCorr_twoprong);
-   
+   }
    fChain->SetBranchAddress("nfatjets_boosted", &nfatjets_boosted);
    
    fChain->SetBranchAddress("nJetAK4", &nJetAK4);
@@ -721,8 +809,10 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_charge_kappa_1p0", JetAK4_charge_kappa_1p0);
    fChain->SetBranchAddress("JetAK4_isMatchB", JetAK4_isMatchB);
    fChain->SetBranchAddress("JetAK4_MatchB_Index", JetAK4_MatchB_Index);
+   if(isMC){
    fChain->SetBranchAddress("JetAK4_JESup", JetAK4_JESup);
    fChain->SetBranchAddress("JetAK4_JESdn", JetAK4_JESdn);
+   }
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF", JetAK4_btag_DeepFlav_SF);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_up", JetAK4_btag_DeepFlav_SF_up);
    //fChain->SetBranchAddress("JetAK4_btag_DeepFlav_SF_dn", JetAK4_btag_DeepFlav_SF_dn);
@@ -778,10 +868,11 @@ using namespace std;
    fChain->SetBranchAddress("angle_theta_H_lab_prime", &angle_theta_H_lab_prime);
    fChain->SetBranchAddress("angle_theta_Y_lab_prime", &angle_theta_Y_lab_prime);
    
-   fChain->SetBranchAddress("LHE_weight", &LHE_weight);
    fChain->SetBranchAddress("Event_weight", &Event_weight);
    
    if(isMC){
+	   
+   fChain->SetBranchAddress("LHE_weight", &LHE_weight);
    
    fChain->SetBranchAddress("Generator_weight", &Generator_weight);
    

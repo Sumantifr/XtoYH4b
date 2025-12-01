@@ -68,7 +68,7 @@ else:
     if args.YEAR=="2024":
         command = "hadd -f %s/Output_SingleH.root %s/Histogram_GluGluH-Hto2B*.root %s/Histogram_VBFH-Hto2B*.root  %s/Histogram_WminusH*.root %s/Histogram_WplusH*.root %s/Histogram_ZH*.root"%(out_path,in_path,in_path,in_path,in_path,in_path)
     else:
-        command = "hadd -f %s/Output_SingleH.root %s/Histogram_GluGluHto2B*.root %s/Histogram_VBFHto2B*.root  %s/Histogram_WminusH*.root %s/Histogram_WplusH*.root %s/Histogram_ZH*.root"%(out_path,in_path,in_path,in_path,in_path,in_path)
+        command = "hadd -f %s/Output_SingleH.root %s/Histogram_GluGluHto2B*.root   %s/Histogram_VBFHto2B*.root  %s/Histogram_WminusH*.root %s/Histogram_WplusH*.root %s/Histogram_ZH*.root"%(out_path,in_path,in_path,in_path,in_path,in_path)
     os.system(command)
 
     command = "cp %s/Histogram_GluGlutoHHto4B_kl-1p00_kt-1p00_c2-0p00_TuneCP5_13p6TeV_powheg-pythia8.root %s/Output_DoubleH.root"%(in_path,out_path)
