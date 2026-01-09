@@ -60,10 +60,10 @@ cmsenv
 
 Once jobs are finished:
 1. Add ntuples: ```python3 ntuple_adder.py --YEAR YEAR [--isDATA isDATA --isSIGNAL isSignal]```
-2. If needed, add histograms (for deriving btag SF correction): ```python3 hist_ntuple_adder.py --YEAR YEAR [--isDATA isDATA]```
+2. For background MC, add histograms (for deriving btag SF correction): ```python3 hist_ntuple_adder.py --YEAR YEAR [--isDATA isDATA]```
 3. Optional (recommended): Clean the directory (i.e., remove submission scripts and output log files):
 `sh clean.sh`
-4. If needed, derive b tag SF correction: 
+4. For background MC, derive b tag SF correction: 
 ```
 cd HistoMaker/ 
 python3 create_btagSF_correction.py --YEAR YEAR
