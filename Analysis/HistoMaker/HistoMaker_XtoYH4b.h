@@ -406,6 +406,20 @@ using namespace std;
    Float_t		   triggersf_weight_btag_err;
    Float_t		   triggersf_weight_L1HT;
    Float_t         triggersf_weight_L1HT_err;
+   Int_t		   nGenJetAK4;
+   Float_t         GenJetAK4_pt[njetmax];
+   Float_t         GenJetAK4_eta[njetmax];
+   Float_t         GenJetAK4_phi[njetmax];
+   Float_t         GenJetAK4_mass[njetmax];
+   Bool_t		   GenJetAK4_isMatchB[njetmax];  
+   Int_t		   GenJetAK4_MatchB_Index[njetmax]; 
+   Int_t		   nGenJetAK4wNu;
+   Float_t         GenJetAK4wNu_pt[njetmax];
+   Float_t         GenJetAK4wNu_eta[njetmax];
+   Float_t         GenJetAK4wNu_phi[njetmax];
+   Float_t         GenJetAK4wNu_mass[njetmax];
+   Bool_t		   GenJetAK4wNu_isMatchB[njetmax];  
+   Int_t		   GenJetAK4wNu_MatchB_Index[njetmax]; 
    Int_t           nGenLep;
    Float_t         GenLep_pt[narray];   //[nGenLep]
    Float_t         GenLep_eta[narray];   //[nGenLep]
@@ -664,7 +678,7 @@ using namespace std;
    
    fChain->SetBranchAddress("MET_pt", &MET_pt);
    fChain->SetBranchAddress("MET_phi", &MET_phi);
-   if(year!="2024"){
+   if(year!="2024" && 0>1){
    fChain->SetBranchAddress("MET_sig", &MET_sig);
    fChain->SetBranchAddress("MET_sumEt", &MET_sumEt);
    fChain->SetBranchAddress("MET_pt_JESup", &MET_pt_JESup);
@@ -688,7 +702,7 @@ using namespace std;
    }
    
    fChain->SetBranchAddress("ST", &ST);
-   if(year!="2024"){
+   if(year!="2024" && 0>1){
    fChain->SetBranchAddress("ST_JESup", &ST_JESup);
    fChain->SetBranchAddress("ST_JESdn", &ST_JESdn);
    fChain->SetBranchAddress("ST_JERup", &ST_JERup);
@@ -758,6 +772,7 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_phi", JetAK4_phi);
    fChain->SetBranchAddress("JetAK4_mass", JetAK4_mass);
    if(year!="2024"){
+   if(0>1){
    fChain->SetBranchAddress("JetAK4_btag_DeepCSV", JetAK4_btag_DeepCSV);
    fChain->SetBranchAddress("JetAK4_btag_DeepFlav", JetAK4_btag_DeepFlav);
    fChain->SetBranchAddress("JetAK4_btag_DeepFlavB", JetAK4_btag_DeepFlavB);
@@ -765,6 +780,7 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_btag_DeepFlavCvL", JetAK4_btag_DeepFlavCvL);
    fChain->SetBranchAddress("JetAK4_btag_DeepFlavQG", JetAK4_btag_DeepFlavQG);
    fChain->SetBranchAddress("JetAK4_btag_DeepFlavB_WP", JetAK4_btag_DeepFlavB_WP);
+   }
    fChain->SetBranchAddress("JetAK4_btag_PNetB", JetAK4_btag_PNetB);
    fChain->SetBranchAddress("JetAK4_btag_PNetCvB", JetAK4_btag_PNetCvB);
    fChain->SetBranchAddress("JetAK4_btag_PNetCvL", JetAK4_btag_PNetCvL);
@@ -935,14 +951,30 @@ using namespace std;
 	fChain->SetBranchAddress("GenNu_grmompdgId", GenNu_grmompdgId);
    
 	fChain->SetBranchAddress("nGenBPart", &nGenBPart);
-	fChain->SetBranchAddress("GenBPart_pt", &GenBPart_pt);
-	fChain->SetBranchAddress("GenBPart_eta", &GenBPart_eta);
-	fChain->SetBranchAddress("GenBPart_phi", &GenBPart_phi);
-	fChain->SetBranchAddress("GenBPart_mass", &GenBPart_mass);
-	fChain->SetBranchAddress("GenBPart_pdgId", &GenBPart_pdgId);
-	fChain->SetBranchAddress("GenBPart_mompdgId", &GenBPart_mompdgId);
+	fChain->SetBranchAddress("GenBPart_pt", GenBPart_pt);
+	fChain->SetBranchAddress("GenBPart_eta", GenBPart_eta);
+	fChain->SetBranchAddress("GenBPart_phi", GenBPart_phi);
+	fChain->SetBranchAddress("GenBPart_mass", GenBPart_mass);
+	fChain->SetBranchAddress("GenBPart_pdgId", GenBPart_pdgId);
+	fChain->SetBranchAddress("GenBPart_mompdgId", GenBPart_mompdgId);
 	fChain->SetBranchAddress("GenBPart_grmompdgId", GenBPart_grmompdgId);
 	fChain->SetBranchAddress("GenBPart_fromResonance", GenBPart_fromResonance);
+	
+	fChain->SetBranchAddress("nGenJetAK4",&nGenJetAK4);
+    fChain->SetBranchAddress("GenJetAK4_pt",GenJetAK4_pt);
+    fChain->SetBranchAddress("GenJetAK4_eta",GenJetAK4_eta);
+    fChain->SetBranchAddress("GenJetAK4_phi",GenJetAK4_phi);
+    fChain->SetBranchAddress("GenJetAK4_mass",GenJetAK4_mass);
+    fChain->SetBranchAddress("GenJetAK4_isMatchB",GenJetAK4_isMatchB);
+    fChain->SetBranchAddress("GenJetAK4_MatchB_Index",GenJetAK4_MatchB_Index);
+    
+    fChain->SetBranchAddress("nGenJetAK4wNu",&nGenJetAK4wNu);
+    fChain->SetBranchAddress("GenJetAK4wNu_pt",GenJetAK4wNu_pt);
+    fChain->SetBranchAddress("GenJetAK4wNu_eta",GenJetAK4wNu_eta);
+    fChain->SetBranchAddress("GenJetAK4wNu_phi",GenJetAK4wNu_phi);
+    fChain->SetBranchAddress("GenJetAK4wNu_mass",GenJetAK4wNu_mass);
+    fChain->SetBranchAddress("GenJetAK4wNu_isMatchB",GenJetAK4wNu_isMatchB);
+    fChain->SetBranchAddress("GenJetAK4wNu_MatchB_Index",GenJetAK4wNu_MatchB_Index);
    
    }
    

@@ -869,6 +869,16 @@
    int nGenTop;
    float GenTop_pt[nTopMax],  GenTop_eta[nTopMax],  GenTop_phi[nTopMax],  GenTop_mass[nTopMax];  
    
+   int _s_nGenJetAK4;
+   float _s_GenJetAK4_pt[njetmx], _s_GenJetAK4_eta[njetmx], _s_GenJetAK4_phi[njetmx], _s_GenJetAK4_mass[njetmx];
+   bool _s_GenJetAK4_matchb[njetmx];
+   int _s_GenJetAK4_matchb_index[njetmx];
+   
+   int _s_nGenJetAK4wNu;
+   float _s_GenJetAK4wNu_pt[njetmx], _s_GenJetAK4wNu_eta[njetmx], _s_GenJetAK4wNu_phi[njetmx], _s_GenJetAK4wNu_mass[njetmx];
+   bool _s_GenJetAK4wNu_matchb[njetmx];
+   int _s_GenJetAK4wNu_matchb_index[njetmx];
+   
    int nLHETop;
    float LHETop_pt[nTopMax],  LHETop_eta[nTopMax],  LHETop_phi[nTopMax],  LHETop_mass[nTopMax];  
    
@@ -1198,7 +1208,7 @@
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4CvB", PFJetAK4_btagRobustParTAK4CvB);
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4CvL", PFJetAK4_btagRobustParTAK4CvL);
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4QG", PFJetAK4_btagRobustParTAK4QG);
-   if(YEAR=="2024"){
+   if(YEAR=="2024"||YEAR=="2025"){
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4B", PFJetAK4_btagUParTAK4B);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4CvB", PFJetAK4_btagUParTAK4CvB);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4CvL", PFJetAK4_btagUParTAK4CvL);
@@ -1207,7 +1217,7 @@
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawCorr", PFJetAK4_PNetRegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawCorrNeutrino", PFJetAK4_PNetRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawRes", PFJetAK4_PNetRegPtRawRes);
-   if(YEAR=="2024"){
+   if(YEAR=="2024"||YEAR=="2025"){
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawCorr", PFJetAK4_UParTRegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawCorrNeutrino", PFJetAK4_UParTRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawRes", PFJetAK4_UParTRegPtRawRes);
@@ -1496,6 +1506,11 @@ bool pass_NoiseFilter(bool Flag_goodVertices, bool Flag_globalSuperTightHalo2016
 	
 	else if (year=="2024"){
 		pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_eeBadScFilter && Flag_ecalBadCalibFilter);
+	}
+
+	else if (year=="2025"){
+		//pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter);
+		pass = true;
 	}
 	
 	return pass;

@@ -524,7 +524,7 @@ int main(int argc, char *argv[])
 	   
    }
    
-   else if(year=="2024"){
+   else if(year=="2024"||year=="2025"){
 	
 	//https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer24/
 	
@@ -651,7 +651,7 @@ int main(int argc, char *argv[])
     store_MET_sys = false;
     
     // Jet booleans //
-    if(year=="2024") { store_AK8jets = false; } else { store_AK8jets = true;  }
+    if(year=="2024"||year=="2025") { store_AK8jets = false; } else { store_AK8jets = true;  }
     store_AK8jet_additional_variables = false;
 
    ////////////// Histograms ////////////////////////
@@ -1005,7 +1005,7 @@ int main(int argc, char *argv[])
    Tout->Branch("JetAK4_btag_UParTAK4B_WP",_s_JetAK4_btag_UParTAK4B_WP,"_s_JetAK4_btag_UParTAK4B_WP[_s_nJetAK4]/I");
    }
    
-   if(year=="2024"){//since BTV only supports UParT in 2024 //   
+   if(year=="2024"||year=="2025"){//since BTV only supports UParT in 2024 //   
 	Tout->Branch("JetAK4_btag_UParTAK4B",_s_JetAK4_btag_UParTAK4B,"_s_JetAK4_btag_UParTAK4B[_s_nJetAK4]/F");
 	Tout->Branch("JetAK4_btag_UParTAK4CvB",_s_JetAK4_btag_UParTAK4CvB,"_s_JetAK4_btag_UParTAK4CvB[_s_nJetAK4]/F");
 	Tout->Branch("JetAK4_btag_UParTAK4CvL",_s_JetAK4_btag_UParTAK4CvL,"_s_JetAK4_btag_UParTAK4CvL[_s_nJetAK4]/F");
@@ -1019,7 +1019,7 @@ int main(int argc, char *argv[])
 	Tout->Branch("JetAK4_btag_RobustParTAK4QG",_s_JetAK4_btag_RobustParTAK4QG,"_s_JetAK4_btag_RobustParTAK4QG[_s_nJetAK4]/F");
 	Tout->Branch("JetAK4_btag_RobustParTAK4B_WP",_s_JetAK4_btag_RobustParTAK4B_WP,"_s_JetAK4_btag_RobustParTAK4B_WP[_s_nJetAK4]/I");   
    }
-   if(year!="2024" || !isMC){//storing PNet scores in data for safety
+   if((year!="2024"&&year!="2025") || !isMC){//storing PNet scores in data for safety
 	Tout->Branch("JetAK4_btag_PNetB",_s_JetAK4_btag_PNetB,"_s_JetAK4_btag_PNetB[_s_nJetAK4]/F");
 	Tout->Branch("JetAK4_btag_PNetCvB",_s_JetAK4_btag_PNetCvB,"_s_JetAK4_btag_PNetCvB[_s_nJetAK4]/F");
 	Tout->Branch("JetAK4_btag_PNetCvL",_s_JetAK4_btag_PNetCvL,"_s_JetAK4_btag_PNetCvL[_s_nJetAK4]/F");
@@ -1028,7 +1028,7 @@ int main(int argc, char *argv[])
 	Tout->Branch("JetAK4_btag_PNetB_WP",_s_JetAK4_btag_PNetB_WP,"_s_JetAK4_btag_PNetB_WP[_s_nJetAK4]/I");
    }
    
-   if(year!="2024"){//since BTV  & JME only supports UParT in 2024
+   if(year!="2024"&&year!="2025"){//since BTV  & JME only supports UParT in 2024
    Tout->Branch("JetAK4_PNetRegPtRawCorr",_s_JetAK4_PNetRegPtRawCorr,"_s_JetAK4_PNetRegPtRawCorr[_s_nJetAK4]/F");
    Tout->Branch("JetAK4_PNetRegPtRawCorrNeutrino",_s_JetAK4_PNetRegPtRawCorrNeutrino,"_s_JetAK4_PNetRegPtRawCorrNeutrino[_s_nJetAK4]/F");
    Tout->Branch("JetAK4_PNetRegPtRawRes",_s_JetAK4_PNetRegPtRawRes,"_s_JetAK4_PNetRegPtRawRes[_s_nJetAK4]/F");
@@ -1066,7 +1066,7 @@ int main(int argc, char *argv[])
    //Tout->Branch("JetAK4_JERdn",_s_JetAK4_JERdn,"_s_JetAK4_JERdn[_s_nJetAK4]/F");
    if(isMC){
 	
-	if(year!="2024"){//since BTV only supports UParT in 2024
+	if(year!="2024" && year!="2025"){//since BTV only supports UParT in 2024
 		Tout->Branch("JetAK4_btag_PNetB_SF",_s_JetAK4_btag_PNetB_SF,"_s_JetAK4_btag_PNetB_SF[_s_nJetAK4]/F");
 		if(isSignal){
 		Tout->Branch("JetAK4_btag_PNetB_SF_up",&_s_JetAK4_btag_PNetB_SF_up);
@@ -1205,7 +1205,7 @@ int main(int argc, char *argv[])
    Tout->Branch("LHETop_phi",LHETop_phi,"LHETop_phi[nLHETop]/F");
    Tout->Branch("LHETop_mass",LHETop_mass,"LHETop_mass[nLHETop]/F");
    
-   // GEN particles //
+   // GEN jets & particles //
    
    if(isSignal){
    
@@ -1251,6 +1251,22 @@ int main(int argc, char *argv[])
    Tout->Branch("GenTop_eta",GenTop_eta,"GenTop_eta[nGenTop]/F");
    Tout->Branch("GenTop_phi",GenTop_phi,"GenTop_phi[nGenTop]/F");
    Tout->Branch("GenTop_mass",GenTop_mass,"GenTop_mass[nGenTop]/F");
+   
+   Tout->Branch("nGenJetAK4",&_s_nGenJetAK4,"_s_nGenJetAK4/I");
+   Tout->Branch("GenJetAK4_pt",_s_GenJetAK4_pt,"_s_GenJetAK4_pt[_s_nGenJetAK4]/F");
+   Tout->Branch("GenJetAK4_eta",_s_GenJetAK4_eta,"_s_GenJetAK4_eta[_s_nGenJetAK4]/F");
+   Tout->Branch("GenJetAK4_phi",_s_GenJetAK4_phi,"_s_GenJetAK4_phi[_s_nGenJetAK4]/F");
+   Tout->Branch("GenJetAK4_mass",_s_GenJetAK4_mass,"_s_GenJetAK4_mass[_s_nGenJetAK4]/F");
+   Tout->Branch("GenJetAK4_isMatchB",_s_GenJetAK4_matchb,"_s_GenJetAK4_matchb[_s_nGenJetAK4]/O");
+   Tout->Branch("GenJetAK4_MatchB_Index",_s_GenJetAK4_matchb_index,"_s_GenJetAK4_matchb_index[_s_nGenJetAK4]/I");
+   
+   Tout->Branch("nGenJetAK4wNu",&_s_nGenJetAK4wNu,"_s_nGenJetAK4wNu/I");
+   Tout->Branch("GenJetAK4wNu_pt",_s_GenJetAK4wNu_pt,"_s_GenJetAK4wNu_pt[_s_nGenJetAK4wNu]/F");
+   Tout->Branch("GenJetAK4wNu_eta",_s_GenJetAK4wNu_eta,"_s_GenJetAK4wNu_eta[_s_nGenJetAK4wNu]/F");
+   Tout->Branch("GenJetAK4wNu_phi",_s_GenJetAK4wNu_phi,"_s_GenJetAK4wNu_phi[_s_nGenJetAK4wNu]/F");
+   Tout->Branch("GenJetAK4wNu_mass",_s_GenJetAK4wNu_mass,"_s_GenJetAK4wNu_mass[_s_nGenJetAK4wNu]/F");
+   Tout->Branch("GenJetAK4wNu_isMatchB",_s_GenJetAK4wNu_matchb,"_s_GenJetAK4wNu_matchb[_s_nGenJetAK4wNu]/O");
+   Tout->Branch("GenJetAK4wNu_MatchB_Index",_s_GenJetAK4wNu_matchb_index,"_s_GenJetAK4wNu_matchb_index[_s_nGenJetAK4wNu]/I");
    
    }
    
@@ -1418,6 +1434,7 @@ int main(int argc, char *argv[])
 	vector<GenParton> lheparts;
 	vector <AK8GenJet> genLJets;
 	vector <AK4GenJet> genJets;
+	vector <AK4GenJet> genJetswNu;
 	
 	if(isMC){
 	
@@ -1477,6 +1494,8 @@ int main(int argc, char *argv[])
 		
 		// Here you get AK4 GEN jets //
 		getAK4Genjets(genJets,AK4GenJet_pt_cut,absetacut);
+		
+		getAK4GenjetswNu(genJetswNu,AK4GenJet_pt_cut,absetacut);
 	    
 	}
 	
@@ -1510,7 +1529,7 @@ int main(int argc, char *argv[])
 		if(jet.ptRaw>raw_pt_cut){
 			if(isBJet(jet,PNetAK4_L,1)){
 				jet.applyReg = true;
-				if(year=="2024"){ jet.RegCorr = (jet.UParTRegPtRawCorrNeutrino); } // exclusive correction in 2024 
+				if(year=="2024"||year=="2025"){ jet.RegCorr = (jet.UParTRegPtRawCorrNeutrino); } // exclusive correction in 2024 
 				else 			{ jet.RegCorr = (jet.PNetRegPtRawCorr * jet.PNetRegPtRawCorrNeutrino); } // stacked correction until 2023
 				//https://indico.cern.ch/event/1580247/contributions/6669560/subcontributions/569881/attachments/3127133/5546889/JER_Correlation_meeting_020925.pdf
 			}
@@ -1527,8 +1546,8 @@ int main(int argc, char *argv[])
 			
 			float genjet_pt = jet_raw_p4.Pt();
 			if(isMC){
-				if(get_Match_GENJet_Id(jet,genJets)>=0 && get_Match_GENJet_Id(jet,genJets)<genJets.size()) { 
-					genjet_pt =  genJets[get_Match_GENJet_Id(jet,genJets)].pt; 
+				if(get_Match_GENJet_Id(jet,genJetswNu)>=0 && get_Match_GENJet_Id(jet,genJetswNu)<genJetswNu.size()) { 
+					genjet_pt =  genJetswNu[get_Match_GENJet_Id(jet,genJetswNu)].pt; 
 				}
 			}
 
@@ -1548,7 +1567,8 @@ int main(int argc, char *argv[])
 				if(year=="2022EE") 		  { jec_tag = "Summer22EE_22Sep2023_Run"+ERA+"_V2_DATA"; }
 				else if(year=="2023")  	  { jec_tag = (ERA=="Cv4" ? "Summer23Prompt23_RunCv4_V1_DATA" : "Summer23Prompt23_RunCv123_V1_DATA"); }
 				else if(year=="2023BPiX") { jec_tag = "Summer23BPixPrompt23_RunD_V1_DATA"; }
-				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V1_DATA";  } 
+				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V1_DATA";  }
+			        else if(year=="2025")     { jec_tag = "Winter25Prompt25_V2_DATA";  }	
 				else 					  { jec_tag = "Summer22_22Sep2023_RunCD_V2_DATA"; }
 			}
 			else{
@@ -1560,14 +1580,14 @@ int main(int argc, char *argv[])
 			}
 		
 			float JEC_L2 = 1.;
-			if (year!="2024") { JEC_L2 = read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,"L2Relative","AK4PFPuppiPNetRegressionPlusNeutrino"); }
+			if (year!="2024"&&year!="2025") { JEC_L2 = read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,"L2Relative","AK4PFPuppiPNetRegressionPlusNeutrino"); }
 			else 			  { JEC_L2 = read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,"L2Relative","AK4PFPuppi"); }
 		
 			jet.JEC_bReg = JEC_L2;
 		
 			if(!isMC) {
 				jetInfo_jec["JetPt"] = (jet_raw_p4.Pt()*jet.RegCorr*JEC_L2);
-				if (year!="2024") {  jet.JEC_bReg *= read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,"L2L3Residual","AK4PFPuppiPNetRegressionPlusNeutrino"); }
+				if (year!="2024"&&year!="2025") {  jet.JEC_bReg *= read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,"L2L3Residual","AK4PFPuppiPNetRegressionPlusNeutrino"); }
 				else 			  {  jet.JEC_bReg *= read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,"L2L3Residual","AK4PFPuppi"); }			
 			}
 			
@@ -1580,7 +1600,7 @@ int main(int argc, char *argv[])
 					
 					float jec_sys_breg = 0;
 					
-					if (year!="2024") {  jec_sys_breg = read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,jecsrcnames[ijec],"AK4PFPuppiPNetRegressionPlusNeutrino"); }
+					if (year!="2024"&&year!="2025") {  jec_sys_breg = read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,jecsrcnames[ijec],"AK4PFPuppiPNetRegressionPlusNeutrino"); }
 					else 			  {  jec_sys_breg = read_jec_single_fromCorrectiolib(cset_jec,jetInfo_jec,jec_tag,jecsrcnames[ijec],"AK4PFPuppi"); }
 					
 					if     (ijec==0)  { jet.jesup_AbsoluteStat = (1.+jec_sys_breg);    jet.jesdn_AbsoluteStat = (1.-jec_sys_breg); }
@@ -1728,7 +1748,7 @@ int main(int argc, char *argv[])
 	
 	vector <AK4Jet> BJets_L;
     for(auto & jet: Jets){
-		if(year=="2024"){
+		if(year=="2024"||year=="2025"){
 			if(isBJet(jet,UParTAK4_L,3)){
 				BJets_L.push_back(jet);
 			}
@@ -2176,7 +2196,7 @@ int main(int argc, char *argv[])
 		h_2D_HT_nAK4jet_nobtagSF->Fill(HT_jets,Jets.size(),weight);
 		h_2D_nAK4jet_hadronflav_nobtagSF->Fill(njets_q,njets_b, weight);
 	
-		if(year=="2024"){
+		if(year=="2024"||year=="2025"){
 			h_nAK4jet->Fill(Jets.size(), weight*btag_UParT_weight);
 			h_HT->Fill(HT_jets,weight*btag_UParT_weight);
 			h_2D_HT_nAK4jet->Fill(HT_jets,Jets.size(),weight*btag_UParT_weight);
@@ -2564,7 +2584,7 @@ int main(int argc, char *argv[])
 	
 	//sort acccording to b tag score (YEAR dependent) //
 	
-	if(year=="2024"){
+	if(year=="2024"||year=="2025"){
 		std::sort(Jets.begin(), Jets.end(), [](const AK4Jet& a, const AK4Jet& b) { return a.btag_UParTAK4B > b.btag_UParTAK4B; });
 	}
 	else{
@@ -2758,6 +2778,78 @@ int main(int argc, char *argv[])
    }
    
    bp4s.clear();
+   
+   //store AK4 GenJets //
+   
+   if(isMC && isSignal)
+   {
+	   _s_nGenJetAK4 = 0;
+	   
+	   for(unsigned ijet=0; ijet<genJets.size(); ijet++){
+
+		_s_GenJetAK4_pt[_s_nGenJetAK4] = genJets[ijet].pt;
+        _s_GenJetAK4_eta[_s_nGenJetAK4] = genJets[ijet].eta;
+        _s_GenJetAK4_phi[_s_nGenJetAK4] = genJets[ijet].phi;
+        _s_GenJetAK4_mass[_s_nGenJetAK4] = genJets[ijet].mass;
+        
+        bool match_b = false; int match_b_idx = -1;
+		float dR_bj_min = 0.4;
+		
+		for(int jb=0; jb<genbs.size(); jb++){
+		
+			if(((genJets[ijet].p4).DeltaR(genbs[jb].p4))<dR_bj_min){
+				dR_bj_min = (genJets[ijet].p4).DeltaR(genbs[jb].p4);
+				match_b = true;
+				match_b_idx = jb;
+			}
+			
+			if(jb==njetmx) break;
+		
+		}
+		
+	    _s_GenJetAK4_matchb[_s_nGenJetAK4] = match_b;
+	    _s_GenJetAK4_matchb_index[_s_nGenJetAK4] = match_b_idx;
+        
+        _s_nGenJetAK4++;
+
+        if(_s_nGenJetAK4 >= njetAK4_max) break;
+        
+	   }//genJets
+	
+	   _s_nGenJetAK4wNu = 0;
+	   
+	   for(unsigned ijet=0; ijet<genJetswNu.size(); ijet++){
+
+		_s_GenJetAK4wNu_pt[_s_nGenJetAK4wNu] = genJetswNu[ijet].pt;
+        _s_GenJetAK4wNu_eta[_s_nGenJetAK4wNu] = genJetswNu[ijet].eta;
+        _s_GenJetAK4wNu_phi[_s_nGenJetAK4wNu] = genJetswNu[ijet].phi;
+        _s_GenJetAK4wNu_mass[_s_nGenJetAK4wNu] = genJetswNu[ijet].mass;
+        
+        bool match_b = false; int match_b_idx = -1;
+		float dR_bj_min = 0.4;
+		
+		for(int jb=0; jb<genbs.size(); jb++){
+		
+			if(((genJetswNu[ijet].p4).DeltaR(genbs[jb].p4))<dR_bj_min){
+				dR_bj_min = (genJetswNu[ijet].p4).DeltaR(genbs[jb].p4);
+				match_b = true;
+				match_b_idx = jb;
+			}
+			
+			if(jb==njetmx) break;
+		
+		}
+		
+		_s_GenJetAK4wNu_matchb[_s_nGenJetAK4wNu] = match_b;
+		_s_GenJetAK4wNu_matchb_index[_s_nGenJetAK4wNu] = match_b_idx;
+        
+        _s_nGenJetAK4wNu++;
+
+        if(_s_nGenJetAK4wNu >= njetAK4_max) break;
+        
+	   }//genJetswNu
+	   
+   }
    
    
    // store muons passing standard criteria //

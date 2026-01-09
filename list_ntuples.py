@@ -87,10 +87,12 @@ if args.isDATA:
 
 elif args.isSIGNAL:
     samples = read_sample_names('SIGNAL_names.txt')
-    if(args.YEAR=="2023"):
-        samples = read_sample_names('SIGNAL_names_2023_remain.txt')
-    elif(args.YEAR=="2023BPiX"):
-        samples = read_sample_names('SIGNAL_names_2023BPIX_new2.txt')
+    #if(args.YEAR=="2023"):
+    #    samples = read_sample_names('SIGNAL_names_2023_remain.txt')
+    if(args.YEAR=="2023BPiX"):
+        samples = read_sample_names('SIGNAL_names_2023BPIX.txt')
+    elif(args.YEAR=="2024"):
+        samples = read_sample_names('SIGNAL_names_2024.txt')
 else:
     #samples = samples_MC
     samples = read_sample_names('MC_names.txt')
@@ -129,10 +131,13 @@ for sample in samples:
             dir_prefix = '250515_163'
         if args.isSIGNAL:
             #dir_prefix = '250324'
-            dir_prefix = '2508'
+            #dir_prefix = '2508'
+            dir_prefix = '2510'
     elif args.YEAR == "2024":
         if args.isDATA:
             dir_prefix = '2507'
+        elif args.isSIGNAL:
+            dir_prefix = '2601'
         else:
             dir_prefix = '2508'
 

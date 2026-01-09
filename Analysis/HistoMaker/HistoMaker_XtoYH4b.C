@@ -509,13 +509,19 @@ int main(int argc, char *argv[])
  
  // region-specific histograms //
 
- const int nregion = 20; 
+ const int nregion = 26; 
  string region_names[nregion] = {
+								  //XXT,XXT,XT,XT 
 								 "Comb_5_5_4_4_Inclusive", "Comb_5_5_4_4", "Comb_5_5_5_4", "Comb_5_5_5_5", 
 								 "Comb_5_5_4_4_Inclusive_mHcut", "Comb_5_5_4_4_mHcut", "Comb_5_5_5_4_mHcut", "Comb_5_5_5_5_mHcut", 
+							     //T,T,T,M & T,T,M,M
 							     "Comb_3_3_3_2_Inclusive", "Comb_3_3_2_2_Inclusive", "Comb_3_3_2_2_Inclusive_CR", "Comb_3_3_2_2_Inclusive_VR",
 							     "Comb_3_3_3_2_Inclusive_mHcut", "Comb_3_3_2_2_Inclusive_mHcut", "Comb_3_3_2_2_Inclusive_CR_mHcut", "Comb_3_3_2_2_Inclusive_VR_mHcut",
-							     "Comb_3_3_3_2_Inclusive_mHcut_invert", "Comb_3_3_2_2_Inclusive_mHcut_invert", "Comb_3_3_2_2_Inclusive_CR_mHcut_invert", "Comb_3_3_2_2_Inclusive_VR_mHcut_invert"
+							     "Comb_3_3_3_2_Inclusive_mHcut_invert", "Comb_3_3_2_2_Inclusive_mHcut_invert", "Comb_3_3_2_2_Inclusive_CR_mHcut_invert", "Comb_3_3_2_2_Inclusive_VR_mHcut_invert",
+							     //T,T,T,L
+							     "Comb_3_3_3_1_Inclusive","Comb_3_3_3_1_Inclusive_mHcut","Comb_3_3_3_1_Inclusive_mHcut_invert",
+							     //M,M,M,L
+							     "Comb_3_2_2_2_Inclusive","Comb_3_2_2_2_Inclusive_mHcut","Comb_3_2_2_2_Inclusive_mHcut_invert"
 							    };
  
  const int nchoice = 2;
@@ -666,6 +672,22 @@ int main(int argc, char *argv[])
  TH1F *h_H2_mass_highest_score_massordered;
  sprintf(name,"h_highestscore_massordered_H2_mass");
  h_H2_mass_highest_score_massordered = getHisto1F(name,name,45,50,500);
+ 
+ TH1F *h_Hmass;
+ sprintf(name,"h_H_mass_genmatched");
+ h_Hmass= getHisto1F(name,name,50,80,180);
+ 
+ TH1F *h_Ymass;
+ sprintf(name,"h_Y_mass_genmatched");
+ h_Ymass= getHisto1F(name,name,50,50,200);
+ 
+ TH1F *h_Hmass_gen;
+ sprintf(name,"h_H_mass_genmatched_GenJet");
+ h_Hmass_gen= getHisto1F(name,name,50,80,180);
+ 
+ TH1F *h_Hmass_genwnu;
+ sprintf(name,"h_H_mass_genmatched_GenJetwNu");
+ h_Hmass_genwnu= getHisto1F(name,name,50,80,180);
  
  final_file_tree->cd();
  
@@ -1182,149 +1204,7 @@ int main(int argc, char *argv[])
    
    // end of AK8 jet veto //
    
-   // inclusive hisotgram filling //
-   
-   h_NPV->Fill(PV_npvsGood,weight_nom);
-   if(puWeight<1.e-9) { puWeight = 1.e-9; }
-   if(!isDATA){ h_NPV_nopuweight->Fill(PV_npvsGood,weight_nom*1./puWeight); }
-   else{  h_NPV_nopuweight->Fill(PV_npvsGood,weight_nom); }
-   
-   h_MET_pt->Fill(MET_pt,weight_nom);
-   h_MET_phi->Fill(MET_phi,weight_nom);
-   
-   if(isMC){
-   h_HT_noSF->Fill(HT_jets,Generator_weight*xsec_weight);
-   h_HT_puSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight);
-   h_HT_pubtagSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*btag_weight);
-   h_HT_putrignoptSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*triggersf_weight_L1HT*triggersf_weight_btag);
-   h_HT_putrigSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*triggersf_weight_L1HT*triggersf_weight_btag*triggersf_weight_pt);
-   }
-   else{
-   h_HT_noSF->Fill(HT_jets,weight_nom);
-   }
-   
-   h_nAK4jet_cor->Fill(nsmalljets,weight_nom);
-   h_HT_cor->Fill(HT_jets,weight_nom);
-   h_2D_HT_nAK4jet_cor->Fill(HT_jets,nsmalljets,weight_nom);
-   if(isMC){
-	h_2D_nAK4jet_hadronflav_cor->Fill(njets_q, njets_b, weight_nom);	   
-   }
-   
-   // pT ordering of AK4 jets //
-      
-   std::vector<int> pt_indices(nJetAK4);
-   for (int ix = 0; ix < pt_indices.size(); ++ix) {
-        pt_indices[ix] = ix;
-   }
-   std::sort(pt_indices.begin(), pt_indices.end(), [&](int i1, int i2) {
-        return JetAK4_pt[i1] > JetAK4_pt[i2]; // Descending order
-   });
-   
-   // btag ordering of AK4 jets //
-   
-   std::vector<int> btag_indices(nJetAK4);
-   for (int ix = 0; ix < btag_indices.size(); ++ix) {
-        btag_indices[ix] = ix;
-   }
-   std::sort(btag_indices.begin(), btag_indices.end(), [&](int i1, int i2) {
-	   if(year=="2024"){
-			return JetAK4_btag_UParTAK4B[i1] > JetAK4_btag_UParTAK4B[i2]; // Descending order
-	   }
-	   else{
-		    return JetAK4_btag_PNetB[i1] > JetAK4_btag_PNetB[i2]; // Descending order
-	   }
-   });
-      
-   for(int ijet=0; ijet<min(nJetAK4,njetmax); ijet++){
-	   
-	   int idx = pt_indices[ijet];
-	   
-	   if(isSignal && !JetAK4_isMatchB[idx]) { continue; }
-	   
-	   h_AK4jets[njetvars*ijet+0]->Fill(JetAK4_pt[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+1]->Fill(JetAK4_eta[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+2]->Fill(JetAK4_phi[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+3]->Fill(JetAK4_mass[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+4]->Fill(JetAK4_charge_kappa_0p3[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+5]->Fill(JetAK4_charge_kappa_0p6[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+6]->Fill(JetAK4_charge_kappa_1p0[idx], weight_nom);
-	   if(year!="2024"){
-	   h_AK4jets[njetvars*ijet+7]->Fill(JetAK4_btag_DeepFlavB[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+8]->Fill(JetAK4_btag_DeepFlavB_WP[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+9]->Fill(JetAK4_btag_DeepFlavQG[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+10]->Fill(JetAK4_btag_PNetB[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+11]->Fill(JetAK4_btag_PNetB_WP[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+12]->Fill(JetAK4_btag_PNetCvB[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+13]->Fill(JetAK4_btag_PNetCvL[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+14]->Fill(JetAK4_btag_PNetQG[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+15]->Fill(JetAK4_btag_RobustParTAK4B[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+16]->Fill(JetAK4_btag_RobustParTAK4B_WP[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+17]->Fill(JetAK4_btag_RobustParTAK4CvB[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+18]->Fill(JetAK4_btag_RobustParTAK4CvL[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+19]->Fill(JetAK4_btag_RobustParTAK4QG[idx], weight_nom);
-	   }
-	   else{
-	   h_AK4jets[njetvars*ijet+7]->Fill(JetAK4_btag_UParTAK4B[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+8]->Fill(JetAK4_btag_UParTAK4B_WP[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+9]->Fill(JetAK4_btag_UParTAK4CvB[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+10]->Fill(JetAK4_btag_UParTAK4CvL[idx], weight_nom);
-	   h_AK4jets[njetvars*ijet+11]->Fill(JetAK4_btag_UParTAK4QG[idx], weight_nom);
-	   }
-   
-   }
-   
-   for(int ijet=0; ijet<min(nJetAK4,njetmax); ijet++){
-    if(JetAK4_isMatchB[ijet]){
-		if (GenBPart_pdgId[JetAK4_MatchB_Index[ijet]]==5){
-			h_AK4jet_charge_b[0]->Fill(JetAK4_charge_kappa_0p3[ijet], weight_nom);
-			h_AK4jet_charge_b[1]->Fill(JetAK4_charge_kappa_0p6[ijet], weight_nom);
-			h_AK4jet_charge_b[2]->Fill(JetAK4_charge_kappa_1p0[ijet], weight_nom);
-		}
-		if (GenBPart_pdgId[JetAK4_MatchB_Index[ijet]]==-5){
-			h_AK4jet_charge_antib[0]->Fill(JetAK4_charge_kappa_0p3[ijet], weight_nom);
-			h_AK4jet_charge_antib[1]->Fill(JetAK4_charge_kappa_0p6[ijet], weight_nom);
-			h_AK4jet_charge_antib[2]->Fill(JetAK4_charge_kappa_1p0[ijet], weight_nom);
-		}
-	}
-   }
-   
-   
-   // Filling histograms for angular variables //
-   
-    h_angle_theta_H->Fill(angle_theta_H,weight_nom);
-	h_angle_cos_theta_H->Fill(cos(angle_theta_H),weight_nom);
-	h_angle_theta_Y->Fill(angle_theta_Y,weight_nom);
-	h_angle_cos_theta_Y->Fill(cos(angle_theta_Y),weight_nom);
-    h_angle_phi->Fill(angle_phi,weight_nom);
-    h_angle_phi_weighted->Fill(angle_phi,weight_nom*Sign(sin(2*angle_theta_H)*sin(2*angle_theta_Y)));
-    h_angle_phi_prime->Fill(angle_phi_prime,weight_nom);
-    h_angle_theta_star->Fill(angle_theta_star,weight_nom);
-    h_angle_cos_theta_star->Fill(cos(angle_theta_star),weight_nom);
-    h_angle_phi_star->Fill(angle_phi_star,weight_nom);
-    //new ones//
-    h_angle_theta_H_lab->Fill(angle_theta_H_lab,weight_nom);
-	h_angle_cos_theta_H_lab->Fill(cos(angle_theta_H_lab),weight_nom);
-	h_angle_theta_Y_lab->Fill(angle_theta_Y_lab,weight_nom);
-	h_angle_cos_theta_Y_lab->Fill(cos(angle_theta_Y_lab),weight_nom);
-	h_angle_theta_H_lab_prime->Fill(angle_theta_H_lab_prime,weight_nom);
-	h_angle_cos_theta_H_lab_prime->Fill(cos(angle_theta_H_lab_prime),weight_nom);
-	h_angle_theta_Y_lab_prime->Fill(angle_theta_Y_lab_prime,weight_nom);
-	h_angle_cos_theta_Y_lab_prime->Fill(cos(angle_theta_Y_lab_prime),weight_nom);
-      
-    if(isMC && isSignal){
-	h_gen_angle_theta_H->Fill(angle_theta_H_gen,weight_nom);
-	h_gen_angle_cos_theta_H->Fill(cos(angle_theta_H_gen),weight_nom);
-	h_gen_angle_theta_Y->Fill(angle_theta_Y_gen,weight_nom);
-	h_gen_angle_cos_theta_Y->Fill(cos(angle_theta_Y_gen),weight_nom);
-    h_gen_angle_phi->Fill(angle_phi_gen,weight_nom);
-    h_gen_angle_phi_weighted->Fill(angle_phi_gen,weight_nom*Sign(sin(2*angle_theta_H_gen)*sin(2*angle_theta_Y_gen)));
-    h_gen_angle_phi_prime->Fill(angle_phi_prime_gen,weight_nom);
-    h_gen_angle_theta_star->Fill(angle_theta_star_gen,weight_nom);
-    h_gen_angle_cos_theta_star->Fill(cos(angle_theta_star_gen),weight_nom);
-    h_gen_angle_phi_star->Fill(angle_phi_star_gen,weight_nom);
-	}
-   
-   // DNN score extraction //
+    // DNN score extraction //
    
    // Prepare input tensor
     std::vector<float> input_tensor_values;
@@ -1430,6 +1310,158 @@ int main(int argc, char *argv[])
    //cout<<"dnn score  "<<dnn_score<<endl;
    // end of DNN score extraction //
    
+   // inclusive hisotgram filling //
+   
+   h_NPV->Fill(PV_npvsGood,weight_nom);
+   if(puWeight<1.e-9) { puWeight = 1.e-9; }
+   if(!isDATA){ h_NPV_nopuweight->Fill(PV_npvsGood,weight_nom*1./puWeight); }
+   else{  h_NPV_nopuweight->Fill(PV_npvsGood,weight_nom); }
+   
+   h_MET_pt->Fill(MET_pt,weight_nom);
+   h_MET_phi->Fill(MET_phi,weight_nom);
+   
+   if(isMC){
+   h_HT_noSF->Fill(HT_jets,Generator_weight*xsec_weight);
+   h_HT_puSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight);
+   h_HT_pubtagSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*btag_weight);
+   h_HT_putrignoptSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*triggersf_weight_L1HT*triggersf_weight_btag);
+   h_HT_putrigSF->Fill(HT_jets,Generator_weight*xsec_weight*puWeight*triggersf_weight_L1HT*triggersf_weight_btag*triggersf_weight_pt);
+   }
+   else{
+   h_HT_noSF->Fill(HT_jets,weight_nom);
+   }
+   
+   h_nAK4jet_cor->Fill(nsmalljets,weight_nom);
+   h_HT_cor->Fill(HT_jets,weight_nom);
+   h_2D_HT_nAK4jet_cor->Fill(HT_jets,nsmalljets,weight_nom);
+   if(isMC){
+	h_2D_nAK4jet_hadronflav_cor->Fill(njets_q, njets_b, weight_nom);	   
+   }
+   
+   // pT ordering of AK4 jets //
+      
+   std::vector<int> pt_indices(nJetAK4);
+   for (int ix = 0; ix < pt_indices.size(); ++ix) {
+        pt_indices[ix] = ix;
+   }
+   std::sort(pt_indices.begin(), pt_indices.end(), [&](int i1, int i2) {
+        return JetAK4_pt[i1] > JetAK4_pt[i2]; // Descending order
+   });
+   
+   // btag ordering of AK4 jets //
+   
+   std::vector<int> btag_indices(nJetAK4);
+   for (int ix = 0; ix < btag_indices.size(); ++ix) {
+        btag_indices[ix] = ix;
+   }
+   std::sort(btag_indices.begin(), btag_indices.end(), [&](int i1, int i2) {
+	   if(year=="2024"){
+			return JetAK4_btag_UParTAK4B[i1] > JetAK4_btag_UParTAK4B[i2]; // Descending order
+	   }
+	   else{
+		    return JetAK4_btag_PNetB[i1] > JetAK4_btag_PNetB[i2]; // Descending order
+	   }
+   });
+      
+   for(int ijet=0; ijet<min(nJetAK4,njetmax); ijet++){
+	   
+	   int idx = pt_indices[ijet];
+	 
+	   //cout<<"index "<<ijet<<" "<<idx<<" wt "<<weight_nom<<endl;
+
+	   // following three conditions will make the jet collection same as those stored in tree
+	   /*
+	   idx = ijet;
+
+	   if(JetAK4_btag_UParTAK4B_WP[btag_indices[1]]<3) continue;
+           if(JetAK4_btag_UParTAK4B_WP[btag_indices[3]]<1) continue;
+	   */
+	   if(isSignal && !JetAK4_isMatchB[idx]) { continue; }
+
+	   h_AK4jets[njetvars*ijet+0]->Fill(JetAK4_pt[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+1]->Fill(JetAK4_eta[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+2]->Fill(JetAK4_phi[idx], weight_nom);
+	   //if(idx==3) { cout<<"4th jet phi "<<JetAK4_phi[idx]<<endl; }
+	   h_AK4jets[njetvars*ijet+3]->Fill(JetAK4_mass[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+4]->Fill(JetAK4_charge_kappa_0p3[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+5]->Fill(JetAK4_charge_kappa_0p6[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+6]->Fill(JetAK4_charge_kappa_1p0[idx], weight_nom);
+	   if(year!="2024"){
+	   h_AK4jets[njetvars*ijet+7]->Fill(JetAK4_btag_DeepFlavB[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+8]->Fill(JetAK4_btag_DeepFlavB_WP[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+9]->Fill(JetAK4_btag_DeepFlavQG[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+10]->Fill(JetAK4_btag_PNetB[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+11]->Fill(JetAK4_btag_PNetB_WP[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+12]->Fill(JetAK4_btag_PNetCvB[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+13]->Fill(JetAK4_btag_PNetCvL[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+14]->Fill(JetAK4_btag_PNetQG[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+15]->Fill(JetAK4_btag_RobustParTAK4B[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+16]->Fill(JetAK4_btag_RobustParTAK4B_WP[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+17]->Fill(JetAK4_btag_RobustParTAK4CvB[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+18]->Fill(JetAK4_btag_RobustParTAK4CvL[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+19]->Fill(JetAK4_btag_RobustParTAK4QG[idx], weight_nom);
+	   }
+	   else{
+	   h_AK4jets[njetvars*ijet+7]->Fill(JetAK4_btag_UParTAK4B[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+8]->Fill(JetAK4_btag_UParTAK4B_WP[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+9]->Fill(JetAK4_btag_UParTAK4CvB[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+10]->Fill(JetAK4_btag_UParTAK4CvL[idx], weight_nom);
+	   h_AK4jets[njetvars*ijet+11]->Fill(JetAK4_btag_UParTAK4QG[idx], weight_nom);
+	   }
+   
+   }
+   
+   for(int ijet=0; ijet<min(nJetAK4,njetmax); ijet++){
+    if(JetAK4_isMatchB[ijet]){
+		if (GenBPart_pdgId[JetAK4_MatchB_Index[ijet]]==5){
+			h_AK4jet_charge_b[0]->Fill(JetAK4_charge_kappa_0p3[ijet], weight_nom);
+			h_AK4jet_charge_b[1]->Fill(JetAK4_charge_kappa_0p6[ijet], weight_nom);
+			h_AK4jet_charge_b[2]->Fill(JetAK4_charge_kappa_1p0[ijet], weight_nom);
+		}
+		if (GenBPart_pdgId[JetAK4_MatchB_Index[ijet]]==-5){
+			h_AK4jet_charge_antib[0]->Fill(JetAK4_charge_kappa_0p3[ijet], weight_nom);
+			h_AK4jet_charge_antib[1]->Fill(JetAK4_charge_kappa_0p6[ijet], weight_nom);
+			h_AK4jet_charge_antib[2]->Fill(JetAK4_charge_kappa_1p0[ijet], weight_nom);
+		}
+	}
+   }
+   
+   
+   // Filling histograms for angular variables //
+   
+    h_angle_theta_H->Fill(angle_theta_H,weight_nom);
+	h_angle_cos_theta_H->Fill(cos(angle_theta_H),weight_nom);
+	h_angle_theta_Y->Fill(angle_theta_Y,weight_nom);
+	h_angle_cos_theta_Y->Fill(cos(angle_theta_Y),weight_nom);
+    h_angle_phi->Fill(angle_phi,weight_nom);
+    h_angle_phi_weighted->Fill(angle_phi,weight_nom*Sign(sin(2*angle_theta_H)*sin(2*angle_theta_Y)));
+    h_angle_phi_prime->Fill(angle_phi_prime,weight_nom);
+    h_angle_theta_star->Fill(angle_theta_star,weight_nom);
+    h_angle_cos_theta_star->Fill(cos(angle_theta_star),weight_nom);
+    h_angle_phi_star->Fill(angle_phi_star,weight_nom);
+    //new ones//
+    h_angle_theta_H_lab->Fill(angle_theta_H_lab,weight_nom);
+	h_angle_cos_theta_H_lab->Fill(cos(angle_theta_H_lab),weight_nom);
+	h_angle_theta_Y_lab->Fill(angle_theta_Y_lab,weight_nom);
+	h_angle_cos_theta_Y_lab->Fill(cos(angle_theta_Y_lab),weight_nom);
+	h_angle_theta_H_lab_prime->Fill(angle_theta_H_lab_prime,weight_nom);
+	h_angle_cos_theta_H_lab_prime->Fill(cos(angle_theta_H_lab_prime),weight_nom);
+	h_angle_theta_Y_lab_prime->Fill(angle_theta_Y_lab_prime,weight_nom);
+	h_angle_cos_theta_Y_lab_prime->Fill(cos(angle_theta_Y_lab_prime),weight_nom);
+      
+    if(isMC && isSignal){
+	h_gen_angle_theta_H->Fill(angle_theta_H_gen,weight_nom);
+	h_gen_angle_cos_theta_H->Fill(cos(angle_theta_H_gen),weight_nom);
+	h_gen_angle_theta_Y->Fill(angle_theta_Y_gen,weight_nom);
+	h_gen_angle_cos_theta_Y->Fill(cos(angle_theta_Y_gen),weight_nom);
+    h_gen_angle_phi->Fill(angle_phi_gen,weight_nom);
+    h_gen_angle_phi_weighted->Fill(angle_phi_gen,weight_nom*Sign(sin(2*angle_theta_H_gen)*sin(2*angle_theta_Y_gen)));
+    h_gen_angle_phi_prime->Fill(angle_phi_prime_gen,weight_nom);
+    h_gen_angle_theta_star->Fill(angle_theta_star_gen,weight_nom);
+    h_gen_angle_cos_theta_star->Fill(cos(angle_theta_star_gen),weight_nom);
+    h_gen_angle_phi_star->Fill(angle_phi_star_gen,weight_nom);
+	}
+   
    // Now select four jets to form jet pairs (H/Y candidates) //
    
    vector<TLorentzVector> jet_p4s_PNet, jet_p4s_PartT, jet_p4s_UParT;
@@ -1442,7 +1474,7 @@ int main(int argc, char *argv[])
 	   int kjet = btag_indices[ijet];
 	   
 	   // apply regression correction only at this stage of pair (H/Y) formation //
-	   if(JetAK4_applyReg[kjet]) { JetAK4_pt[kjet] *= JetAK4_RegCorr[ijet]; }
+	   if(JetAK4_applyReg[kjet]) { JetAK4_pt[kjet] *= JetAK4_RegCorr[ijet]; JetAK4_mass[kjet] *= JetAK4_RegCorr[ijet];  }
 	   
 	   if(JetAK4_btag_PNetB_WP[kjet]>=1) { // loose WP
 		    if(isSignal && !JetAK4_isMatchB[kjet]) { continue; } // b quark matching condition for signal
@@ -1575,7 +1607,7 @@ int main(int argc, char *argv[])
 				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[btag_indices[0]]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[btag_indices[1]]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[btag_indices[2]]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[btag_indices[3]];
 			}
 			else{
-				jet_btag_1 = JetAK4_btag_PNetB_WP[btag_indices[0]]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[btag_indices[1]]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[btag_indices[2]]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[btag_indices[3]];
+				jet_btag_1 = JetAK4_btag_PNetB_WP[btag_indices[0]]; 	jet_btag_2 = JetAK4_btag_PNetB_WP[btag_indices[1]]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[btag_indices[2]]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[btag_indices[3]];
 			}
 	   }
 	   
@@ -1660,6 +1692,101 @@ int main(int argc, char *argv[])
 			{ b_matching = true; }
 	   
 	   }
+	   
+	   // H mass reconstruction //
+	   
+	   if(isMC){
+	   
+	   // RECO jets //
+	   
+		for(int ijet=0; ijet<4; ijet++){
+			for(int kjet=(ijet+1); kjet<4; kjet++){
+						
+				if(JetAK4_MatchB_Index[jet_idx_btag[ijet]]>=0 && JetAK4_MatchB_Index[jet_idx_btag[kjet]]>=0 && (JetAK4_MatchB_Index[jet_idx_btag[ijet]]!=JetAK4_MatchB_Index[jet_idx_btag[kjet]])){
+			
+					if( (GenBPart_fromResonance[JetAK4_MatchB_Index[jet_idx_btag[ijet]]] && abs(GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[ijet]]])==5 && abs(GenBPart_mompdgId[JetAK4_MatchB_Index[jet_idx_btag[ijet]]])==25)
+					&&  (GenBPart_fromResonance[JetAK4_MatchB_Index[jet_idx_btag[kjet]]] && abs(GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[kjet]]])==5 && abs(GenBPart_mompdgId[JetAK4_MatchB_Index[jet_idx_btag[kjet]]])==25)
+					&&  (GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[ijet]]]*GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[kjet]]]<0) )
+					{
+				
+						TLorentzVector H_bjet1 = jet_p4s[ijet]; 
+						TLorentzVector H_bjet2 = jet_p4s[kjet]; 
+										
+						h_Hmass->Fill((H_bjet1+H_bjet2).M(),weight_nom);
+						
+						break;
+					}
+					
+					else if( (GenBPart_fromResonance[JetAK4_MatchB_Index[jet_idx_btag[ijet]]] && abs(GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[ijet]]])==5 && abs(GenBPart_mompdgId[JetAK4_MatchB_Index[jet_idx_btag[ijet]]])==35)
+						 &&  (GenBPart_fromResonance[JetAK4_MatchB_Index[jet_idx_btag[kjet]]] && abs(GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[kjet]]])==5 && abs(GenBPart_mompdgId[JetAK4_MatchB_Index[jet_idx_btag[kjet]]])==35)
+						 &&  (GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[ijet]]]*GenBPart_pdgId[JetAK4_MatchB_Index[jet_idx_btag[kjet]]]<0) 
+						 && isSignal
+						 )
+					{
+				
+						TLorentzVector Y_bjet1 = jet_p4s[ijet]; 
+						TLorentzVector Y_bjet2 = jet_p4s[kjet]; 
+										
+						h_Ymass->Fill((Y_bjet1+Y_bjet2).M(),weight_nom);
+						
+						break;
+					}
+				}
+			
+			}//kjet
+		}//ijet
+		
+		// Gen jets //
+		
+		for(int ijet=0; ijet<nGenJetAK4; ijet++){
+			for(int kjet=(ijet+1); kjet<nGenJetAK4; kjet++){
+						
+				if(GenJetAK4_MatchB_Index[ijet]>=0 && GenJetAK4_MatchB_Index[kjet]>=0 && (GenJetAK4_MatchB_Index[ijet]!=GenJetAK4_MatchB_Index[kjet])){
+			
+					if( (GenBPart_fromResonance[GenJetAK4_MatchB_Index[ijet]] && abs(GenBPart_pdgId[GenJetAK4_MatchB_Index[ijet]])==5 && abs(GenBPart_mompdgId[GenJetAK4_MatchB_Index[ijet]])==25)
+					&&  (GenBPart_fromResonance[GenJetAK4_MatchB_Index[kjet]] && abs(GenBPart_pdgId[GenJetAK4_MatchB_Index[kjet]])==5 && abs(GenBPart_mompdgId[GenJetAK4_MatchB_Index[kjet]])==25)
+					&&  (GenBPart_pdgId[GenJetAK4_MatchB_Index[ijet]]*GenBPart_pdgId[GenJetAK4_MatchB_Index[kjet]]<0) )
+					{
+				
+						TLorentzVector H_bjet1_g,  H_bjet2_g;
+						
+						H_bjet1_g.SetPtEtaPhiM(GenJetAK4_pt[ijet],GenJetAK4_eta[ijet],GenJetAK4_phi[ijet],GenJetAK4_mass[ijet]);
+						H_bjet2_g.SetPtEtaPhiM(GenJetAK4_pt[kjet],GenJetAK4_eta[kjet],GenJetAK4_phi[kjet],GenJetAK4_mass[kjet]);
+										
+						h_Hmass_gen->Fill((H_bjet1_g+H_bjet2_g).M(),weight_nom);
+						
+						break;
+					}
+				}
+			}
+		}
+		
+		for(int ijet=0; ijet<nGenJetAK4wNu; ijet++){
+			for(int kjet=(ijet+1); kjet<nGenJetAK4wNu; kjet++){
+						
+				if(GenJetAK4wNu_MatchB_Index[ijet]>=0 && GenJetAK4wNu_MatchB_Index[kjet]>=0 && (GenJetAK4wNu_MatchB_Index[ijet]!=GenJetAK4wNu_MatchB_Index[kjet])){
+			
+					if( (GenBPart_fromResonance[GenJetAK4wNu_MatchB_Index[ijet]] && abs(GenBPart_pdgId[GenJetAK4wNu_MatchB_Index[ijet]])==5 && abs(GenBPart_mompdgId[GenJetAK4wNu_MatchB_Index[ijet]])==25)
+					&&  (GenBPart_fromResonance[GenJetAK4wNu_MatchB_Index[kjet]] && abs(GenBPart_pdgId[GenJetAK4wNu_MatchB_Index[kjet]])==5 && abs(GenBPart_mompdgId[GenJetAK4wNu_MatchB_Index[kjet]])==25)
+					&&  (GenBPart_pdgId[GenJetAK4wNu_MatchB_Index[ijet]]*GenBPart_pdgId[GenJetAK4wNu_MatchB_Index[kjet]]<0) )
+					{
+				
+						TLorentzVector H_bjet1_g,  H_bjet2_g;
+						
+						H_bjet1_g.SetPtEtaPhiM(GenJetAK4wNu_pt[ijet],GenJetAK4wNu_eta[ijet],GenJetAK4wNu_phi[ijet],GenJetAK4wNu_mass[ijet]);
+						H_bjet2_g.SetPtEtaPhiM(GenJetAK4wNu_pt[kjet],GenJetAK4wNu_eta[kjet],GenJetAK4wNu_phi[kjet],GenJetAK4wNu_mass[kjet]);
+										
+						h_Hmass_genwnu->Fill((H_bjet1_g+H_bjet2_g).M(),weight_nom);
+						
+						break;
+					}
+				}
+			}
+		}
+	   
+	   }//isMC
+	   
+	   // end of H mass reconstruction //
 	   
 	   float dH_mass_min = 100000;
 	   
@@ -2085,6 +2212,14 @@ int main(int argc, char *argv[])
 			JetAK4_pt_3 = JetAK4_pt[2]; JetAK4_eta_3 = JetAK4_eta[2]; JetAK4_phi_3 = JetAK4_phi[2]; JetAK4_mass_3 = JetAK4_mass[2]; JetAK4_charge_kappa_0p3_3 = JetAK4_charge_kappa_0p3[2]; JetAK4_charge_kappa_0p6_3 = JetAK4_charge_kappa_0p6[2]; JetAK4_charge_kappa_1p0_3 = JetAK4_charge_kappa_1p0[2];
 			JetAK4_pt_4 = JetAK4_pt[3]; JetAK4_eta_4 = JetAK4_eta[3]; JetAK4_phi_4 = JetAK4_phi[3]; JetAK4_mass_4 = JetAK4_mass[3]; JetAK4_charge_kappa_0p3_4 = JetAK4_charge_kappa_0p3[3]; JetAK4_charge_kappa_0p6_4 = JetAK4_charge_kappa_0p6[3]; JetAK4_charge_kappa_1p0_4 = JetAK4_charge_kappa_1p0[3];
 		
+			//cout<<"JetAK4_phi_4 "<<JetAK4_phi_4<<endl; 
+		
+			// however, we have applied the special JEC (post b jet energy regression) only to jet_p4s vector (& not to the JetAK4_pt, ...) //
+			JetAK4_pt_1 = jet_p4s[0].Pt(); JetAK4_mass_1 = jet_p4s[0].M();
+			JetAK4_pt_2 = jet_p4s[1].Pt(); JetAK4_mass_2 = jet_p4s[1].M();
+			JetAK4_pt_3 = jet_p4s[2].Pt(); JetAK4_mass_3 = jet_p4s[2].M();
+			JetAK4_pt_4 = jet_p4s[3].Pt(); JetAK4_mass_4 = jet_p4s[3].M();
+			
 			if(year!="2024"){
 				JetAK4_btag_B_1 = JetAK4_btag_PNetB[0]; JetAK4_btag_CvB_1 = JetAK4_btag_PNetCvB[0]; JetAK4_btag_CvL_1 = JetAK4_btag_PNetCvL[0]; JetAK4_btag_QG_1 = JetAK4_btag_PNetQG[0];   JetAK4_btag_B_WP_1 = JetAK4_btag_PNetB_WP[0];
 				JetAK4_btag_B_2 = JetAK4_btag_PNetB[1]; JetAK4_btag_CvB_2 = JetAK4_btag_PNetCvB[1]; JetAK4_btag_CvL_2 = JetAK4_btag_PNetCvL[1]; JetAK4_btag_QG_2 = JetAK4_btag_PNetQG[1];   JetAK4_btag_B_WP_2 = JetAK4_btag_PNetB_WP[1];
@@ -2190,16 +2325,19 @@ int main(int argc, char *argv[])
 				jet_btag_1 = JetAK4_btag_PNetB_WP[0]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[1]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[2]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[3];
 			}
 			
-			// tight SR (no mHcut)
+			// very tight SR (no mHcut) [XXT,XXT,..,..]
 			if(jet_btag_1>=5 && jet_btag_2>=5 && jet_btag_3>=4 && jet_btag_4>=4){ reg_pass[0] = true; };  //5544 inclusive
 			if(jet_btag_1>=5 && jet_btag_2>=5 && jet_btag_3==4 && jet_btag_4==4){ reg_pass[1] = true; };  //5544 
 			if(jet_btag_1>=5 && jet_btag_2>=5 && jet_btag_3>=5 && jet_btag_4==4){ reg_pass[2] = true; };  //5554
 			if(jet_btag_1>=5 && jet_btag_2>=5 && jet_btag_3>=5 && jet_btag_4>=5){ reg_pass[3] = true; };  //5555
-			// loose SR, CR, VR (no mHcut)
+			// tight SR, CR, VR (no mHcut) [3T1M or 2T2M]
 			if(jet_btag_1>=3 && jet_btag_2>=3 && jet_btag_3>=3 && jet_btag_4>=2){ reg_pass[8] = true; };  //3332 SR Inclusive
 			if(jet_btag_1>=3 && jet_btag_2>=3 && jet_btag_3>=2 && jet_btag_4>=2){ reg_pass[9] = true; };  //3322 SR Inclusive
 			if(jet_btag_1>=3 && jet_btag_2>=3 && jet_btag_3<2 && jet_btag_4<2)  { reg_pass[10] = true; };    //CR
 			if(jet_btag_1>=3 && jet_btag_2>=3 && jet_btag_3>=2 && jet_btag_4<2) { reg_pass[11] = true; };    //VR
+			// loose SR [3T1L & 3MnT] (no MHcut)
+			if(jet_btag_1>=3 && jet_btag_2>=3 && jet_btag_3>=3 && jet_btag_4>=1 && jet_btag_4<2){ reg_pass[20] = true; }; 
+			if((jet_btag_2>=2 && jet_btag_2<3 && jet_btag_3>=2 && jet_btag_3<3 && jet_btag_4>=2 && jet_btag_4<3)||(jet_btag_1>=2 && jet_btag_1<3 && jet_btag_2>=2 && jet_btag_2<3 && jet_btag_3>=2 && jet_btag_3<3)){ reg_pass[23] = true; }; 
 			
 			for(int jter=0; jter<2; jter++){
 				
@@ -2214,21 +2352,27 @@ int main(int argc, char *argv[])
 					 { Hcand_mass_proxy = Hcand_1[jxcomb].M();  Ycand_mass_proxy = Hcand_2[jxcomb].M();  }
 				else { Hcand_mass_proxy = Hcand_2[jxcomb].M();  Ycand_mass_proxy = Hcand_1[jxcomb].M();  }
 	
-				// tight SR (with mHcut)
+				// very tight SR (with mHcut)
 				if(reg_pass[0] && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[4] = true; };  //5544 inclusive SR & mHcut
 				if(reg_pass[1] && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[5] = true; };  //5544 SR & mHcut
 				if(reg_pass[2] && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[6] = true; };  //5554 SR & mHcut
 				if(reg_pass[3] && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[7] = true; };  //5555 SR & mHcut
-				// loose SR, CR, VR (with mHcut)
+				// tight SR, CR, VR (with mHcut)
 				if(reg_pass[8]  && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[12] = true; };  //3332 SR & mHcut
 				if(reg_pass[9]  && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[13] = true; };  //3322 SR & mHcut
 				if(reg_pass[10] && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[14] = true; };  //CR  & mHcut
 				if(reg_pass[11] && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) { reg_pass[15] = true; };  //VR  & mHcut
-				// loose SR, CR, VR (inverted mHcut)
+				// tight SR, CR, VR (inverted mHcut)
 				if(reg_pass[8]  && !(Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max)) { reg_pass[16] = true; };  //3332 SR & !mHcut
 				if(reg_pass[9]  && !(Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max)) { reg_pass[17] = true; };  //3322 SR & !mHcut
 				if(reg_pass[10] && !(Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max)) { reg_pass[18] = true; };  //CR & !mHcut
 				if(reg_pass[11] && !(Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max)) { reg_pass[19] = true; };  //VR & !mHcut
+				// 3T1L SR with & inverted mHcut //
+				if(reg_pass[20]  && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) 	{ reg_pass[21] = true; }; //3T1L SR &  mHcut
+				if(reg_pass[20]  && !(Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max)) { reg_pass[22] = true; }; //3T1L SR & !mHcut
+				// 3MnT SR with & inverted mHcut //
+				if(reg_pass[23]  && Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max) 	{ reg_pass[24] = true; }; //3MnT SR &  mHcut
+				if(reg_pass[23]  && !(Hcand_mass_proxy>=H_mass_min && Hcand_mass_proxy<H_mass_max)) { reg_pass[25] = true; }; //3MnT SR & !mHcut
 			
 				for(int ireg=0; ireg<nregion; ireg++){
 				
@@ -2393,23 +2537,31 @@ int main(int argc, char *argv[])
 				
 				bool in_mass = (Hcand_mass_bkg[jsig]>=H_mass_min && Hcand_mass_bkg[jsig]<H_mass_max);
 				
-				// tight SR (with mHcut)
+				// very tight SR (with mHcut)
 				reg_pass[4] = (reg_pass[0] && in_mass) ; //5544 inclusive SR & mHcut
 				reg_pass[5] = (reg_pass[1] && in_mass) ; //5544 SR & mHcut
 				reg_pass[6] = (reg_pass[2] && in_mass) ; //5554 SR & mHcut
 				reg_pass[7] = (reg_pass[3] && in_mass) ; //5555 SR & mHcut		
 						
-				// loose SR, CR, VR (with mHcut)
+				// tight SR, CR, VR (with mHcut)
 				reg_pass[12] = (reg_pass[8] && in_mass) ; //3332 SR & mHcut
 				reg_pass[13] = (reg_pass[9] && in_mass) ; //3322 SR & mHcut
 				reg_pass[14] = (reg_pass[10] && in_mass) ; //CR  & mHcut
 				reg_pass[15] = (reg_pass[11] && in_mass) ; //VR  & mHcut
 				
-				// loose SR, CR, VR (inverted mHcut)
+				// tight SR, CR, VR (inverted mHcut)
 				reg_pass[16]  = (reg_pass[8] && !in_mass) ; //3332 SR & !mHcut
 				reg_pass[17]  = (reg_pass[9] && !in_mass) ; //3322 SR & !mHcut
 				reg_pass[18]  = (reg_pass[10] && !in_mass) ; //CR & !mHcut
 				reg_pass[19]  = (reg_pass[11] && !in_mass) ; //VR & !mHcut
+				
+				// 3T1L SR (with & inverted mHcut)
+				reg_pass[21] = (reg_pass[20] && in_mass) ; //3T1L SR & mHcut
+				reg_pass[22] = (reg_pass[20] && !in_mass) ; //3T1L SR & !mHcut
+				
+				// 3MnT SR (with & inverted mHcut)
+				reg_pass[24] = (reg_pass[23] && in_mass) ; //3MnT1L SR & mHcut
+				reg_pass[25] = (reg_pass[23] && !in_mass) ; //3MnT1L SR & !mHcut
 				
 				float mx_reco = (Hcand_1[best_comb]+Hcand_2[best_comb]).M();
 				int ybinid = getbinid(Ycand_mass_bkg[jsig],nmybins,mybins);

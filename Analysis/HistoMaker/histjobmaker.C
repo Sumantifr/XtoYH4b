@@ -35,6 +35,7 @@ if(year=="2024") { Filenames_MC = loadFilenames(file_path+"MC_names_2024.txt"); 
 vector<string> Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names.txt");
 if(year=="2023") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2023.txt");  }
 else if (year=="2023BPiX") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2023BPIX.txt");  }
+else if (year=="2024") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2024.txt");  }
 
 vector<string> Filenames_Data = loadFilenames(file_path+"Data_names_"+year+".txt");
 string path = std::filesystem::current_path().string();
