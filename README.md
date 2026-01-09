@@ -25,7 +25,7 @@ source ~/.bashrc
 cmsenv
 ```
 
-## Running counter 
+### Running counter 
 
 1. Go to the counter directory: `cd COUNTER`
 
