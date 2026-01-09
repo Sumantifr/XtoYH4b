@@ -24,6 +24,21 @@ cd XtoYH4b/
 source ~/.bashrc
 cmsenv
 ```
+
+## Running counter 
+
+1. Go to the counter directory: `cd COUNTER`
+
+2. Run `run_counter.py`: E.g., `python3 run_counter.py --isSIGNAL 1 --YEAR 2024`
+
+3. It will produce a txt file with name `Final_SumofWeights...`
+
+4. Copy this file to another one replacing `Final_SumofWeights` to `MC_Summary`.  E.g. `cp Final_SumofWeights_2024_SIGNAL.txt MC_Summary_2024_SIGNAL.txt`
+
+5. Move `MC_Summary` file to `../Analysis/HistoMaker/`
+
+6. If this is regarding background MC, you need to add cross sections by hand (as of now)  [ignore this for signal]
+
 ### Running analysis code
 
 1. Go to Analysis directory: `cd Analysis/`

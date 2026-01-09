@@ -25,6 +25,8 @@ if args.isSIGNAL:
         samples = read_sample_names('../SIGNAL_names_2023.txt')
     elif(args.YEAR=="2023BPiX"):
         samples = read_sample_names('../SIGNAL_names_2023BPIX.txt')
+    elif(args.YEAR=="2024"):
+        samples = read_sample_names('../SIGNAL_names_2024.txt')
     output_file = "Final_SumofWeights_"+args.YEAR+"_SIGNAL.txt"
 elif args.SingleH:
     samples = read_sample_names('../MC_names_SingleH.txt')

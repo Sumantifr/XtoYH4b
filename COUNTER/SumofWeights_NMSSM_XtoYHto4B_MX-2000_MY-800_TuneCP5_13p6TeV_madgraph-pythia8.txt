@@ -1,1 +1,0 @@
-NMSSM_XtoYHto4B_MX-2000_MY-800_TuneCP5_13p6TeV_madgraph-pythia8	67000	8.40196e+12 	8.40196e+12
