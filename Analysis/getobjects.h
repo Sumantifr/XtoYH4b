@@ -291,6 +291,27 @@ void getAK4Genjets(std::vector<AK4GenJet> &genJets, float ptcut = 8.0, float eta
   sorted_by_pt(genJets);
 }
 
+void getAK4GenjetswNu(std::vector<AK4GenJet> &genJetswNu, float ptcut = 8.0, float etacut=2.5, bool isMC=true, int maxsize=njetmx)
+{
+	for(int ijet=0; ijet<(nGenJetAK4wNu); ijet++){
+		AK4GenJet gJet;
+		if (fabs(GenJetAK4wNu_eta[ijet]) >etacut) continue;
+        if (GenJetAK4wNu_pt[ijet] < ptcut) continue;
+
+		gJet.pt = GenJetAK4wNu_pt[ijet];
+		gJet.eta = GenJetAK4wNu_eta[ijet];
+		gJet.phi = GenJetAK4wNu_phi[ijet];
+		gJet.mass = GenJetAK4wNu_mass[ijet];
+		gJet.hadronFlavor = GenJetAK4wNu_hadronflav[ijet];
+		gJet.partonFlavor = GenJetAK4wNu_partonflav[ijet];
+		gJet.p4.SetPtEtaPhiM(gJet.pt,gJet.eta,gJet.phi,gJet.mass);
+
+		genJetswNu.push_back(gJet);
+		if(int(genJetswNu.size())>=maxsize) break;
+  }
+  sorted_by_pt(genJetswNu);
+}
+
 void getAK8Genjets(std::vector<AK8GenJet> &Jets, float ptcut=50, float etacut=2.5, bool isMC=true, int maxsize=njetmx)
 {
     for(int ijet=0; ijet<(nGenJetAK8); ijet++){
