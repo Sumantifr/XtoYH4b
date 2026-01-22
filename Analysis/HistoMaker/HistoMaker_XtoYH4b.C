@@ -1134,10 +1134,10 @@ int main(int argc, char *argv[])
 		
 		//btag SF correction //
 		if(year=="2024"){
-		shape_weight_up.push_back(sfcorvalues[1]); shape_weight_dn.push_back(sfcorvalues[2]); shape_weight_nom.push_back(sfcorvalues[0]);
+		shape_weight_up.push_back(1.); shape_weight_dn.push_back(1.); shape_weight_nom.push_back(1.);
 		}
 		else{
-		shape_weight_up.push_back(1.); shape_weight_dn.push_back(1.); shape_weight_nom.push_back(1.);
+		shape_weight_up.push_back(sfcorvalues[1]); shape_weight_dn.push_back(sfcorvalues[2]); shape_weight_nom.push_back(sfcorvalues[0]);
 		}
 
 		//LHEScale//
