@@ -96,6 +96,8 @@ if args.isDATA:
         samples = samples_data_2022EE
     elif args.YEAR == "2024":
         samples = read_sample_names('../Data_names_2024.txt')
+    elif args.YEAR == "2025":
+        samples = read_sample_names('../Data_names_2025.txt')
     else:
         samples = samples_data_2022
 else:
@@ -105,6 +107,8 @@ else:
             samples = read_sample_names('../SIGNAL_names_2023.txt')
         elif(args.YEAR=="2023BPiX"):
             samples = read_sample_names('../SIGNAL_names_2023BPIX.txt')
+        elif(args.YEAR=="2024"):
+            samples = read_sample_names('../SIGNAL_names_2024.txt')
     elif args.SingleH:
         samples = read_sample_names('../MC_names_SingleH.txt')
     else:
@@ -114,16 +118,16 @@ else:
             samples = read_sample_names('../MC_names.txt')
 
 for sam in samples:
-    if args.YEAR=="2024":
-        #if "TTto4Q" in sam:
-        if "QCD" not in sam:
-            continue
+    if args.YEAR=="2024": #special scheme for 2024 due to very large size of files
+        if "TTto4Q" in sam:
+        #if "QCD" not in sam:
+            continue #this is because TTto4Q sample is super-large
         else:
             pattern = os.path.join(in_path, sam+"*.root")
             input_files = glob.glob(pattern)
             batch_hadd(out_path, sam, in_path, input_files)
     else:
-        #if "MX-3000_MY-80" not in sam:
+        #if "QCD-4Jets_HT-1000to1200" not in sam:
         #    continue
         #else:
 	    command = "hadd -f %s/%s.root %s/%s_*.root"%(out_path,sam,in_path,sam)
