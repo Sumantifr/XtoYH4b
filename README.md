@@ -120,28 +120,35 @@ python3 create_btagSF_correction.py --YEAR YEAR
 
 - Copy `Hist2Comb.py` and `CreateCards_XYHto4b.C` from `COMBINE/bin` here
 
-- Add `<bin file="CreateCards_XYHto4b.C" name="CreateCards_XYHto4b"></bin>` to BuildFile.xml (or copy COMBINE/bin/BuildFile.xml) 
+- Add `<bin file="CreateCards_XYHto4b.C" name="CreateCards_XYHto4b"></bin>` to BuildFile.xml (or copy `COMBINE/bin/BuildFile.xml` directly) 
 
 3. Ingredients for datacard creation:
 
    - `mkdir -p InputFiles`
 
-   - If using histograms produced by `HistoMaker`,  run `Hist2Comb.py` (after using correct path `input_dir` inside the code). This will produce a ROOT file (within `InputFiles` directory) using histograms created by `HistoMaker` to the format that can be directly used to produce datacard.
+   - If using histograms produced by `HistoMaker`,  run `Hist2Comb.py` (after using correct path `input_dir` inside the code). 
+     
+     This will produce a ROOT file (within `InputFiles` directory) using histograms created by `HistoMaker` to the format that can be directly used to produce datacard.
+     
      Example command: `python3 Hist2Comb.py --YEAR 2022`
 
   - If you already have the ROOT file in the required format, put it in `InputFiles` directory
 
 4. Script for datacard creation: `CreateCards_XYHto4b.C`
-   - Make necessary changes to `CreateCards_XYHto4b.C` 
-   - recompile: `scram b -j10`  
+   - Make necessary changes to `CreateCards_XYHto4b.C`   (E.g, make sure `input_filename` matches to the one in `InputFiles` directory)
+   - recompile: `scram b -j10`  (in `CombineHarvester/CombineTools/bin/`)
 
 5. Go one level up (i.e., `CombineHarvester/CombineTools/`) and copy `COMBINE/XYHto4b` here. 
 
    - Inside `XYHto4b`, there are scripts for:
-     --  producing workspace from data (with or without condor)
-     --  computing limits (with or without condor)  
-     --  combining multiple datacards
-     --  making impact plots 
+
+     - -  producing workspace from data (with or without condor)
+
+     - -  computing limits (with or without condor)  
+
+     - -  combining multiple datacards
+
+     - -  making impact plots 
 
 6. Datacard creation:
 
