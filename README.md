@@ -162,3 +162,7 @@ python3 create_btagSF_correction.py --YEAR YEAR
    ```CreateCards_XYHto4b 2023BPiX```
 
 7. In the scripts for workspace creation, the corresponding path (from the earlier step) should be used
+
+Below are example commands for different tasks:
+
+1. Producing postfit results: `python3 run_postfit.py --YEAR 2023BPiX --combination 5 --MX 600 --MY 125`
