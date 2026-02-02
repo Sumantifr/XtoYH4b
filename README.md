@@ -101,3 +101,57 @@ python3 create_btagSF_correction.py --YEAR YEAR
    test_run=0/1 (default:0) 
    show_signal=0/1 (default:0) 
    ```
+
+### Using Combine tools 
+
+1. First go to the CMSSW source path and install Combine and CombineHarvester (for creating datacards and workspaces):
+
+   ```
+   cd CMSSW_14_2_1/src
+   cmsenv
+   git -c advice.detachedHead=false clone --depth 1 --branch v10.4.2 https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+   git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester
+   scram b -j10
+   ```
+
+2. Copy & modification of codes for datacard creating:
+
+- cd `CombineHarvester/CombineTools/bin/`
+
+- Copy `Hist2Comb.py` and `CreateCards_XYHto4b.C` from `COMBINE/bin` here
+
+- Add `<bin file="CreateCards_XYHto4b.C" name="CreateCards_XYHto4b"></bin>` to BuildFile.xml (or copy COMBINE/bin/BuildFile.xml) 
+
+3. Ingredients for datacard creation:
+
+   - `mkdir -p InputFiles`
+
+   - If using histograms produced by `HistoMaker`,  run `Hist2Comb.py` (after using correct path `input_dir` inside the code). This will produce a ROOT file (within `InputFiles` directory) using histograms created by `HistoMaker` to the format that can be directly used to produce datacard.
+     Example command: `python3 Hist2Comb.py --YEAR 2022`
+
+  - If you already have the ROOT file in the required format, put it in `InputFiles` directory
+
+4. Script for datacard creation: `CreateCards_XYHto4b.C`
+   - Make necessary changes to `CreateCards_XYHto4b.C` 
+   - recompile: `scram b -j10`  
+
+5. Go one level up (i.e., `CombineHarvester/CombineTools/`) and copy `COMBINE/XYHto4b` here. 
+
+   - Inside `XYHto4b`, there are scripts for:
+     --  producing workspace from data (with or without condor)
+     --  computing limits (with or without condor)  
+     --  combining multiple datacards
+     --  making impact plots 
+
+6. Datacard creation:
+
+   - One note: since we have many mass points and volume of datacards and workspaces is large. So, we produce datacards in group directory, e.g.,
+   ```
+   cd /data/dust/group/cms/higgs-bb-desy/XToYHTo4b/CombineResults/
+   mkdir -p 2023BPiX/datacards_vx/
+   cd 2023BPiX/datacards_vx/
+   ```
+   Now create datacards here:
+   ```CreateCards_XYHto4b 2023BPiX```
+
+7. In the scripts for workspace creation, the corresponding path (from the earlier step) should be used
