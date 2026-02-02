@@ -142,13 +142,13 @@ python3 create_btagSF_correction.py --YEAR YEAR
 
    - Inside `XYHto4b`, there are scripts for:
 
-     - -  producing workspace from data (with or without condor)
+     - producing workspace from data (with or without condor)
+    
+     - combining multiple datacards  
 
-     - -  computing limits (with or without condor)  
+     - computing limits (with or without condor)  
 
-     - -  combining multiple datacards
-
-     - -  making impact plots 
+     - making impact plots 
 
 6. Datacard creation:
 
