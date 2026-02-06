@@ -167,4 +167,4 @@ Below are example commands for different tasks:
 
 1. Producing postfit results: `python3 run_postfit.py --YEAR 2023BPiX --combination 5 --MX 600 --MY 125`
 
-2. Running GoF test: `python3 run_GoF_test.py --YEAR 2023BPiX --combination 5 --MX 600 --MY 125 --ntoys 400`  (N.B. plotting doesn't work on NAF)
+2. Running GoF test: `python3 run_GoF_test.py --YEAR 2023BPiX --combination 5 --MX 600 --MY 125 --ntoys 400`  

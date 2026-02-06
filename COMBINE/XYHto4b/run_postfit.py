@@ -49,7 +49,8 @@ def main():
         #running fit
         os.system("combineTool.py -M FitDiagnostics -d "+workspace+" -m 125 --rMax 10 --rMin -10 --setParameters r="+str(args.signal)+" --freezeParameters r  --saveShapes --saveWithUncertainties -n "+out_file)
         #producing plots
-        os.system("PostFitShapesFromWorkspace -w "+workspace+" -m 125 --output PostFitResults_"+Output+"_Signal_"+str(args.signal)+".root -f fitDiagnostics"+out_file+".root:fit_b --postfit --sampling --print")
+        os.system("PostFitShapesFromWorkspace -w "+workspace+" -m 125 --output PostFitResults_"+Output+"_Signal_"+str(args.signal)+"_Bonly.root -f fitDiagnostics"+out_file+".root:fit_b --postfit --sampling --print")
+        os.system("PostFitShapesFromWorkspace -w "+workspace+" -m 125 --output PostFitResults_"+Output+"_Signal_"+str(args.signal)+"_SplusB.root -f fitDiagnostics"+out_file+".root:fit_s --postfit --sampling --print")
 
     else:
 
@@ -57,7 +58,8 @@ def main():
         #running fit
         os.system("combineTool.py -M FitDiagnostics -d "+workspace+" -m 125 --rMax 10 --rMin -10  --saveShapes --saveWithUncertainties -n "+out_file)
         #producing plots
-        os.system("PostFitShapesFromWorkspace -w "+workspace+" -m 125 --output PostFitResults_XYH4b_"+Output+".root -f fitDiagnostics"+out_file+".root:fit_b --postfit --sampling --print")
+        os.system("PostFitShapesFromWorkspace -w "+workspace+" -m 125 --output PostFitResults_XYH4b_"+Output+"_Bonly.root -f fitDiagnostics"+out_file+".root:fit_b --postfit --sampling --print")
+        os.system("PostFitShapesFromWorkspace -w "+workspace+" -m 125 --output PostFitResults_XYH4b_"+Output+"_SplusB.root -f fitDiagnostics"+out_file+".root:fit_s --postfit --sampling --print")
         
 if __name__ == "__main__":
     main()

@@ -58,7 +58,7 @@ def main():
         out_file = ".GoFResults_XYH4b_"+Output
         os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" -t "+str(args.ntoys)+" --toysFrequentist --bypassFrequentistFit")
         #Computing p-value
-        os.system("combineTool.py -M CollectGoodnessOfFit higgsCombine."+out_file_data+".GoodnessOfFit.mH125.root higgsCombine."+out_file+".GoodnessOfFit.mH125.*.root -o gof_"+Output+".json")
+        os.system("combineTool.py -M CollectGoodnessOfFit --input higgsCombine"+out_file_data+".GoodnessOfFit.mH125.root higgsCombine"+out_file+".GoodnessOfFit.mH125.*.root -o gof_"+Output+".json")
 
     else:
 
@@ -66,7 +66,7 @@ def main():
         os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" --fixedSignalStrength 0 -t "+str(args.ntoys)+" --toysFrequentist --bypassFrequentistFit")
 
     #Computing p-value
-    os.system("combineTool.py -M CollectGoodnessOfFit higgsCombine."+out_file_data+".GoodnessOfFit.mH125.root higgsCombine."+out_file+".GoodnessOfFit.mH125.*.root  -o gof_"+Output+".json")
+    os.system("combineTool.py -M CollectGoodnessOfFit --input higgsCombine"+out_file_data+".GoodnessOfFit.mH125.root higgsCombine"+out_file+".GoodnessOfFit.mH125.*.root -o gof_"+Output+".json")
     #Making plot
     os.system("plotGof.py gof_"+Output+".json --statistic "+args.algorithm+" --mass 125.0 -o gof_plot_"+Output)#+" --title-right=")
 
