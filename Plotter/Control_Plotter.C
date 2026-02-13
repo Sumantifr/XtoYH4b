@@ -9,7 +9,8 @@ string signal_process = " ";
 const char* user_c = std::getenv("USER");
 string user = user_c ? std::string(user_c) : std::string("unknown");
 
-string filepath = string("/data/dust/user/")+user+"/XToYHTo4b/SmallNtuples/Histograms/";
+//string filepath = string("/data/dust/user/")+user+"/XToYHTo4b/SmallNtuples/Histograms/";
+string filepath = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/";
 string output_filepath = "Control_plots/";		
 
 void Control_Plotter(string year="2022", bool show_data = false, bool test_run=false, bool show_signal=false, bool singleH=true, bool ispostfit=false)
@@ -36,10 +37,10 @@ samples.push_back({"DoubleH","HH(4b)",int(TColor::GetColor("#92dadd")),"",false}
 } 
 samples.push_back({"ST","Single t",int(TColor::GetColor("#7a21dd")),"",false}); //
 samples.push_back({"Diboson","VV",int(TColor::GetColor("#9c9ca1")),"",false});//
-if(year!="2024"){
+//if(year!="2024"){
 samples.push_back({"Zto2Q","Z+jets",int(TColor::GetColor("#e42536")),"",false});//
 samples.push_back({"Wto2Q","W+jets",int(TColor::GetColor("#f89c20")),"",false});//
-}
+//}
 samples.push_back({"TT","t#bar{t}",int(TColor::GetColor("#964a8b")),"",false}); //
 samples.push_back({"QCD","QCD",int(TColor::GetColor("#5790fc")),"",false});//
 
@@ -60,7 +61,7 @@ for(unsigned isam=0; isam<samples.size(); isam++){
 }
 
 string data_file = "Data"; 
-if(year=="2023"||year=="2023BPiX"||year=="2024"){ data_file = "Data_Parking"; }
+if(year=="2023"||year=="2023BPiX"||year=="2024"||year=="2025"){ data_file = "Data_Parking"; }
 
 int nsamples = samples.size();
 if((bkgs.size()+sigs.size())!=nsamples) {cout<<"Check number of files";  return;}
@@ -95,7 +96,7 @@ vars.push_back({"Jet_pt_1","1st jet p_{T} (GeV)",true});
 vars.push_back({"Jet_eta_1","1st jet #eta"});
 vars.push_back({"Jet_phi_1","1st jet #phi"});
 vars.push_back({"Jet_mass_1","1st jet mass (GeV)",true});
-if(year!="2024"){
+if(year!="2024"&&year!="2025"){
 vars.push_back({"Jet_DeepFlavB_1","1st jet DeepFlavB score",true});
 vars.push_back({"Jet_DeepFlavB_WP_1","1st jet DeepFlavB score (WP-binned)"});
 vars.push_back({"Jet_DeepFlavQG_1","1st jet DeepFlavQG score"});
@@ -117,7 +118,7 @@ vars.push_back({"Jet_UParTAK4CvB_1","1st jet UParTAK4CvB score",true});
 vars.push_back({"Jet_UParTAK4CvL_1","1st jet UParTAK4CvL score",true});
 vars.push_back({"Jet_UParTAK4QG_1","1st jet UParTAK4QG score",true});
 }
-if(year=="2024"||year=="2023BPiX"){
+if(year=="2024"||year=="2025"||year=="2023BPiX"){
 vars.push_back({"Jet_charge_kappa_0p3_1","1st jet charge (#kappa=0.3)"});
 vars.push_back({"Jet_charge_kappa_0p6_1","1st jet charge (#kappa=0.6)"});
 vars.push_back({"Jet_charge_kappa_1p0_1","1st jet charge (#kappa=1.0)"});
@@ -126,7 +127,7 @@ vars.push_back({"Jet_pt_2","2nd jet p_{T} (GeV)",true});
 vars.push_back({"Jet_eta_2","2nd jet #eta"});
 vars.push_back({"Jet_phi_2","2nd jet #phi"});
 vars.push_back({"Jet_mass_2","2nd jet mass (GeV)",true});
-if(year!="2024"){
+if(year!="2024"&&year!="2025"){
 vars.push_back({"Jet_DeepFlavB_2","2nd jet DeepFlavB score",true});
 vars.push_back({"Jet_DeepFlavB_WP_2","2nd jet DeepFlavB score (WP-binned)"});
 vars.push_back({"Jet_DeepFlavQG_2","2nd jet DeepFlavQG score",true});
@@ -148,7 +149,7 @@ vars.push_back({"Jet_UParTAK4CvB_2","2nd jet UParTAK4CvB score",true});
 vars.push_back({"Jet_UParTAK4CvL_2","2nd jet UParTAK4CvL score",true});
 vars.push_back({"Jet_UParTAK4QG_2","2nd jet UParTAK4QG score",true});
 }
-if(year=="2024"||year=="2023BPiX"){
+if(year=="2024"||year=="2025"||year=="2023BPiX"){
 vars.push_back({"Jet_charge_kappa_0p3_2","2nd jet charge (#kappa=0.3)"});
 vars.push_back({"Jet_charge_kappa_0p6_2","2nd jet charge (#kappa=0.6)"});
 vars.push_back({"Jet_charge_kappa_1p0_2","2nd jet charge (#kappa=1.0)"});
@@ -157,7 +158,7 @@ vars.push_back({"Jet_pt_3","3rd jet p_{T} (GeV)",true});
 vars.push_back({"Jet_eta_3","3rd jet #eta"});
 vars.push_back({"Jet_phi_3","3rd jet #phi"});
 vars.push_back({"Jet_mass_3","3rd jet mass (GeV)",true});
-if(year!="2024"){
+if(year!="2024"&&year!="2025"){
 vars.push_back({"Jet_DeepFlavB_3","3rd jet DeepFlavB score",true});
 vars.push_back({"Jet_DeepFlavB_WP_3","3rd jet DeepFlavB score (WP-binned)"});
 vars.push_back({"Jet_DeepFlavQG_3","3rd jet DeepFlavQG score",true});
@@ -179,7 +180,7 @@ vars.push_back({"Jet_UParTAK4CvB_3","3rd jet UParTAK4CvB score",true});
 vars.push_back({"Jet_UParTAK4CvL_3","3rd jet UParTAK4CvL score",true});
 vars.push_back({"Jet_UParTAK4QG_3","3rd jet UParTAK4QG score",true});
 }
-if(year=="2024"||year=="2023BPiX"){
+if(year=="2024"||year=="2025"||year=="2023BPiX"){
 vars.push_back({"Jet_charge_kappa_0p3_3","3rd jet charge (#kappa=0.3)"});
 vars.push_back({"Jet_charge_kappa_0p6_3","3rd jet charge (#kappa=0.6)"});
 vars.push_back({"Jet_charge_kappa_1p0_3","3rd jet charge (#kappa=1.0)"});
@@ -188,7 +189,7 @@ vars.push_back({"Jet_pt_4","4th jet p_{T} (GeV)",true});
 vars.push_back({"Jet_eta_4","4th jet #eta"});
 vars.push_back({"Jet_phi_4","4th jet #phi"});
 vars.push_back({"Jet_mass_4","4th jet mass (GeV)",true});
-if(year!="2024"){
+if(year!="2024"&&year!="2025"){
 vars.push_back({"Jet_DeepFlavB_4","4th jet DeepFlavB score",true});
 vars.push_back({"Jet_DeepFlavB_WP_4","4th jet DeepFlavB score (WP-binned)"});
 vars.push_back({"Jet_DeepFlavQG_4","4th jet DeepFlavQG score",true});
@@ -210,11 +211,12 @@ vars.push_back({"Jet_UParTAK4CvB_4","4th jet UParTAK4CvB score",true});
 vars.push_back({"Jet_UParTAK4CvL_4","4th jet UParTAK4CvL score",true});
 vars.push_back({"Jet_UParTAK4QG_4","4th jet UParTAK4QG score",true});
 }
-if(year=="2024"||year=="2023BPiX"){
+if(year=="2024"||year=="2025"||year=="2023BPiX"){
 vars.push_back({"Jet_charge_kappa_0p3_4","4th jet charge (#kappa=0.3)"});
 vars.push_back({"Jet_charge_kappa_0p6_4","4th jet charge (#kappa=0.6)"});
 vars.push_back({"Jet_charge_kappa_1p0_4","4th jet charge (#kappa=1.0)"});
 }
+
 vars.push_back({"h_highestscore_H1_mass","Highest BDT score combination: leading candidate m (GeV)"});
 vars.push_back({"h_highestscore_H2_mass","Highest BDT score combination: subleading candidate m (GeV)"});
 vars.push_back({"h_highestscore_X_mass","Highest BDT score combination: m_{4j} (GeV)"});
@@ -234,7 +236,7 @@ vars.push_back({"Dijet_Comb3_LeadingPair_mass","Dijet Combination 3: leading can
 vars.push_back({"Dijet_Comb3_LeadingPair_pt","Dijet Combination 3: leading candidate p_{T} (GeV)",true});
 vars.push_back({"Dijet_Comb3_LeadingPair_ptratio","Dijet Combination 3: leading candidate p_{T} ratio"});
 vars.push_back({"Dijet_Comb3_LeadingPair_dR","Dijet Combination 3: leading candidate #DeltaR"});
-if(year=="2024" || year=="2023BPiX"){
+if(year=="2024"||year=="2025"|| year=="2023BPiX"){
 vars.push_back({"Dijet_Comb4_LeadingPair_mass","Dijet Combination (Min Mass): leading candidate m (GeV)"});
 vars.push_back({"Dijet_Comb4_LeadingPair_pt","Dijet Combination (Min Mass): leading candidate p_{T} (GeV)",true});
 vars.push_back({"Dijet_Comb4_LeadingPair_ptratio","Dijet Combination (Min Mass): leading candidate p_{T} ratio"});
@@ -257,7 +259,7 @@ vars.push_back({"Dijet_Comb3_SubleadingPair_mass","Dijet Combination 3: subleadi
 vars.push_back({"Dijet_Comb3_SubleadingPair_pt","Dijet Combination 3: subleading candidate p_{T} (GeV)",true});
 vars.push_back({"Dijet_Comb3_SubleadingPair_ptratio","Dijet Combination 3: subleading candidate p_{T} ratio"});
 vars.push_back({"Dijet_Comb3_SubleadingPair_dR","Dijet Combination 3: subleading candidate #DeltaR"});
-if(year=="2024" || year=="2023BPiX"){
+if(year=="2024" || year=="2025" || year=="2023BPiX"){
 vars.push_back({"Dijet_Comb4_SubleadingPair_mass","Dijet Combination (Min Mass): subleading candidate m (GeV)"});
 vars.push_back({"Dijet_Comb4_SubleadingPair_pt","Dijet Combination (Min Mass): subleading candidate p_{T} (GeV)",true});
 vars.push_back({"Dijet_Comb4_SubleadingPair_ptratio","Dijet Combination (Min Mass): subleading candidate p_{T} ratio"});
@@ -298,7 +300,7 @@ vars.push_back({"Quadjet_Comb3_ptratio","Quadjet Combination 3:  p_{T}^{H_{2}}/p
 vars.push_back({"Quadjet_Comb3_mass_residual","Quadjet Combination 3:  m_{4j} - m_{H_{1}} - m_{H_{2}} (GeV)"});
 vars.push_back({"Quadjet_Comb3_mass_residual_ratio","Quadjet Combination 3:  (m_{4j} - m_{H_{1}} - m_{H_{2}}) / m_{4j}"});
 
-if(year=="2024" || year=="2023BPiX"){
+if(year=="2024" || year=="2025" || year=="2023BPiX"){
 
 vars.push_back({"Quadjet_Comb4_deta","Quadjet Combination (Min Mass):  #Delta#eta (H_{1}, H_{2})"});
 vars.push_back({"Quadjet_Comb4_dy","Quadjet Combination (Min Mass):  #Deltay (H_{1}, H_{2})"});
@@ -339,43 +341,55 @@ vars.push_back({"Jet_pt_3_Comb_3_3_2_2_Inclusive_VR","3rd jet p_{T} (GeV)"});
 vars.push_back({"Jet_eta_3_Comb_3_3_2_2_Inclusive_CR","3rd jet #eta"});
 vars.push_back({"Jet_eta_3_Comb_3_3_2_2_Inclusive_VR","3rd jet #eta"});
 
-if(year!="2024"){
+if(year!="2024" && 0>1){
 if(!show_data){vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive_mHcut","1st jet PNet CvB score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive","1st jet PNet CvB score",true});}
 vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive_CR","1st jet PNet CvB score",true});
 vars.push_back({"Jet_PNetCvB_1_Comb_3_3_2_2_Inclusive_VR","1st jet PNet CvB score",true});
 if(!show_data){vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive_mHcut","2nd jet PNet CvB score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive","2nd jet PNet CvB score",true});}
 vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive_CR","2nd jet PNet CvB score",true});
 vars.push_back({"Jet_PNetCvB_2_Comb_3_3_2_2_Inclusive_VR","2nd jet PNet CvB score",true});
 if(!show_data){vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive_mHcut","3rd jet PNet CvB score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive","3rd jet PNet CvB score",true});}
 vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive_CR","3rd jet PNet CvB score",true});
 vars.push_back({"Jet_PNetCvB_3_Comb_3_3_2_2_Inclusive_VR","3rd jet PNet CvB score",true});
 if(!show_data){vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive_mHcut","4th jet PNet CvB score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive","4th jet PNet CvB score",true});}
 vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive_CR","4th jet PNet CvB score",true});
 vars.push_back({"Jet_PNetCvB_4_Comb_3_3_2_2_Inclusive_VR","4th jet PNet CvB score",true});
 
 if(!show_data){vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive_mHcut","1st jet PNet CvL score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive","1st jet PNet CvL score",true});}
 vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive_CR","1st jet PNet CvL score",true});
 vars.push_back({"Jet_PNetCvL_1_Comb_3_3_2_2_Inclusive_VR","1st jet PNet CvL score",true});
 if(!show_data){vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive_mHcut","2nd jet PNet CvL score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive","2nd jet PNet CvL score",true});}
 vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive_CR","2nd jet PNet CvL score",true});
 vars.push_back({"Jet_PNetCvL_2_Comb_3_3_2_2_Inclusive_VR","2nd jet PNet CvL score",true});
 if(!show_data){vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive_mHcut","3rd jet PNet CvL score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive","3rd jet PNet CvL score",true});}
 vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive_CR","3rd jet PNet CvL score",true});
 vars.push_back({"Jet_PNetCvL_3_Comb_3_3_2_2_Inclusive_VR","3rd jet PNet CvL score",true});
 if(!show_data){vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive_mHcut","4th jet PNet CvL score",true});}
+if(!show_data){vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive","4th jet PNet CvL score",true});}
 vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive_CR","4th jet PNet CvL score",true});
 vars.push_back({"Jet_PNetCvL_4_Comb_3_3_2_2_Inclusive_VR","4th jet PNet CvL score",true});
 
 if(!show_data){vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive_mHcut","1st jet PNet QG score",true});}
+if(!show_data){vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive","1st jet PNet QG score",true});}
 vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive_CR","1st jet PNet QG score",true});
 vars.push_back({"Jet_PNetQG_1_Comb_3_3_2_2_Inclusive_VR","1st jet PNet QG score",true});
 if(!show_data){vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive_mHcut","2nd jet PNet QG score",true});}
+if(!show_data){vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive","2nd jet PNet QG score",true});}
 vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive_CR","2nd jet PNet QG score",true});
 vars.push_back({"Jet_PNetQG_2_Comb_3_3_2_2_Inclusive_VR","2nd jet PNet QG score",true});
 if(!show_data){vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive_mHcut","3rd jet PNet QG score",true});}
+if(!show_data){vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive","3rd jet PNet QG score",true});}
 vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive_CR","3rd jet PNet QG score",true});
 vars.push_back({"Jet_PNetQG_3_Comb_3_3_2_2_Inclusive_VR","3rd jet PNet QG score",true});
 if(!show_data){vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive_mHcut","4th jet PNet QG score",true});}
+if(!show_data){vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive","4th jet PNet QG score",true});}
 vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive_CR","4th jet PNet QG score",true});
 vars.push_back({"Jet_PNetQG_4_Comb_3_3_2_2_Inclusive_VR","4th jet PNet QG score",true});
 
@@ -413,6 +427,7 @@ vars.push_back({"h_angle_theta_star","#theta*"});
 vars.push_back({"h_angle_cos_theta_star","cos#theta*"});
 vars.push_back({"h_angle_phi_star","#phi*"});
 //new//
+
 vars.push_back({"h_angle_theta_H_lab","#theta_{H}"});
 vars.push_back({"h_angle_cos_theta_H_lab","cos#theta_{H}"});
 vars.push_back({"h_angle_theta_Y_lab","#theta_{Y}"});
@@ -427,6 +442,7 @@ vars.push_back({"h_nAK4jets_loose_btag","# of loose b-tagged jets"});
 }
 
 //additional jet info//
+
 vars.push_back({"h_njets_add","# of additional AK4 jets"});
 vars.push_back({"h_njets_add_btag","# of additional AK4 jets (loose b-tagged)"});
 vars.push_back({"h_HTjets_additional","H_{T} (GeV) [additional jets]"});
@@ -441,6 +457,8 @@ vars.push_back({"h_MX_Comb_5_5_4_4_Inclusive","m_{4j} (GeV)"});
 vars.push_back({"h_MX_Comb_5_5_4_4","m_{4j} (GeV)"});
 vars.push_back({"h_MX_Comb_5_5_5_4","m_{4j} (GeV)"});
 vars.push_back({"h_MX_Comb_5_5_5_5","m_{4j} (GeV)"});
+vars.push_back({"h_MX_Comb_3_3_3_1_Inclusive","m_{4j} (GeV)"});
+vars.push_back({"h_MX_Comb_3_2_2_2_Inclusive","m_{4j} (GeV)"});
 
 vars.push_back({"h_MX_MY_Comb_3_3_2_2_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"});
 vars.push_back({"h_MX_MY_Comb_3_3_3_2_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"});
@@ -448,6 +466,8 @@ vars.push_back({"h_MX_MY_Comb_5_5_4_4_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"})
 vars.push_back({"h_MX_MY_Comb_5_5_4_4","Unrolled m_{4j}-m_{Y} (GeV)"});
 vars.push_back({"h_MX_MY_Comb_5_5_5_4","Unrolled m_{4j}-m_{Y} (GeV)"});
 vars.push_back({"h_MX_MY_Comb_5_5_5_5","Unrolled m_{4j}-m_{Y} (GeV)"});
+vars.push_back({"h_MX_MY_Comb_3_3_3_1_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"});
+vars.push_back({"h_MX_MY_Comb_3_2_2_2_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"});
 
 vars.push_back({"h_MX_Comb_3_3_2_2_Inclusive_mHcut","m_{4j} (GeV)"});
 vars.push_back({"h_MX_Comb_3_3_3_2_Inclusive_mHcut","m_{4j} (GeV)"});
@@ -455,10 +475,14 @@ vars.push_back({"h_MX_Comb_3_3_3_2_Inclusive_mHcut","m_{4j} (GeV)"});
 //vars.push_back({"h_MX_Comb_5_5_4_4_mHcut","m_{4j} (GeV)"});
 //vars.push_back({"h_MX_Comb_5_5_5_4_mHcut","m_{4j} (GeV)"});
 //vars.push_back({"h_MX_Comb_5_5_5_5_mHcut","m_{4j} (GeV)"});
+vars.push_back({"h_MX_Comb_3_3_3_1_Inclusive_mHcut","m_{4j} (GeV)"});
+vars.push_back({"h_MX_Comb_3_2_2_2_Inclusive_mHcut","m_{4j} (GeV)"});
 
 vars.push_back({"h_MX_Comb_3_3_2_2_Inclusive_mHcut_invert","m_{4j} (GeV)"});
 vars.push_back({"h_MX_Comb_3_3_3_2_Inclusive_mHcut_invert","m_{4j} (GeV)"});
 //vars.push_back({"h_MX_Comb_5_5_4_4_Inclusive_mHcut_invert","m_{4j} (GeV)"});
+vars.push_back({"h_MX_Comb_3_3_3_1_Inclusive_mHcut_invert","m_{4j} (GeV)"});
+vars.push_back({"h_MX_Comb_3_2_2_2_Inclusive_mHcut_invert","m_{4j} (GeV)"});
 
 vars.push_back({"h_MX_MY_Comb_3_3_2_2_Inclusive_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
 vars.push_back({"h_MX_MY_Comb_3_3_3_2_Inclusive_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
@@ -466,6 +490,8 @@ vars.push_back({"h_MX_MY_Comb_3_3_3_2_Inclusive_mHcut","Unrolled m_{4j}-m_{Y} (G
 //vars.push_back({"h_MX_MY_Comb_5_5_4_4_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
 //vars.push_back({"h_MX_MY_Comb_5_5_5_4_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
 //vars.push_back({"h_MX_MY_Comb_5_5_5_5_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
+vars.push_back({"h_MX_MY_Comb_3_3_3_1_Inclusive_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
+vars.push_back({"h_MX_MY_Comb_3_2_2_2_Inclusive_mHcut","Unrolled m_{4j}-m_{Y} (GeV)"});
 
 vars.push_back({"Jet_pt_4_Comb_3_3_2_2_Inclusive","4th jet p_{T} (GeV)"});
 vars.push_back({"Jet_pt_4_Comb_3_3_3_2_Inclusive","4th jet p_{T} (GeV)"});
@@ -524,6 +550,10 @@ if(year=="2022EE") { runtag = 18; data_lumi = 26.67; }
 if(year=="2023") { runtag = 19; data_lumi = 11.24; }
 if(year=="2023BPiX") { runtag = 20; data_lumi = 9.45; }
 if(year=="2024") { runtag = 21; data_lumi = 108.96; }
+//if(year=="2025") { runtag = 22; data_lumi = 20.78; }
+if(year=="2025") { runtag = 22; data_lumi = 26.5; }
+
+//data_lumi *= 0.15;
 
 cout<<"data_lumi "<<data_lumi<<endl;
 
@@ -661,10 +691,28 @@ for(unsigned int ivar=0; ivar<vars.size(); ivar++){
 		if(vars[ivar].name=="h_CutFlow_rel") { 
 			if(fg<bkgs.size()) { hists[fg]->Scale(1./(hists[fg]->GetBinContent(1)*bkgs.size())); }
 			else    { hists[fg]->Scale(1./(hists[fg]->GetBinContent(1))); }
+			
+			hists[fg]->GetYaxis()->SetTitle("Efficiency");
+			hists[fg]->SetMaximum(1.35);
+		}
+
+		if(vars[ivar].name=="h_CutFlow_abs" || vars[ivar].name=="h_CutFlow_cum" || vars[ivar].name=="h_CutFlow_nmo" || vars[ivar].name=="h_CutFlow_rel")
+		{
+
+			hists[fg]->GetXaxis()->SetBinLabel(1,"Noise filter");
+			hists[fg]->GetXaxis()->SetBinLabel(2,"Jet veto");
+			hists[fg]->GetXaxis()->SetBinLabel(3,"L1");
+			hists[fg]->GetXaxis()->SetBinLabel(4,"HLT");
+			hists[fg]->GetXaxis()->SetBinLabel(5,"N_{j}>=4");
+			hists[fg]->GetXaxis()->SetBinLabel(6,"p_{T} cond.");
+			hists[fg]->GetXaxis()->SetBinLabel(7,"b tag cond.");
+
+			hists[fg]->GetXaxis()->SetLabelOffset(0.03);
+		
 		}
 			
 	}
-	
+
 	// Plot name & plotting //
 
 	//gStyle->SetLabelOffset(-200,"Y");
@@ -684,6 +732,22 @@ for(unsigned int ivar=0; ivar<vars.size(); ivar++){
 		hists_sys_up,hists_sys_dn,
 		signal_process
 	);
+		
+	if(vars[ivar].name=="h_njets"
+	 ||vars[ivar].name=="h_HTjets" 
+	 ||vars[ivar].name=="h_MX_Comb_3_3_3_2_Inclusive_mHcut"
+	 ||vars[ivar].name=="h_MX_Comb_3_3_3_2_Inclusive_mHcut_invert"
+	 ){
+	
+		Plot_Fraction(
+			hists,
+			string(name),
+			runtag,
+			bkgs, 
+			output_filepath
+		);
+	
+	}
 					
 	hists.clear();
 	hists_sys_up.clear();

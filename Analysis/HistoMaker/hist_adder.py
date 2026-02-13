@@ -11,8 +11,10 @@ args = parser.parse_args()
 
 username = getpass.getuser()
 
-in_path="/data/dust/user/"+username+"/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
-out_path="/data/dust/user/"+username+"/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+##in_path="/data/dust/user/"+username+"/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+##out_path="/data/dust/user/"+username+"/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+in_path="/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+out_path="/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
 
 if not os.path.exists(out_path):
     os.makedirs(out_path)

@@ -260,7 +260,9 @@ void Plot(vector<TH1D*> hists_in,
 	
 	if(show_data){
 		SetPlotStyle(h_data,	 1,1,1,20,1,1,0,0,0);		
-		h_data->Draw("E1X0 SAME");	// data
+		//h_data->Draw("E1X0 SAME");	// data
+		h_data->Draw("PE1X0 SAME"); // data
+
 		leg_data->AddEntry(h_data,"Data","pe");
 	}
 
@@ -611,6 +613,123 @@ void Compare_1D(vector<TH1D*> hists_in,
 	
 	hrat.clear();
 	hrat.shrink_to_fit();
+	
+	canv->Close();
+	gSystem->ProcessEvents();
+	delete canv;
+}
+
+void Plot_Fraction(vector<TH1D*> hists_in,
+		  string canvas_name, 
+		  int runtag, 
+		  vector<sample_info> bkgs,
+		  string output_filepath
+		  )
+	{
+	
+	int nbkg = bkgs.size();
+	
+	if(hists_in.size()<1) {
+		cout<<"Need at least one sample!";
+		return;
+	}
+	
+	vector<TH1D*> hists;
+	// loading only backgrounds //
+	for(unsigned ih=0; ih<hists_in.size(); ih++){
+		if(ih<nbkg){
+			hists.push_back(hists_in[ih]);
+		}
+	}
+	
+	// sum of bkgs (nominal & sys) //
+	
+	TH1D *hists_mcsum;
+   
+	for(int fg=0; fg<(hists.size()); fg++){
+		
+		if(fg==0){
+			hists_mcsum = (TH1D*)hists[fg]->Clone();
+		}			
+		else if(fg>0 && fg<nbkg){
+			if(isnan(hists[fg]->Integral())) continue;
+			hists_mcsum->Add(hists[fg]);
+		}
+		
+	}//fg
+	
+	for(int fg=0; fg<(hists.size()); fg++){
+		if(fg<nbkg){
+			hists[fg]->Divide(hists_mcsum);
+			hists[fg]->GetYaxis()->SetTitle("Fraction");
+			hists[fg]->SetMinimum(0);
+			hists[fg]->SetMaximum(1);
+		}
+	}
+	
+	unsigned imax = 0;
+	for(unsigned fg=0; fg<(hists.size()); fg++){
+		if(hists[fg]->GetMaximum()>hists[imax]->GetMaximum()){
+			imax = fg;
+		}
+	}
+	
+	char name[1000];
+	sprintf(name,"Fraction_%s",(canvas_name).c_str());
+	TCanvas *canv;
+			
+	canv = tdrCanvas(name,hists[imax],runtag,0,true,"");
+	
+	TLegend *leg;
+	leg = tdrLeg(leg_x1,leg_y1-0.1,leg_x2,leg_y2-0.1,42,0.04);
+	if((nbkg)>8){ leg->SetNColumns(3); }
+	else if((nbkg)>4){ leg->SetNColumns(2); }
+	else{ leg->SetNColumns(1); }
+
+	// Canvas 1 //
+	
+	canv->cd(1);
+//	gPad->SetRightMargin(0.225);
+	
+	char hist_name[500];
+	sprintf(hist_name,"%s",hists[0]->GetName());
+
+	// Setting plotting height limits //
+	
+	SetLimits(hists[0],hists_mcsum->GetMaximumBin(),1.,0,gPad->GetLogy());
+	
+	sprintf(name,"Stack_%s",hists[0]->GetName());
+	THStack *h_var_stack = new THStack(name,"");
+	
+	// Plotting //
+
+	for(int fg=0; fg<int(hists.size()); fg++){
+	
+		SetAxisStyle(hists[fg]);
+		hists[fg]->GetYaxis()->SetTitleOffset(1.25);
+		hists[fg]->GetXaxis()->SetNdivisions(506);
+		//bkg//
+		
+		SetPlotStyle(hists[fg],kSolid,bkgs[fg].color,1,0,bkgs[fg].color,0,1001,bkgs[fg].color,1);
+		if(!isnan(hists[fg]->Integral())){
+			h_var_stack->Add(hists[fg]);
+			leg->AddEntry(hists[fg],bkgs[fg].title.c_str(),"lf");
+		}
+		
+		
+	}//fg
+    
+	h_var_stack->Draw("hist:SAME");			// bkg
+	
+	leg->Draw("SAME");
+
+	gPad->RedrawAxis();
+	
+	sprintf(name,"%s/%s.png",(output_filepath).c_str(),canv->GetName());
+	canv->SaveAs(name);
+	
+	hists.clear();
+	hists.shrink_to_fit();
 	
 	canv->Close();
 	gSystem->ProcessEvents();

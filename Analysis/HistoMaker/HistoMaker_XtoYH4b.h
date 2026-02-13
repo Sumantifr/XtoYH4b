@@ -678,7 +678,7 @@ using namespace std;
    
    fChain->SetBranchAddress("MET_pt", &MET_pt);
    fChain->SetBranchAddress("MET_phi", &MET_phi);
-   if(year!="2024" && 0>1){
+   if(year!="2024" && year!="2025" && 0>1){
    fChain->SetBranchAddress("MET_sig", &MET_sig);
    fChain->SetBranchAddress("MET_sumEt", &MET_sumEt);
    fChain->SetBranchAddress("MET_pt_JESup", &MET_pt_JESup);
@@ -702,7 +702,7 @@ using namespace std;
    }
    
    fChain->SetBranchAddress("ST", &ST);
-   if(year!="2024" && 0>1){
+   if(year!="2024" && year!="2025" && 0>1){
    fChain->SetBranchAddress("ST_JESup", &ST_JESup);
    fChain->SetBranchAddress("ST_JESdn", &ST_JESdn);
    fChain->SetBranchAddress("ST_JERup", &ST_JERup);
@@ -722,13 +722,13 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_jetID_tightlepveto", PFJetAK8_jetID_tightlepveto);
    fChain->SetBranchAddress("PFJetAK8_msoftdrop", PFJetAK8_msoftdrop);
    }
-   if(year!="2024"){
+   if(year!="2024" && year!="2025"){
    fChain->SetBranchAddress("PFJetAK8_JESup", PFJetAK8_JESup);
    fChain->SetBranchAddress("PFJetAK8_JESdn", PFJetAK8_JESdn);
 	}
    //fChain->SetBranchAddress("PFJetAK8_JESup_split", &PFJetAK8_JESup_split);
    //fChain->SetBranchAddress("PFJetAK8_JESdn_split", &PFJetAK8_JESdn_split);
-   if(year!="2024"){
+   if(year!="2024" && year!="2025"){
    fChain->SetBranchAddress("PFJetAK8_label_Top_bq", PFJetAK8_label_Top_bq);
    fChain->SetBranchAddress("PFJetAK8_label_Top_bc", PFJetAK8_label_Top_bc);
    fChain->SetBranchAddress("PFJetAK8_label_Top_bcq", PFJetAK8_label_Top_bcq);
@@ -745,7 +745,7 @@ using namespace std;
    if(readAK8jets){
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XbbvsQCD", PFJetAK8_DeepTag_PNetMD_XbbvsQCD);
    }
-   if(year!="2024"){
+   if(year!="2024" && year!="2025"){
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XccvsQCD", PFJetAK8_DeepTag_PNetMD_XccvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XqqvsQCD", PFJetAK8_DeepTag_PNetMD_XqqvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_QCD", PFJetAK8_DeepTag_PNetMD_QCD);
@@ -771,7 +771,7 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_eta", JetAK4_eta);
    fChain->SetBranchAddress("JetAK4_phi", JetAK4_phi);
    fChain->SetBranchAddress("JetAK4_mass", JetAK4_mass);
-   if(year!="2024"){
+   if(year!="2024" && year!="2025"){
    if(0>1){
    fChain->SetBranchAddress("JetAK4_btag_DeepCSV", JetAK4_btag_DeepCSV);
    fChain->SetBranchAddress("JetAK4_btag_DeepFlav", JetAK4_btag_DeepFlav);
@@ -799,7 +799,7 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_btag_UParTAK4QG", JetAK4_btag_UParTAK4QG);
    fChain->SetBranchAddress("JetAK4_btag_UParTAK4B_WP", JetAK4_btag_UParTAK4B_WP);
    }
-   if(year!="2024"){
+   if(year!="2024" && year!="2025"){
    fChain->SetBranchAddress("JetAK4_PNetRegPtRawCorr", JetAK4_PNetRegPtRawCorr);
    fChain->SetBranchAddress("JetAK4_PNetRegPtRawCorrNeutrino", JetAK4_PNetRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("JetAK4_PNetRegPtRawRes", JetAK4_PNetRegPtRawRes);
@@ -916,7 +916,7 @@ using namespace std;
 	fChain->SetBranchAddress("btag_PNet_weightdown", &btag_PNet_weightdown);
    }
    fChain->SetBranchAddress("btag_ParT_weight", &btag_ParT_weight);
-   if(year=="2024"){
+   if(year=="2024"||year=="2025"){
    fChain->SetBranchAddress("btag_UParT_weight", &btag_UParT_weight);
    if(isSignal){
 	fChain->SetBranchAddress("btag_UParT_weightup", &btag_UParT_weightup);

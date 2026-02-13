@@ -29,7 +29,8 @@ string input_path = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/A
 
 const char* user_c = std::getenv("USER");
 string user = user_c ? std::string(user_c) : std::string("unknown");
-string output_path = string("/data/dust/user/")+user+"/XToYHTo4b/SmallNtuples/Histograms/";
+//string output_path = string("/data/dust/user/")+user+"/XToYHTo4b/SmallNtuples/Histograms/";
+string output_path = string("/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/");
 
 // JES unc variables //
 
@@ -304,10 +305,10 @@ int main(int argc, char *argv[])
  
  
  // cut-flow tables //
- TH1F *h_cutflow_abs = getHisto1F("h_CutFlow_abs","Cut flow (absolute)",6,-0.5,5.5);	//Absolute selection
- TH1F *h_cutflow_cum = getHisto1F("h_CutFlow_cum","Cut flow (cumulative)",6,-0.5,5.5);	//Cumulative selection
- TH1F *h_cutflow_nmo = getHisto1F("h_CutFlow_nmo","Cut flow (N-1)",7,-0.5,6.5);  		//N-1 selection
- TH1F *h_cutflow_rel = getHisto1F("h_CutFlow_rel","Cut flow (relative)",6,-0.5,5.5);	//Relative selection
+ TH1F *h_cutflow_abs = getHisto1F("h_CutFlow_abs","Cut flow (absolute)",7,-0.5,6.5);	//Absolute selection
+ TH1F *h_cutflow_cum = getHisto1F("h_CutFlow_cum","Cut flow (cumulative)",7,-0.5,6.5);	//Cumulative selection
+ TH1F *h_cutflow_nmo = getHisto1F("h_CutFlow_nmo","Cut flow (N-1)",8,-0.5,7.5);  		//N-1 selection
+ TH1F *h_cutflow_rel = getHisto1F("h_CutFlow_rel","Cut flow (relative)",7,-0.5,6.5);	//Relative selection
  
  // # of primary vertices //
  TH1F *h_NPV			 = getHisto1F("h_PV_npvsGood","# of primary vertices",100,0,100);  
@@ -373,7 +374,7 @@ int main(int argc, char *argv[])
         {"charge_kappa_1p0", "Charge (#kappa=1.0)", {100,-2.5,2.5}}
  };
  
- if(year!="2024"){
+ if(year!="2024" && year!="2025"){
 	jetInfo.insert(jetInfo.end(), {
         {"DeepFlavB", "DeepFlavB score", {40, 0, 1}},
         {"DeepFlavB_WP", "DeepFlavB score (WP-binned)", {6, -0.5, 5.5}},
@@ -970,6 +971,7 @@ int main(int argc, char *argv[])
 	   
 	  Event_weight_nom *= puWeight;
 	  if(year=="2024") { Event_weight_nom *= btag_UParT_weight;  }
+	  else if(year=="2025") { Event_weight_nom *= 1.;  } //since shape weights don't exist for 2025
 	  else             { Event_weight_nom *= btag_PNet_weight;  }
 	  Event_weight_nom *= triggersf_weight_L1HT;
 	  Event_weight_nom *= triggersf_weight_pt;
@@ -1026,6 +1028,7 @@ int main(int argc, char *argv[])
 	
 	float btag_weight = 1.;
 	if(year=="2024") { btag_weight = btag_UParT_weight; }
+	else if(year=="2025") { btag_weight = 1; } //since shape-based SFs don't exist for 2025
 	else             { btag_weight = btag_PNet_weight;  }
 	
 	if(isMC){
@@ -1133,7 +1136,7 @@ int main(int argc, char *argv[])
 		}
 		
 		//btag SF correction //
-		if(year=="2024"){
+		if(year=="2024" || year=="2025"){
 		shape_weight_up.push_back(1.); shape_weight_dn.push_back(1.); shape_weight_nom.push_back(1.);
 		}
 		else{
@@ -1360,7 +1363,7 @@ int main(int argc, char *argv[])
         btag_indices[ix] = ix;
    }
    std::sort(btag_indices.begin(), btag_indices.end(), [&](int i1, int i2) {
-	   if(year=="2024"){
+	   if(year=="2024"||year=="2025"){
 			return JetAK4_btag_UParTAK4B[i1] > JetAK4_btag_UParTAK4B[i2]; // Descending order
 	   }
 	   else{
@@ -1391,7 +1394,7 @@ int main(int argc, char *argv[])
 	   h_AK4jets[njetvars*ijet+4]->Fill(JetAK4_charge_kappa_0p3[idx], weight_nom);
 	   h_AK4jets[njetvars*ijet+5]->Fill(JetAK4_charge_kappa_0p6[idx], weight_nom);
 	   h_AK4jets[njetvars*ijet+6]->Fill(JetAK4_charge_kappa_1p0[idx], weight_nom);
-	   if(year!="2024"){
+	   if(year!="2024" && year!="2025"){
 	   h_AK4jets[njetvars*ijet+7]->Fill(JetAK4_btag_DeepFlavB[idx], weight_nom);
 	   h_AK4jets[njetvars*ijet+8]->Fill(JetAK4_btag_DeepFlavB_WP[idx], weight_nom);
 	   h_AK4jets[njetvars*ijet+9]->Fill(JetAK4_btag_DeepFlavQG[idx], weight_nom);
@@ -1501,8 +1504,8 @@ int main(int argc, char *argv[])
 			jet_idx_PartT.push_back(kjet);
 	   }
 	
-	  // 2024 //
-	   if(year=="2024")
+	  // 2024 || 2025 //
+	   if(year=="2024"||year=="2025")
 	   {
 		// b tagger changed to UParT in 2024 //	  
 	    if(JetAK4_btag_UParTAK4B_WP[kjet]>=1) { // loose WP
@@ -1514,7 +1517,7 @@ int main(int argc, char *argv[])
 			jet_p4s_UParT.push_back(p4_cand);
 			jet_idx_UParT.push_back(kjet);
 	   }
-	  }//2024
+	  }//2024||2025
 		
    }
    
@@ -1524,7 +1527,7 @@ int main(int argc, char *argv[])
    vector<int> jet_idx_btag;
    vector<int> additional_jet_idx;
    
-   if(year=="2024") {  jet_p4s_btag = jet_p4s_UParT; jet_idx_btag = jet_idx_UParT; }
+   if(year=="2024"||year=="2025") {  jet_p4s_btag = jet_p4s_UParT; jet_idx_btag = jet_idx_UParT; }
    else 			{  jet_p4s_btag = jet_p4s_PNet;  jet_idx_btag = jet_idx_PNet;  }
    
    for(int ijet=0; ijet<nJetAK4; ijet++)
@@ -1560,7 +1563,7 @@ int main(int argc, char *argv[])
    
    njets_add_btag = 0;
    for(unsigned iadjet=0; iadjet<additional_jet_idx.size(); iadjet++){
-	if(year=="2024") { if (JetAK4_btag_UParTAK4B_WP[additional_jet_idx[iadjet]]>=1) { njets_add_btag ++; } }
+	if(year=="2024"||year=="2025") { if (JetAK4_btag_UParTAK4B_WP[additional_jet_idx[iadjet]]>=1) { njets_add_btag ++; } }
 	else { if (JetAK4_btag_PNetB_WP[additional_jet_idx[iadjet]]>=1) { njets_add_btag ++; } }
    }
    
@@ -1608,7 +1611,7 @@ int main(int argc, char *argv[])
 	   float jet_btag_1, jet_btag_2, jet_btag_3, jet_btag_4;
 	   
 	   if(nJetAK4>=4){
-			if(year=="2024"){
+			if(year=="2024"||year=="2025"){
 				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[btag_indices[0]]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[btag_indices[1]]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[btag_indices[2]]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[btag_indices[3]];
 			}
 			else{
@@ -1890,7 +1893,7 @@ int main(int argc, char *argv[])
 			charge_kappa_0p3_sum_b1b2_H1 = JetAK4_charge_kappa_0p3[Hcand_1_b_1_idx[icomb]]+JetAK4_charge_kappa_0p3[Hcand_1_b_2_idx[icomb]];
 			charge_kappa_0p6_sum_b1b2_H1 = JetAK4_charge_kappa_0p6[Hcand_1_b_1_idx[icomb]]+JetAK4_charge_kappa_0p6[Hcand_1_b_2_idx[icomb]];
 			charge_kappa_1p0_sum_b1b2_H1 = JetAK4_charge_kappa_1p0[Hcand_1_b_1_idx[icomb]]+JetAK4_charge_kappa_1p0[Hcand_1_b_2_idx[icomb]];
-			if(year=="2024"){ btag_score_sum_H1 = JetAK4_btag_UParTAK4B[Hcand_1_b_1_idx[icomb]]+JetAK4_btag_UParTAK4B[Hcand_1_b_2_idx[icomb]];   }
+			if(year=="2024"||year=="2025"){ btag_score_sum_H1 = JetAK4_btag_UParTAK4B[Hcand_1_b_1_idx[icomb]]+JetAK4_btag_UParTAK4B[Hcand_1_b_2_idx[icomb]];   }
 			else { btag_score_sum_H1 = JetAK4_btag_PNetB[Hcand_1_b_1_idx[icomb]]+JetAK4_btag_PNetB[Hcand_1_b_2_idx[icomb]]; }
 			DR_b1b2_H1_Xframe = H1_b1_Xframe.DeltaR(H1_b2_Xframe);
 			DEta_b1b2_H1_Xframe = H1_b1_Xframe.Eta() - H1_b2_Xframe.Eta();
@@ -1906,7 +1909,7 @@ int main(int argc, char *argv[])
 			charge_kappa_0p3_sum_b1b2_H2 = JetAK4_charge_kappa_0p3[Hcand_2_b_1_idx[icomb]]+JetAK4_charge_kappa_0p3[Hcand_2_b_2_idx[icomb]];
 			charge_kappa_0p6_sum_b1b2_H2 = JetAK4_charge_kappa_0p6[Hcand_2_b_1_idx[icomb]]+JetAK4_charge_kappa_0p6[Hcand_2_b_2_idx[icomb]];
 			charge_kappa_1p0_sum_b1b2_H2 = JetAK4_charge_kappa_1p0[Hcand_2_b_1_idx[icomb]]+JetAK4_charge_kappa_1p0[Hcand_2_b_2_idx[icomb]];
-			if(year=="2024"){ btag_score_sum_H2 = JetAK4_btag_UParTAK4B[Hcand_2_b_1_idx[icomb]]+JetAK4_btag_UParTAK4B[Hcand_2_b_2_idx[icomb]];   }
+			if(year=="2024"||year=="2025"){ btag_score_sum_H2 = JetAK4_btag_UParTAK4B[Hcand_2_b_1_idx[icomb]]+JetAK4_btag_UParTAK4B[Hcand_2_b_2_idx[icomb]];   }
 			else { btag_score_sum_H2 = JetAK4_btag_PNetB[Hcand_2_b_1_idx[icomb]]+JetAK4_btag_PNetB[Hcand_2_b_2_idx[icomb]]; }
 			DR_b1b2_H2_Xframe = H2_b1_Xframe.DeltaR(H2_b2_Xframe);
 			DEta_b1b2_H2_Xframe = H2_b1_Xframe.Eta() - H2_b2_Xframe.Eta();
@@ -2225,7 +2228,7 @@ int main(int argc, char *argv[])
 			JetAK4_pt_3 = jet_p4s[2].Pt(); JetAK4_mass_3 = jet_p4s[2].M();
 			JetAK4_pt_4 = jet_p4s[3].Pt(); JetAK4_mass_4 = jet_p4s[3].M();
 			
-			if(year!="2024"){
+			if(year!="2024" && year!="2025"){
 				JetAK4_btag_B_1 = JetAK4_btag_PNetB[0]; JetAK4_btag_CvB_1 = JetAK4_btag_PNetCvB[0]; JetAK4_btag_CvL_1 = JetAK4_btag_PNetCvL[0]; JetAK4_btag_QG_1 = JetAK4_btag_PNetQG[0];   JetAK4_btag_B_WP_1 = JetAK4_btag_PNetB_WP[0];
 				JetAK4_btag_B_2 = JetAK4_btag_PNetB[1]; JetAK4_btag_CvB_2 = JetAK4_btag_PNetCvB[1]; JetAK4_btag_CvL_2 = JetAK4_btag_PNetCvL[1]; JetAK4_btag_QG_2 = JetAK4_btag_PNetQG[1];   JetAK4_btag_B_WP_2 = JetAK4_btag_PNetB_WP[1];
 				JetAK4_btag_B_3 = JetAK4_btag_PNetB[2]; JetAK4_btag_CvB_3 = JetAK4_btag_PNetCvB[2]; JetAK4_btag_CvL_3 = JetAK4_btag_PNetCvL[2]; JetAK4_btag_QG_3 = JetAK4_btag_PNetQG[2];   JetAK4_btag_B_WP_3 = JetAK4_btag_PNetB_WP[2];
@@ -2323,7 +2326,7 @@ int main(int argc, char *argv[])
 			
 			//cout<<"btag scores: "<<JetAK4_btag_UParTAK4B_WP[0]<<" "<<JetAK4_btag_UParTAK4B_WP[1]<<" "<<JetAK4_btag_UParTAK4B_WP[2]<<" "<<JetAK4_btag_UParTAK4B_WP[3]<<endl;
 			
-			if(year=="2024"){
+			if(year=="2024"||year=="2025"){
 				jet_btag_1 = JetAK4_btag_UParTAK4B_WP[btag_indices[0]]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[btag_indices[1]]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[btag_indices[2]]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[btag_indices[3]];
 			}
 			else{
@@ -2394,7 +2397,7 @@ int main(int argc, char *argv[])
 							h_AK4jets_regs[jter][ireg][njetvars*ijet+4]->Fill(JetAK4_charge_kappa_0p3[ijet], weight_nom);
 							h_AK4jets_regs[jter][ireg][njetvars*ijet+5]->Fill(JetAK4_charge_kappa_0p6[ijet], weight_nom);
 							h_AK4jets_regs[jter][ireg][njetvars*ijet+6]->Fill(JetAK4_charge_kappa_1p0[ijet], weight_nom);
-							if(year!="2024"){
+							if(year!="2024" && year!="2025"){
 								h_AK4jets_regs[jter][ireg][njetvars*ijet+7]->Fill(JetAK4_btag_DeepFlavB[ijet], weight_nom);
 								h_AK4jets_regs[jter][ireg][njetvars*ijet+8]->Fill(JetAK4_btag_DeepFlavB_WP[ijet], weight_nom);
 								h_AK4jets_regs[jter][ireg][njetvars*ijet+9]->Fill(JetAK4_btag_DeepFlavQG[ijet], weight_nom);
