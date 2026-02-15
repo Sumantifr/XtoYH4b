@@ -1514,8 +1514,8 @@ int main(int argc, char *argv[])
    
     //a fix added for 2022EE//
 	if(year=="2022EE") { 
-		for(int ijet=0; ijet<nPFJetAK4; ijet++) {  PFJetAK4_jetID[ijet] = true; } 
-		for(int ijet=0; ijet<nPFJetAK8; ijet++) {  PFJetAK8_jetID[ijet] = true; } 
+		for(int ijet=0; ijet<nPFJetAK4; ijet++) {  PFJetAK4_jetID[ijet] = true; PFJetAK4_jetID_tightlepveto[ijet] = true; } 
+		for(int ijet=0; ijet<nPFJetAK8; ijet++) {  PFJetAK8_jetID[ijet] = true; PFJetAK8_jetID_tightlepveto[ijet] = true; } 
 	}
 	// end of fix //
    
@@ -1525,16 +1525,27 @@ int main(int argc, char *argv[])
     
     // Calculate b jet energy regression (*important* but not apply)//
     
-	for(auto & jet: Jets){
+    //https://indico.cern.ch/event/1580247/contributions/6669560/subcontributions/569881/attachments/3127133/5546889/JER_Correlation_meeting_020925.pdf
+    
+    for(auto & jet: Jets){
 		if(jet.ptRaw>raw_pt_cut){
-			if(isBJet(jet,PNetAK4_L,1)){
-				jet.applyReg = true;
-				if(year=="2024"||year=="2025"){ jet.RegCorr = (jet.UParTRegPtRawCorrNeutrino); } // exclusive correction in 2024 
-				else 			{ jet.RegCorr = (jet.PNetRegPtRawCorr * jet.PNetRegPtRawCorrNeutrino); } // stacked correction until 2023
-				//https://indico.cern.ch/event/1580247/contributions/6669560/subcontributions/569881/attachments/3127133/5546889/JER_Correlation_meeting_020925.pdf
+			
+			if(year=="2024"||year=="2025"){
+				if(isBJet(jet,UParTAK4_L,3)){   //using loose WP for UParT 
+					jet.applyReg = true;
+					jet.RegCorr = (jet.UParTRegPtRawCorrNeutrino); // exclusive correction in >=2024 
+				}
 			}
-		}
-    }
+			else{
+				if(isBJet(jet,PNetAK4_L,1)){ //using loose WP for PNet 
+					jet.applyReg = true;
+					jet.RegCorr = (jet.PNetRegPtRawCorr * jet.PNetRegPtRawCorrNeutrino);  // stacked correction until 2023
+				
+				}
+			}
+			
+		}//pt cut 
+	}//loop over jets
     
     for(auto & jet: Jets){
 		
@@ -1567,15 +1578,15 @@ int main(int argc, char *argv[])
 				if(year=="2022EE") 		  { jec_tag = "Summer22EE_22Sep2023_Run"+ERA+"_V2_DATA"; }
 				else if(year=="2023")  	  { jec_tag = (ERA=="Cv4" ? "Summer23Prompt23_RunCv4_V1_DATA" : "Summer23Prompt23_RunCv123_V1_DATA"); }
 				else if(year=="2023BPiX") { jec_tag = "Summer23BPixPrompt23_RunD_V1_DATA"; }
-				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V1_DATA";  }
-			        else if(year=="2025")     { jec_tag = "Winter25Prompt25_V2_DATA";  }	
+				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V2_DATA";  }
+			    else if(year=="2025")     { jec_tag = "Winter25Prompt25_V3_DATA";  } 
 				else 					  { jec_tag = "Summer22_22Sep2023_RunCD_V2_DATA"; }
 			}
 			else{
 				if(year=="2022EE") 		  { jec_tag = "Summer22EE_22Sep2023_V2_MC"; }
 				else if(year=="2023") 	  { jec_tag = "Summer23Prompt23_V1_MC"; }
 				else if(year=="2023BPiX") { jec_tag = "Summer23BPixPrompt23_V1_MC"; }
-				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V1_MC"; }
+				else if(year=="2024") 	  { jec_tag = "Summer24Prompt24_V2_MC"; }	
 				else 					  { jec_tag = "Summer22_22Sep2023_V2_MC"; }
 			}
 		
@@ -1594,7 +1605,7 @@ int main(int argc, char *argv[])
 			// also changing JES uncertainties //
 			// for signal only //
 			
-			if(isMC){	
+			if(isMC && isSignal){	
 				
 				for(int ijec=0; ijec<nsrc; ijec++){
 					
@@ -1636,9 +1647,11 @@ int main(int argc, char *argv[])
 		}//if applyReg
 		
 		else {  jet.JEC_bReg = jet.JEC; }
+		
+		//One loophole: for jets on which b jet energy regression will not be applied will have JEC from crab ntuple
+		//So, if there are JEC updates, that is NOT being applied to non-b regressed jets
+		//This can be changed (easily) in future
 	}
-	
-	
 	
 	// end of b jet energy regression //
     
@@ -1823,7 +1836,6 @@ int main(int argc, char *argv[])
 		MET_phi_HEMcor = MET_phi;
 	}
 	
-	
 	// Defining kinematic variables, e.g., HT, ST //
 	
 	HT_quadjet = 0;
@@ -1885,7 +1897,7 @@ int main(int argc, char *argv[])
 		 trig_threshold_pt_pass = (Jets.size()>=4)?(Jets[0].pt>80. && Jets[1].pt>70. && Jets[2].pt>60. && Jets[3].pt>50.):0;
 	}
     else { 
-		 L1_trig_pass = (L1_HTT280er || L1_HTT360er || L1_HTT400er || L1_HTT450er || L1_Mu6_HTT240er);
+		 L1_trig_pass = (L1_HTT280er || L1_HTT360er || L1_HTT400er || L1_HTT450er || L1_Mu6_HTT240er || L1_QuadJet60er2p5);
 		 //Jet_trig_pass = (hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65 || hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p55) ; 
 		 //if(hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65) { trig_threshold_pass =  (Jets.size()>=4)?(Jets[0].pt>70. && Jets[1].pt>50. && Jets[2].pt>40. && Jets[3].pt>35.):0; }
 		 //if(hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p55)  { trig_threshold_pass =  (Jets.size()>=4)?(Jets[3].pt>35. && HT_quadjet>280.):0; }
@@ -1918,6 +1930,8 @@ int main(int argc, char *argv[])
 
     // ======= Event selection cuts ========= //
 
+	// MET filter //
+
 	bool NoisyFilter_pass = pass_NoiseFilter(Flag_goodVertices, 
 											 Flag_globalSuperTightHalo2016Filter, 
 											 Flag_EcalDeadCellTriggerPrimitiveFilter, 
@@ -1927,17 +1941,35 @@ int main(int argc, char *argv[])
 											 Flag_eeBadScFilter, 
 											 Flag_ecalBadCalibFilter, 
 											 year, isMC);
+											 
+   // JetVeto Condition //
+   
+   bool JetVeto_pass = true;
+   for(unsigned ijet=0; ijet<Jets.size(); ijet++){
+		if(Jets[ijet].jetveto_Flag) { 
+			JetVeto_pass = false; 
+			break; 
+		}
+	}
 
     vector<bool> event_cuts;
  
+	//Cut 1: Noisy filter //
     event_cuts.push_back(NoisyFilter_pass);    		// Noisy filter pass
+    //Cut 2: Jet Veto //
+    event_cuts.push_back(JetVeto_pass); 		   // Reject event if at least one jet in veto region
     
     //event_cuts.push_back(((int)vleptons.size())==0);    		// Lepton veto (not really needed, already applied in ntuple production)
+    //Cut 3: L1 trigger //
 	event_cuts.push_back(L1_trig_pass);			// At least one L1 trigger should fire
+	//Cut 4: HLT //
 	event_cuts.push_back(Jet_trig_pass);		// At least one jet trigger should fire 
+	//Cut 5: # of jets //
 	event_cuts.push_back(((int)Jets.size())>=4);    // At least 4 AK4 jets 
+	//Cut 6: Trigger threshold (pT) //
 	event_cuts.push_back(trig_threshold_pt_pass);	// Offline objects should pass trigger threshold  (pt)
 	//event_cuts.push_back(trig_matching_pass);	// Offline objects should match to trigger object
+	//Cut 7: Trigger threshold (btag score) //
 	event_cuts.push_back(trig_threshold_btag_pass); // Offline objects should pass trigger threshold  (btag)
 	//event_cuts.push_back(((int)BJets_L.size())>=2);	// At least 2 AK4 b jets 
     	
@@ -2588,7 +2620,7 @@ int main(int argc, char *argv[])
 		std::sort(Jets.begin(), Jets.end(), [](const AK4Jet& a, const AK4Jet& b) { return a.btag_UParTAK4B > b.btag_UParTAK4B; });
 	}
 	else{
-	//redundant (still doing for sake of consistency //
+	//redundant (still doing for sake of consistency) //
 		std::sort(Jets.begin(), Jets.end(), [](const AK4Jet& a, const AK4Jet& b) { return a.btag_PNetB > b.btag_PNetB; });
 	}
 

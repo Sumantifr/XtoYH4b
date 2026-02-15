@@ -130,9 +130,10 @@
    Bool_t          hlt_PFMETNoMu140_PFMHTNoMu140_IDTight;
    Bool_t          hlt_PFMETTypeOne140_PFMHT140_IDTight;
    
-   Int_t           nTrigObj;
    int ncuts;
    Bool_t          Flag_event_cuts[njetmxAK8];
+   
+   Int_t           nTrigObj;
    Float_t         TrigObj_pt[njetmx];   //[nTrigObj]
    Float_t         TrigObj_eta[njetmx];   //[nTrigObj]
    Float_t         TrigObj_phi[njetmx];   //[nTrigObj]
