@@ -1,6 +1,14 @@
 #!/bin/bash
 
-input_dir="/afs/desy.de/user/c/chokepra/private/XtoYH4b/CMSSW_14_2_1/src/CombineHarvester/CombineTools/XYHto4b/workspace_v4"
+year=$1
+
+#input_dir="/afs/desy.de/user/c/chokepra/private/XtoYH4b/CMSSW_14_2_1/src/CombineHarvester/CombineTools/XYHto4b/workspace_v4"
+
+if [ "$year" = "2024" ]; then
+        input_dir="${path_dir}/SignalExtraction/${year}"
+else
+        input_dir="${path_dir}/${year}"
+fi
 
 for file in $input_dir/workspace*.root; do
     

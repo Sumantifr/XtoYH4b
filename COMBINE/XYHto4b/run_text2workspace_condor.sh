@@ -1,9 +1,17 @@
 #!/bin/bash
 
-path_dir="/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/CombineResults"
-year="2023BPiX"
+year=$1
 
-path_dir="${path_dir}/${year}"
+path_dir="/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/CombineResults"
+#year="2023BPiX"
+#year="2024"
+
+if [ "$year" = "2024" ]; then
+	path_dir="${path_dir}/SignalExtraction/${year}"
+else
+	path_dir="${path_dir}/${year}"
+fi
+
 
 input_dir="${path_dir}/datacards_v5/"
 output_dir="${path_dir}/workspace_v5/"

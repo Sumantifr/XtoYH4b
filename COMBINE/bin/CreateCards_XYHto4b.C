@@ -114,12 +114,27 @@ int main(int argc, char **argv) {
   //! [part2]
   vector<string> signals;
   signals = loadFilenames(file_path+"SIGNAL_names_2023BPIX.txt");
+  if(year=="2024") { signals = loadFilenames(file_path+"SIGNAL_names_2024.txt"); }
 
   for (auto &sig : signals) {
-      const string prefix = "NMSSM_";
+      //const 
+      string prefix = "NMSSM_";
+      if(year=="2024") { prefix = "NMSSM-"; }
       if (sig.rfind(prefix, 0) == 0) {  // check if it starts with "NMSSM_"
           sig.erase(0, prefix.size());  // remove the prefix
       }
+  }
+
+  if(year=="2024"){
+  
+  	signals.erase(
+    	std::remove_if(signals.begin(), signals.end(),
+        	[](const std::string& sg) {
+            	return sg.find("MY-125_") != std::string::npos;
+        	}),
+    	signals.end()
+	);
+
   }
 
   cout<<"# of signal points "<<signals.size()<<endl;
@@ -136,6 +151,7 @@ int main(int argc, char **argv) {
   bkg_procs.push_back("DoubleH");
   //signal
   vector<string> sig_procs = {"NMSSM_"};
+  if(year=="2024") { sig_procs = {"NMSSM-"} ;}
   cb.AddObservations({"*"}, {"XYH"}, {"13p6TeV_"+year}, {"4b"}, cats);
   cb.AddProcesses({"*"}, {"XYH"}, {"13p6TeV_"+year},  {"4b"}, bkg_procs, cats, false); 
   cb.AddProcesses(signals, {"XYH"}, {"13p6TeV_"+year}, {"4b"}, sig_procs, cats, true);
@@ -175,11 +191,43 @@ int main(int argc, char **argv) {
 //  cb.cp().signals()
 
 	//luminosity uncertainty (affecting both signal & backgrounds)
-    cb.cp()
-      .AddSyst(cb, "lumi_13TeV_Uncorrelated_2022", "lnN", SystMap<era>::init
-      ({"13TeV_2022"}, 1.015));
+  if(year=="2022"||year=="2022EE"){  
+  	cb.cp()
+      	.process(ch::JoinStr({sig_procs}))
+      	.AddSyst(cb, "lumi_1", "lnN", SystMap<era>::init
+      	({"13p6TeV_2022"}, 1.0138));
+  }
 
-	// systematic uncertainties affecting signal
+  if(year=="2023"||year=="2023BPiX"){
+	cb.cp()
+        .process(ch::JoinStr({sig_procs}))
+        .AddSyst(cb, "lumi_1", "lnN", SystMap<era>::init
+        ({"13p6TeV_2023"}, 1.0017));
+
+	cb.cp()
+        .process(ch::JoinStr({sig_procs}))
+        .AddSyst(cb, "lumi_2", "lnN", SystMap<era>::init
+        ({"13p6TeV_2023"}, 1.0127));
+  }
+
+  if(year=="2024"){
+    	cb.cp()
+      	.process(ch::JoinStr({sig_procs}))
+      	.AddSyst(cb, "lumi_1", "lnN", SystMap<era>::init
+      	({"13p6TeV_2024"}, 1.0020));
+
+	cb.cp()
+        .process(ch::JoinStr({sig_procs}))
+        .AddSyst(cb, "lumi_2", "lnN", SystMap<era>::init
+        ({"13p6TeV_2024"}, 1.0068));
+
+	cb.cp()
+        .process(ch::JoinStr({sig_procs}))
+        .AddSyst(cb, "lumi_3", "lnN", SystMap<era>::init
+        ({"13p6TeV_2024"}, 1.0144));
+  }
+
+    // systematic uncertainties affecting signal
     for (auto const& syst : systNames) {
 		cb.cp()
 		  .process(ch::JoinStr({sig_procs}))

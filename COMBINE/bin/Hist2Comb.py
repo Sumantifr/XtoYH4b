@@ -115,7 +115,8 @@ def process_histogram(histogram_name, output_file_name, input_dir, signals, back
 #Input signal and background processes here
 
 #input_dir = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/2022/NoFatJetVeto/"
-input_dir = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+#input_dir = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
+input_dir = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
 signals = read_sample_names('../../../SIGNAL_names.txt')
 data_lumi = float(7.98)
 if(args.YEAR=="2023"):
@@ -124,6 +125,9 @@ if(args.YEAR=="2023"):
 elif(args.YEAR=="2023BPiX"):
     signals = read_sample_names('../../../SIGNAL_names_2023BPIX.txt')
     data_lumi = 9.45
+elif(args.YEAR=="2024"):
+    signals = read_sample_names('../../../SIGNAL_names_2024.txt')
+    data_lumi = 108.96
 
 print("Signals:")
 for sig in signals:
@@ -156,7 +160,7 @@ signal_systematic_uncs = [
 ]
 
 data = "Data"
-if args.YEAR=="2023" or args.YEAR=="2023BPiX":
+if args.YEAR=="2023" or args.YEAR=="2023BPiX" or args.YEAR=="2024":
     data = "Data_Parking"
 
 # Output directory & file
@@ -196,7 +200,7 @@ histograms_to_process = [
     "h_MX_MY_Comb_3_3_3_2_Inclusive_mHcut",
 ]
 # histograms for BDT score based selection #
-if args.YEAR == "2023BPiX":
+if args.YEAR=="2023BPiX" or args.YEAR=="2024":
     histograms_to_process.extend([
         "h_MaxScore_MX_MY_Comb_5_5_4_4_Inclusive_mHcut",
         "h_MaxScore_MX_MY_Comb_5_5_4_4_mHcut",
