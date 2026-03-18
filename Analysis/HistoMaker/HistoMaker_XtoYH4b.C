@@ -788,6 +788,32 @@ int main(int argc, char *argv[])
  Tree_Pairing_Out->Branch("mass_H1", &mass_H1, "mass_H1/F");
  Tree_Pairing_Out->Branch("mass_H2", &mass_H2, "mass_H2/F");
  
+ Tree_Pairing_Out->Branch("pT_H1", &pT_H1, "pT_H1/F");
+ Tree_Pairing_Out->Branch("pT_H2", &pT_H2, "pT_H2/F");
+ 
+ Tree_Pairing_Out->Branch("eta_H1", &eta_H1, "eta_H1/F");
+ Tree_Pairing_Out->Branch("eta_H2", &eta_H2, "eta_H2/F");
+ 
+ Tree_Pairing_Out->Branch("pT_ratio_H1H2", &pT_ratio_H1H2, "pT_ratio_H1H2/F");
+ Tree_Pairing_Out->Branch("y_asymmetry",  &y_asymmetry,  "y_asymmetry/F");
+ 
+ Tree_Pairing_Out->Branch("DR_b1b2_H1", &DR_b1b2_H1, "DR_b1b2_H1/F");
+ Tree_Pairing_Out->Branch("DR_b1b2_H2", &DR_b1b2_H2, "DR_b1b2_H2/F"); 
+ 
+ Tree_Pairing_Out->Branch("DEta_b1b2_H1", &DEta_b1b2_H1, "DEta_b1b2_H1/F");
+ Tree_Pairing_Out->Branch("DEta_b1b2_H2", &DEta_b1b2_H2, "DEta_b1b2_H2/F"); 
+ 
+ Tree_Pairing_Out->Branch("DPhi_b1b2_H1", &DPhi_b1b2_H1, "DPhi_b1b2_H1/F");
+ Tree_Pairing_Out->Branch("DPhi_b1b2_H2", &DPhi_b1b2_H2, "DPhi_b1b2_H2/F"); 
+ 
+ Tree_Pairing_Out->Branch("mass_H1H2", &mass_H1H2, "mass_H1H2/F"); 
+ 
+ Tree_Pairing_Out->Branch("H1_pdgId", &H1_pdgId, "H1_pdgId/I");
+ Tree_Pairing_Out->Branch("H2_pdgId", &H2_pdgId, "H2_pdgId/I");
+ 
+ Tree_Pairing_Out->Branch("MX", &MX_value, "MX_value/I");
+ Tree_Pairing_Out->Branch("MY", &MY_value, "MY_value/I");
+ 
  }
  
  //  One more tree to store jet info for the chosen pairing //
@@ -1928,6 +1954,15 @@ int main(int argc, char *argv[])
 			mass_H1 = (Hcand_1[icomb]).M();
 			mass_H2 = (Hcand_2[icomb]).M();
 			
+			pT_H1 = (Hcand_1[icomb]).Pt();
+			pT_H2 = (Hcand_2[icomb]).Pt();
+			
+			eta_H1 = (Hcand_1[icomb]).Eta();
+			eta_H2 = (Hcand_2[icomb]).Eta();
+			
+			pT_asymmetry = (max(pT_H1,pT_H2)-min(pT_H1,pT_H2))*1./(pT_H1+pT_H2);
+			y_asymmetry = (max(Hcand_1[icomb].Rapidity(),Hcand_2[icomb].Rapidity())-min(Hcand_1[icomb].Rapidity(),Hcand_2[icomb].Rapidity()));
+			
 			mass_H1H2 = (Hcand_1[icomb]+Hcand_2[icomb]).M();
 			
 			angles_comb = get_Xto4b_angles(H1_b1,H1_b2,H2_b1,H2_b2);
@@ -1995,6 +2030,8 @@ int main(int argc, char *argv[])
 		    _pairing.charge_kappa_0p6_sum_b1b2_H1 = charge_kappa_0p6_sum_b1b2_H1;
 		    _pairing.charge_kappa_1p0_sum_b1b2_H1 = charge_kappa_1p0_sum_b1b2_H1;
 		    _pairing.mass_H1 = mass_H1;
+		    _pairing.pT_H1 = pT_H1;
+		    _pairing.eta_H1 = eta_H1;
 		    
 		    _pairing.DR_b1b2_H2 = DR_b1b2_H2;
 		    _pairing.DEta_b1b2_H2 = DEta_b1b2_H2;
@@ -2007,8 +2044,13 @@ int main(int argc, char *argv[])
 		    _pairing.charge_kappa_0p6_sum_b1b2_H2 = charge_kappa_0p6_sum_b1b2_H2;
 		    _pairing.charge_kappa_1p0_sum_b1b2_H2 = charge_kappa_1p0_sum_b1b2_H2;
 		    _pairing.mass_H2 = mass_H2;
+		    _pairing.pT_H2 = pT_H2;
+		    _pairing.eta_H2 = eta_H2;
 		    
 		    _pairing.mass_H1H2 = mass_H1H2;
+		    
+		    _pairing.pT_asymmetry = pT_asymmetry;
+		    _pairing.y_asymmetry = y_asymmetry;
 		    
 		    _pairing.pT_ratio_H1H2 = pT_ratio_H1H2;
 		    _pairing.DR_H1H2 = DR_H1H2;
@@ -2043,6 +2085,9 @@ int main(int argc, char *argv[])
 		    _pairing.H2_b2_pdgId = H2_b2_pdgId;
 		    _pairing.H2_b1_mom_pdgId = H2_b1_mom_pdgId;
 		    _pairing.H2_b2_mom_pdgId = H2_b2_mom_pdgId;
+		    
+		     _pairing.H1_pdgId = (H1_b1_mom_pdgId==H1_b2_mom_pdgId)?H1_b1_mom_pdgId:0;
+		     _pairing.H2_pdgId = (H2_b1_mom_pdgId==H2_b2_mom_pdgId)?H2_b1_mom_pdgId:0;
 		    
 		    _pairing.score = -0.5;
 		    
@@ -2188,6 +2233,29 @@ int main(int argc, char *argv[])
 				
 				mass_H1 = pairs[icomb].mass_H1;
 				mass_H2 = pairs[icomb].mass_H2;
+				
+				mass_H1H2 = pairs[icomb].mass_H1H2;
+				
+				pT_H1 = pairs[icomb].pT_H1;
+				pT_H2 = pairs[icomb].pT_H2;
+				
+				eta_H1 = pairs[icomb].eta_H1;
+				eta_H2 = pairs[icomb].eta_H2;
+				
+				DR_b1b2_H1 = pairs[icomb].DR_b1b2_H1;
+				DR_b1b2_H2 = pairs[icomb].DR_b1b2_H2;
+				
+				DEta_b1b2_H1 = pairs[icomb].DEta_b1b2_H1;
+				DEta_b1b2_H2 = pairs[icomb].DEta_b1b2_H2;
+				
+				DPhi_b1b2_H1 = pairs[icomb].DPhi_b1b2_H1;
+				DPhi_b1b2_H2 = pairs[icomb].DPhi_b1b2_H2;
+				
+				pT_ratio_H1H2 = pairs[icomb].pT_ratio_H1H2;
+				y_asymmetry = pairs[icomb].y_asymmetry;
+				
+				H1_pdgId = pairs[icomb].H1_pdgId;
+				H2_pdgId = pairs[icomb].H2_pdgId;
 							
 				//if(jentry%2==0){
 				Tree_Pairing_Out->Fill();

@@ -46,6 +46,14 @@ samples.push_back({"QCD","QCD",int(TColor::GetColor("#5790fc")),"",false});//
 
 //signal//
 if(show_signal){
+if(year=="2024")
+{
+samples.push_back({"NMSSM-XtoYHto4B_Par-MX-500-MY-150_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 500, 150",kGreen+2,"",true}); //
+samples.push_back({"NMSSM-XtoYHto4B_Par-MX-650-MY-95_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 650, 95",kBlue+2,"",true});
+samples.push_back({"NMSSM-XtoYHto4B_Par-MX-1000-MY-500_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 1000, 500",kMagenta+2,"",true}); //
+}
+else
+{
 samples.push_back({"NMSSM_XtoYHto4B_MX-300_MY-60_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 300, 60",kGreen+2,"",true}); //
 //samples.push_back({"NMSSM_XtoYHto4B_MX-650_MY-125_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 650, 125",kGreen+2,"",true}); //
 if(year=="2023"){ samples.push_back({"NMSSM_XtoYHto4B_MX-650_MY-80_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 650, 80",kBlue+2,"",true}); }
@@ -53,6 +61,7 @@ else{ samples.push_back({"NMSSM_XtoYHto4B_MX-650_MY-95_TuneCP5_13p6TeV_madgraph-
 samples.push_back({"NMSSM_XtoYHto4B_MX-2500_MY-125_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 2500, 125",kMagenta+2,"",true}); //
 //samples.push_back({"NMSSM_XtoYHto4B_MX-4000_MY-95_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 4000, 95",kGreen+2,"",true}); //
 //samples.push_back({"NMSSM_XtoYHto4B_MX-4000_MY-1000_TuneCP5_13p6TeV_madgraph-pythia8","m_{X}, m_{Y} = 4000, 1000",kGreen+2,"",true}); //
+}
 }
 
 for(unsigned isam=0; isam<samples.size(); isam++){
@@ -469,6 +478,10 @@ vars.push_back({"h_MX_MY_Comb_5_5_5_5","Unrolled m_{4j}-m_{Y} (GeV)"});
 vars.push_back({"h_MX_MY_Comb_3_3_3_1_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"});
 vars.push_back({"h_MX_MY_Comb_3_2_2_2_Inclusive","Unrolled m_{4j}-m_{Y} (GeV)"});
 
+
+vars.push_back({"h_MY_Comb_3_3_3_2_Inclusive","m_{Y} (GeV)"});
+vars.push_back({"h_MY_Comb_3_3_3_2_Inclusive_mHcut","m_{Y} (GeV)"});
+
 vars.push_back({"h_MX_Comb_3_3_2_2_Inclusive_mHcut","m_{4j} (GeV)"});
 vars.push_back({"h_MX_Comb_3_3_3_2_Inclusive_mHcut","m_{4j} (GeV)"});
 //vars.push_back({"h_MX_Comb_5_5_4_4_Inclusive_mHcut","m_{4j} (GeV)"});
@@ -551,7 +564,8 @@ if(year=="2023") { runtag = 19; data_lumi = 11.24; }
 if(year=="2023BPiX") { runtag = 20; data_lumi = 9.45; }
 if(year=="2024") { runtag = 21; data_lumi = 108.96; }
 //if(year=="2025") { runtag = 22; data_lumi = 20.78; }
-if(year=="2025") { runtag = 22; data_lumi = 26.5; }
+//if(year=="2025") { runtag = 22; data_lumi = 26.5; }
+if(year=="2025") { runtag = 22; data_lumi = 110.73; }
 
 //data_lumi *= 0.15;
 

@@ -62,6 +62,8 @@ struct Pair{
  float charge_kappa_0p6_sum_b1b2_H1;
  float charge_kappa_1p0_sum_b1b2_H1;
  float mass_H1;
+ float pT_H1;
+ float eta_H1;
  
  float DR_b1b2_H2;
  float DEta_b1b2_H2;
@@ -74,6 +76,8 @@ struct Pair{
  float charge_kappa_0p6_sum_b1b2_H2;
  float charge_kappa_1p0_sum_b1b2_H2;
  float mass_H2; 
+ float pT_H2;
+ float eta_H2;
   
  float mass_H1H2;
   
@@ -85,6 +89,9 @@ struct Pair{
  float angle_theta_H1H2;
  float angle_theta_H1;
  float angle_theta_H2;
+ 
+ float pT_asymmetry;
+ float y_asymmetry;
  
  // In X frame //
  
@@ -114,6 +121,9 @@ struct Pair{
  int H2_b2_pdgId;
  int H2_b1_mom_pdgId;
  int H2_b2_mom_pdgId;
+ 
+ int H1_pdgId;
+ int H2_pdgId;
  
  //
  float score;
@@ -526,12 +536,15 @@ using namespace std;
   float charge_kappa_0p6_sum_b1b2_H1, charge_kappa_0p6_sum_b1b2_H2;
   float charge_kappa_1p0_sum_b1b2_H1, charge_kappa_1p0_sum_b1b2_H2;
   float mass_H1, mass_H2, mass_H1H2;
+  float pT_H1, pT_H2, eta_H1, eta_H2;
+  float pT_asymmetry, y_asymmetry;
   
   bool H1_pairing_truth, H2_pairing_truth;
   int H1_b1_pdgId, H1_b2_pdgId;
   int H2_b1_pdgId, H2_b2_pdgId;
   int H1_b1_mom_pdgId, H1_b2_mom_pdgId;
   int H2_b1_mom_pdgId, H2_b2_mom_pdgId;
+  int H1_pdgId, H2_pdgId;
   
   float pT_ratio_H1H2, DR_H1H2, DEta_H1H2, DPhi_H1H2;
   vector<float> angles_comb;

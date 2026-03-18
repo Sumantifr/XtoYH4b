@@ -38,6 +38,7 @@ else if (year=="2023BPiX") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL
 else if (year=="2024") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2024.txt");  }
 
 vector<string> Filenames_Data = loadFilenames(file_path+"Data_names_"+year+".txt");
+cout<<"file_path "<<file_path<<endl;
 string path = std::filesystem::current_path().string();
 string proxy = "/tmp/x509up_u81649";
 

@@ -35,7 +35,7 @@ kinematic_mask = MX > (MY + mh)
 resolved_region_masked = resolved_region & kinematic_mask
 
 # Plot
-plt.figure(figsize=(7,6))
+plt.figure(figsize=(8,6.4))
 plt.contourf(MX, MY, resolved_region_masked, 
              levels=[-0.5,0.5,1.5], colors=["white","green"], alpha=0.6)
 

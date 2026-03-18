@@ -1513,10 +1513,10 @@ int main(int argc, char *argv[])
     getLeptons(vleptons,vmuons,velectrons,lepton_pt_cut);    
    
     //a fix added for 2022EE//
-	if(year=="2022EE") { 
-		for(int ijet=0; ijet<nPFJetAK4; ijet++) {  PFJetAK4_jetID[ijet] = true; PFJetAK4_jetID_tightlepveto[ijet] = true; } 
-		for(int ijet=0; ijet<nPFJetAK8; ijet++) {  PFJetAK8_jetID[ijet] = true; PFJetAK8_jetID_tightlepveto[ijet] = true; } 
-	}
+   //	if(year=="2022EE") { 
+   //		for(int ijet=0; ijet<nPFJetAK4; ijet++) {  PFJetAK4_jetID[ijet] = true; PFJetAK4_jetID_tightlepveto[ijet] = true; } 
+   //		for(int ijet=0; ijet<nPFJetAK8; ijet++) {  PFJetAK8_jetID[ijet] = true; PFJetAK8_jetID_tightlepveto[ijet] = true; } 
+   //	}
 	// end of fix //
    
     //Here you get AK4 jets with your criteria

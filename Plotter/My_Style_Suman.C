@@ -430,11 +430,14 @@ float relExtraDY = 1.2;
 // ratio of "CMS" and extra text size
 float extraOverCmsTextSize  = 0.76;
 
-TString lumi_13p6TeV_2022 		= "2022 7.98 fb^{-1}";
-TString lumi_13p6TeV_2022EE		= "2022EE 26.7 fb^{-1}";
-TString lumi_13p6TeV_2023 		= "2023 11.2 fb^{-1}";
-TString lumi_13p6TeV_2023BPiX 	= "2023BPiX 9.45 fb^{-1}";
+TString lumi_13p6TeV_2022 		= "2022PreEE 7.98 fb^{-1}";
+TString lumi_13p6TeV_2022EE		= "2022PostEE 26.7 fb^{-1}";
+TString lumi_13p6TeV_2023 		= "2023PreBPiX 11.2 fb^{-1}";
+TString lumi_13p6TeV_2023BPiX 	= "2023PostBPiX 9.45 fb^{-1}";
 TString lumi_13p6TeV_2024   = "2024 109 fb^{-1}";
+//TString lumi_13p6TeV_2025   = "2025C 20.8 fb^{-1}";
+//TString lumi_13p6TeV_2025   = "2025F  26.5 fb^{-1}";
+TString lumi_13p6TeV_2025   = "2025  111 fb^{-1}";
 TString lumi_13TeV_EF = "2016EF 10.7 fb^{-1}";
 TString lumi_13TeV_BCD = "2016BCD 10.1 fb^{-1}";
 TString lumi_13TeV_GH = "2016GH 16.4 fb^{-1}";
@@ -607,6 +610,10 @@ CMS_lumi( TPad* pad, int iPeriod, int iPosX, bool SIM)
       lumiText += lumi_13p6TeV_2024;
       lumiText += " (13.6 TeV)";
   }
+  else if ( iPeriod==22 ){
+      lumiText += lumi_13p6TeV_2025;
+      lumiText += " (13.6 TeV)";
+  }
   cout << lumiText << endl;
 
   TLatex latex;
@@ -625,8 +632,8 @@ CMS_lumi( TPad* pad, int iPeriod, int iPosX, bool SIM)
     {
       latex.SetTextFont(cmsTextFont);
       latex.SetTextAlign(11); 
-      latex.SetTextSize(cmsTextSize*t);    
-      latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText);
+      latex.SetTextSize(cmsTextSize*t);   
+      latex.DrawLatex(l+0.025,1-t+lumiTextOffset*t-0.085,cmsText);
     }
   
   pad->cd();
@@ -687,8 +694,8 @@ CMS_lumi( TPad* pad, int iPeriod, int iPosX, bool SIM)
     {
       if( iPosX==0) 
 	{
-	  posX_ =   l +  relPosX*(1-l-r);
-	  posY_ =   1-t+lumiTextOffset*t;
+	  posX_ =   l +  0.025 + relPosX*(1-l-r);
+	  posY_ =   1-t+lumiTextOffset*t - 0.085;
 	}
       latex.SetTextFont(extraTextFont);
       latex.SetTextSize(extraTextSize*t);

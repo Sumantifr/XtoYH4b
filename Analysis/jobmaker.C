@@ -174,13 +174,23 @@ file1 << "should_transfer_files = YES\n";
 file1 << "transfer_input_files = "<<executable<<".exe, "<<name_buffer<<", "<<name_buffer_ex<<"\n";
 file1 << "when_to_transfer_output = ON_EXIT\n";
 if(!isDATA && !isSIGNAL){
-file1 << "RequestMemory = 4000\n";
-file1 << "max_materialize = 250\n";
+   if (files[ii].find("TTto4Q") != std::string::npos){
+	file1 << "RequestMemory = 8198\n";
+	file1 << "+JobFlavour = \"tomorrow\"\n";
+   }
+  else{
+	file1 << "RequestMemory = 4000\n";
+ }
+ file1 << "max_materialize = 250\n";
 }
-if((files[ii].find("TTto4Q") != std::string::npos)||(files[ii].find("Data_Run3") != std::string::npos)){
+
+if(isDATA && year=="2025"){ jobflavor = "tomorrow";  }
+
+if (files[ii].find("TTto4Q") == std::string::npos){
 file1 << "+JobFlavour = \""<<jobflavor<<"\"\n";
 //file1<< "+MaxRuntime = 100000\n";
 }
+
 file1 << "queue args from "<<name_buffer<<"\n";
 
 cout<<"sub created successfully." << endl;

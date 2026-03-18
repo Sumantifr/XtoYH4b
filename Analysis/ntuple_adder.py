@@ -119,9 +119,9 @@ else:
 
 for sam in samples:
     if args.YEAR=="2024": #special scheme for 2024 due to very large size of files
-        if "TTto4Q" in sam:
+        if "TTto4QXXX" in sam:
         #if "QCD" not in sam:
-            continue #this is because TTto4Q sample is super-large
+            continue #this is because TTto4Q sample is super-large (P.S. with veto maps, now < 100 GB)
         else:
             pattern = os.path.join(in_path, sam+"*.root")
             input_files = glob.glob(pattern)
