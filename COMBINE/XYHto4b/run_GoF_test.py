@@ -29,6 +29,7 @@ def main():
     parser.add_argument("--ntoys", type=int, default=500, help="Number of toys: Default: 500")
     parser.add_argument('--float_signal', action='store',      default=False,   type=bool,           help="Float signal strength?  Default: False")
     parser.add_argument('--algorithm', default="saturated", type=str, help="Algorithm: Default: saturated; Other options: KS, AD")
+    parser.add_argument('--usebypassff', action='store',      default=False,   type=bool,           help="Use bypassFrequentistFit?  Default: False")
 
     args = parser.parse_args()
 
@@ -44,26 +45,33 @@ def main():
 
     Output = "XYH4b_"+args.YEAR+"_Comb-"+str(args.combination)+"_MX-"+str(args.MX)+"_MY-"+str(args.MY)
 
-    #First running on data
-
     out_file_data = ".GoFResults_"+Output+"_Data"
-    os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file_data)
-    
-    #Then running with toys  
 
     out_file = ".GoFResults_XYH4b_Bonly_"+Output
 
     if args.float_signal:
-
+        
+        #First running on data
+        os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file_data)
+        #Then running with toys
         out_file = ".GoFResults_XYH4b_"+Output
-        os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" -t "+str(args.ntoys)+" --toysFrequentist --bypassFrequentistFit")
+        if args.usebypassff:
+            os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" -t "+str(args.ntoys)+" --toysFrequentist --bypassFrequentistFit")
+        else:
+            os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" -t "+str(args.ntoys)+" --toysFrequentist")
         #Computing p-value
         os.system("combineTool.py -M CollectGoodnessOfFit --input higgsCombine"+out_file_data+".GoodnessOfFit.mH125.root higgsCombine"+out_file+".GoodnessOfFit.mH125.*.root -o gof_"+Output+".json")
 
     else:
-
         #background-only fit (r=0)
-        os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" --fixedSignalStrength 0 -t "+str(args.ntoys)+" --toysFrequentist --bypassFrequentistFit")
+        
+        #First running on data
+        os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file_data+" --fixedSignalStrength 0")
+        #Then running with toys
+        if args.usebypassff:
+            os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" --fixedSignalStrength 0 -t "+str(args.ntoys)+" --toysFrequentist --bypassFrequentistFit")
+        else:
+            os.system("combineTool.py -M GoodnessOfFit "+workspace+" -m 125 --algo="+args.algorithm+" -n "+out_file+" --fixedSignalStrength 0 -t "+str(args.ntoys)+" --toysFrequentist")
 
     #Computing p-value
     os.system("combineTool.py -M CollectGoodnessOfFit --input higgsCombine"+out_file_data+".GoodnessOfFit.mH125.root higgsCombine"+out_file+".GoodnessOfFit.mH125.*.root -o gof_"+Output+".json")
