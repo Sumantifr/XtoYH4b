@@ -1510,8 +1510,8 @@ bool pass_NoiseFilter(bool Flag_goodVertices, bool Flag_globalSuperTightHalo2016
 	}
 
 	else if (year=="2025"){
-		//pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter);
-		pass = true;
+		pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter);
+		//pass = true;
 	}
 	
 	return pass;
