@@ -568,6 +568,7 @@ using namespace std;
   int MY_value = -1;
   
   float score_pairing;
+  int pair_index_maxscore;
   
   const int ncomb = 3;
   
@@ -602,28 +603,47 @@ using namespace std;
   
   float H1H2_deta, H1H2_dphi, H1H2_dR, H1H2_pt, H1H2_eta, H1H2_phi, H1H2_mass;
   
+  float angle_CS_theta_H1H2, angle_CS_theta_H1, angle_CS_theta_H2;
+  
   float HT_4j, HT_allj;
   
-  float angle_CS_theta_H1H2, angle_CS_theta_H1, angle_CS_theta_H2;
+  //arrays for each pair //
+
+  vector<int> pair_index;
+
+  vector<float> Hcand_mass_pair, Ycand_mass_pair;
+  
+  vector<float> Hcand_1_pt_pair, Hcand_1_eta_pair, Hcand_1_phi_pair, Hcand_1_mass_pair;
+  vector<float> Hcand_2_pt_pair, Hcand_2_eta_pair, Hcand_2_phi_pair, Hcand_2_mass_pair;
+  
+  vector<float> H1_b1b2_deta_pair, H1_b1b2_dphi_pair, H1_b1b2_dR_pair;
+  vector<float> H2_b1b2_deta_pair, H2_b1b2_dphi_pair, H2_b1b2_dR_pair;
+  
+  vector<float> H1H2_deta_pair, H1H2_dphi_pair, H1H2_dR_pair, H1H2_pt_pair, H1H2_eta_pair, H1H2_phi_pair, H1H2_mass_pair;
+  
+  vector<float> angle_CS_theta_H1H2_pair, angle_CS_theta_H1_pair, angle_CS_theta_H2_pair;
+  
+  vector<int> mX_sig, mY_sig, best_pair_sig;
   
   const int nmasspoints = 300;
     
   TTree *Tree_Pairing ;
   TTree *Tree_Pairing_Out ;
   TTree *Tree_JetInfo ;
+  TTree *Tree_SigGrid ;
     
   // end of pairing variables //
   
   map<int, std::vector<int>> signal_mass_grid = {
-        {300,  {60, 70, 80, 90, 95, 100, 125, 150}},
-        {400,  {60, 70, 80, 90, 95, 100, 125, 150, 200}},
-        {500,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300}},
-        {500,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},
-        {600,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},
-        {650,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},
-        {700,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},
-        {800,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},
-        {900,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},
+        {300,   {60, 70, 80, 90, 95, 100, 125, 150}},
+        {400,   {60, 70, 80, 90, 95, 100, 125, 150, 200}},
+        {500,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300}},
+        {500,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},
+        {600,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},
+        {650,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},
+        {700,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},
+        {800,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},
+        {900,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},
         {1000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800}},
         {1200,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000}},
         {1400,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200}},

@@ -622,6 +622,8 @@ int main(int argc, char *argv[])
 	int mX = signal_index[jsig].first;
 	int mY = signal_index[jsig].second;
  
+    if(verbose) { cout<<"mX "<<mX<<" mY "<<mY<<endl; }
+ 
 	for(int ireg=0; ireg<nregion; ireg++){
 	 
 		char histname_reg[200];
@@ -646,7 +648,7 @@ int main(int argc, char *argv[])
 	sprintf(name,"h_highestscore_H2_mass_Signal_MX_%i_MY_%i",mX,mY);
 	h_H2_mass_highest_score_bkg[jsig] = getHisto1F(name,name,45,50,500);
 	
-	if(jsig>=signal_index.size()) break;
+	if(jsig>=(signal_index.size()-1)) break;
  
  }//jsig
  
@@ -816,11 +818,24 @@ int main(int argc, char *argv[])
  
  }
  
+ // store signal grid in a tree //
+ 
+ if(!isMC){
+ 
+ Tree_SigGrid = new TTree("Tree_SignalGrid", "Signal grid tree: mX and mY");
+ 
+ Tree_SigGrid->Branch("mX_sig",   &mX_sig);
+ Tree_SigGrid->Branch("mY_sig",   &mY_sig);
+ 
+ }
+ 
  //  One more tree to store jet info for the chosen pairing //
  
  Tree_JetInfo = new TTree("Tree_JetInfo", "JetInfo tree: Chosen Pairing");
  
  // Jet information (for background estimation) //
+ 
+ //// pairing-independent features ////
  
  Tree_JetInfo->Branch("JetAK4_pt_1", &JetAK4_pt_1, "JetAK4_pt_1/F");
  Tree_JetInfo->Branch("JetAK4_eta_1", &JetAK4_eta_1, "JetAK4_eta_1/F");
@@ -878,18 +893,26 @@ int main(int argc, char *argv[])
  Tree_JetInfo->Branch("JetAK4_btag_B_WP_4", &JetAK4_btag_B_WP_4, "JetAK4_btag_B_WP_4/I");
  Tree_JetInfo->Branch("JetAK4_Hcand_index_4", &JetAK4_Hcand_index_4, "JetAK4_Hcand_index_4/I");
  
+ Tree_JetInfo->Branch("HT_4j", &HT_4j, "HT_4j/F");
+ Tree_JetInfo->Branch("HT_allj", &HT_allj, "HT_allj/F");
+ 
+ Tree_JetInfo->Branch("njets_add", &njets_add, "njets_add/I");
+ Tree_JetInfo->Branch("HT_add", &HT_add, "HT_add/F");
+ 
+ Tree_JetInfo->Branch("JetAK4_add_pt", &JetAK4_add_pt, "JetAK4_add_pt/F");
+ Tree_JetInfo->Branch("JetAK4_add_eta", &JetAK4_add_eta, "JetAK4_add_eta/F");
+ Tree_JetInfo->Branch("JetAK4_add_phi", &JetAK4_add_phi, "JetAK4_add_phi/F");
+ Tree_JetInfo->Branch("JetAK4_add_mass", &JetAK4_add_mass, "JetAK4_add_mass/F");
+ 
+ //// pairing-dependent features ////
+ 
+ // for the best pair //
+ 
  Tree_JetInfo->Branch("Hcand_mass", &Hcand_mass, "Hcand_mass/F");
  Tree_JetInfo->Branch("Ycand_mass", &Ycand_mass, "Ycand_mass/F");
  
  Tree_JetInfo->Branch("Hcand_mass_bkg", &Hcand_mass_bkg);
  Tree_JetInfo->Branch("Ycand_mass_bkg", &Ycand_mass_bkg);
- 
- Tree_JetInfo->Branch("njets_add", &njets_add, "njets_add/I");
- Tree_JetInfo->Branch("HT_add", &HT_add, "HT_add/F");
- Tree_JetInfo->Branch("JetAK4_add_pt", &JetAK4_add_pt, "JetAK4_add_pt/F");
- Tree_JetInfo->Branch("JetAK4_add_eta", &JetAK4_add_eta, "JetAK4_add_eta/F");
- Tree_JetInfo->Branch("JetAK4_add_phi", &JetAK4_add_phi, "JetAK4_add_phi/F");
- Tree_JetInfo->Branch("JetAK4_add_mass", &JetAK4_add_mass, "JetAK4_add_mass/F");
  
  Tree_JetInfo->Branch("Hcand_1_pt", &Hcand_1_pt, "Hcand_1_pt/F");
  Tree_JetInfo->Branch("Hcand_1_eta", &Hcand_1_eta, "Hcand_1_eta/F");
@@ -917,12 +940,50 @@ int main(int argc, char *argv[])
  Tree_JetInfo->Branch("H1H2_dphi", &H1H2_dphi, "H1H2_dphi/F");
  Tree_JetInfo->Branch("H1H2_dR", &H1H2_dR, "H1H2_dR/F");
  
- Tree_JetInfo->Branch("HT_4j", &HT_4j, "HT_4j/F");
- Tree_JetInfo->Branch("HT_allj", &HT_allj, "HT_allj/F");
- 
  Tree_JetInfo->Branch("angle_CS_theta_H1", &angle_CS_theta_H1, "angle_CS_theta_H1/F");
  Tree_JetInfo->Branch("angle_CS_theta_H2", &angle_CS_theta_H2, "angle_CS_theta_H2/F");
  Tree_JetInfo->Branch("angle_CS_theta_H1H2", &angle_CS_theta_H1H2, "angle_CS_theta_H1H2/F");
+ 
+ Tree_JetInfo->Branch("pair_index_maxscore", &pair_index_maxscore, "pair_index_maxscore/I");
+ 
+ // for all pairs //
+ 
+ Tree_JetInfo->Branch("pair_index", &pair_index);
+ 
+ Tree_JetInfo->Branch("Hcand_mass_pair", &Hcand_mass_pair);
+ Tree_JetInfo->Branch("Ycand_mass_pair", &Ycand_mass_pair);
+ 
+ Tree_JetInfo->Branch("Hcand_1_pt_pair",   &Hcand_1_pt_pair);
+ Tree_JetInfo->Branch("Hcand_1_eta_pair",  &Hcand_1_eta_pair);
+ Tree_JetInfo->Branch("Hcand_1_phi_pair",  &Hcand_1_phi_pair);
+ Tree_JetInfo->Branch("Hcand_1_mass_pair", &Hcand_1_mass_pair);
+ 
+ Tree_JetInfo->Branch("Hcand_2_pt_pair",   &Hcand_2_pt_pair);
+ Tree_JetInfo->Branch("Hcand_2_eta_pair",  &Hcand_2_eta_pair);
+ Tree_JetInfo->Branch("Hcand_2_phi_pair",  &Hcand_2_phi_pair);
+ Tree_JetInfo->Branch("Hcand_2_mass_pair", &Hcand_2_mass_pair);
+ 
+ Tree_JetInfo->Branch("H1_b1b2_deta_pair", &H1_b1b2_deta_pair);
+ Tree_JetInfo->Branch("H1_b1b2_dphi_pair", &H1_b1b2_dphi_pair);
+ Tree_JetInfo->Branch("H1_b1b2_dR_pair",   &H1_b1b2_dR_pair);
+ 
+ Tree_JetInfo->Branch("H2_b1b2_deta_pair", &H2_b1b2_deta_pair);
+ Tree_JetInfo->Branch("H2_b1b2_dphi_pair", &H2_b1b2_dphi_pair);
+ Tree_JetInfo->Branch("H2_b1b2_dR_pair",   &H2_b1b2_dR_pair);
+ 
+ Tree_JetInfo->Branch("H1H2_pt_pair",   &H1H2_pt_pair);
+ Tree_JetInfo->Branch("H1H2_eta_pair",  &H1H2_eta_pair);
+ Tree_JetInfo->Branch("H1H2_phi_pair",  &H1H2_phi_pair);
+ Tree_JetInfo->Branch("H1H2_mass_pair", &H1H2_mass_pair);
+ Tree_JetInfo->Branch("H1H2_deta_pair", &H1H2_deta_pair);
+ Tree_JetInfo->Branch("H1H2_dphi_pair", &H1H2_dphi_pair);
+ Tree_JetInfo->Branch("H1H2_dR_pair",   &H1H2_dR_pair);
+ 
+ Tree_JetInfo->Branch("angle_CS_theta_H1_pair",   &angle_CS_theta_H1_pair);
+ Tree_JetInfo->Branch("angle_CS_theta_H2_pair",   &angle_CS_theta_H2_pair);
+ Tree_JetInfo->Branch("angle_CS_theta_H1H2_pair", &angle_CS_theta_H1H2_pair);
+ 
+ Tree_JetInfo->Branch("best_pair_sig",   &best_pair_sig);
 
  // end of trees //
  
@@ -1036,6 +1097,29 @@ int main(int argc, char *argv[])
    //tree->Write("", TObject::kOverwrite);
 
    // end of sum calculation //
+   
+   
+   // score evaluation for all signals & storing signal mass grid // 
+   // needed only for data //
+   
+   if(!isMC) { 
+   
+	skip_score_eval_allsig = false; 
+   
+	// Just signal grid tree //
+   
+	mX_sig.clear(); mY_sig.clear();
+   
+	for(unsigned jsig=0; jsig<(signal_index.size()); jsig++){
+									
+		mX_sig.push_back(signal_index[jsig].first);
+		mY_sig.push_back(signal_index[jsig].second);
+   
+	}
+   
+   Tree_SigGrid->Fill();
+   
+   }
    
    // Main event loop
    
@@ -2167,8 +2251,8 @@ int main(int argc, char *argv[])
 				const float* out_result_s;
 
 				int xjsig = 0;
-
-				for (size_t ims = 0; ims < signal_index.size(); ++ims) {
+				
+				for (size_t ims = 0; ims < signal_index.size(); ims++) {
 					
 					auto [mX_val, mY_val] = signal_index[ims];
 					
@@ -2186,7 +2270,7 @@ int main(int argc, char *argv[])
 					float score = out_result_s[ims];
 					
 					if(verbose) { cout<<"mX: "<<mX_val<<" mY: "<<mY_val<<" mass frac "<<Mass_Fraction(mX_val, mY_val, SM_H_mass)<<" score "<<score<<endl; }
-				
+								
 					if (score > comb_pairing_bkg[xjsig].score) {
 						comb_pairing_bkg[xjsig].index = icomb;
 						comb_pairing_bkg[xjsig].score = score;
@@ -2279,10 +2363,6 @@ int main(int argc, char *argv[])
 				
 			//also storing jet variables //
 			
-			if(fabs(float(Hcand_1[xcomb].M()) - SM_H_mass) < fabs(float(Hcand_2[xcomb].M()) - SM_H_mass)) 
-					{ Hcand_mass = Hcand_1[xcomb].M();  Ycand_mass = Hcand_2[xcomb].M();  }
-			else { Hcand_mass = Hcand_2[xcomb].M();  Ycand_mass = Hcand_1[xcomb].M();  }
-			
 			JetAK4_pt_1 = JetAK4_pt[0]; JetAK4_eta_1 = JetAK4_eta[0]; JetAK4_phi_1 = JetAK4_phi[0]; JetAK4_mass_1 = JetAK4_mass[0]; JetAK4_charge_kappa_0p3_1 = JetAK4_charge_kappa_0p3[0]; JetAK4_charge_kappa_0p6_1 = JetAK4_charge_kappa_0p6[0]; JetAK4_charge_kappa_1p0_1 = JetAK4_charge_kappa_1p0[0];
 			JetAK4_pt_2 = JetAK4_pt[1]; JetAK4_eta_2 = JetAK4_eta[1]; JetAK4_phi_2 = JetAK4_phi[1]; JetAK4_mass_2 = JetAK4_mass[1]; JetAK4_charge_kappa_0p3_2 = JetAK4_charge_kappa_0p3[1]; JetAK4_charge_kappa_0p6_2 = JetAK4_charge_kappa_0p6[1]; JetAK4_charge_kappa_1p0_2 = JetAK4_charge_kappa_1p0[1]; 
 			JetAK4_pt_3 = JetAK4_pt[2]; JetAK4_eta_3 = JetAK4_eta[2]; JetAK4_phi_3 = JetAK4_phi[2]; JetAK4_mass_3 = JetAK4_mass[2]; JetAK4_charge_kappa_0p3_3 = JetAK4_charge_kappa_0p3[2]; JetAK4_charge_kappa_0p6_3 = JetAK4_charge_kappa_0p6[2]; JetAK4_charge_kappa_1p0_3 = JetAK4_charge_kappa_1p0[2];
@@ -2308,7 +2388,16 @@ int main(int argc, char *argv[])
 				JetAK4_btag_B_3 = JetAK4_btag_UParTAK4B[2]; JetAK4_btag_CvB_3 = JetAK4_btag_UParTAK4CvB[2]; JetAK4_btag_CvL_3 = JetAK4_btag_UParTAK4CvL[2]; JetAK4_btag_QG_3 = JetAK4_btag_UParTAK4QG[2];   JetAK4_btag_B_WP_3 = JetAK4_btag_UParTAK4B_WP[2];
 				JetAK4_btag_B_4 = JetAK4_btag_UParTAK4B[3]; JetAK4_btag_CvB_4 = JetAK4_btag_UParTAK4CvB[3]; JetAK4_btag_CvL_4 = JetAK4_btag_UParTAK4CvL[3]; JetAK4_btag_QG_4 = JetAK4_btag_UParTAK4QG[3];   JetAK4_btag_B_WP_4 = JetAK4_btag_UParTAK4B_WP[3];
 			}
+			
+			HT_4j = (JetAK4_pt_1+JetAK4_pt_2+JetAK4_pt_3+JetAK4_pt_4);
+			HT_allj = (HT_add<0)?HT_4j:(HT_4j+HT_add);
+				
+			// pairing-dependent features //
 		
+			if(fabs(float(Hcand_1[xcomb].M()) - SM_H_mass) < fabs(float(Hcand_2[xcomb].M()) - SM_H_mass)) 
+					{ Hcand_mass = Hcand_1[xcomb].M();  Ycand_mass = Hcand_2[xcomb].M();  }
+			else { Hcand_mass = Hcand_2[xcomb].M();  Ycand_mass = Hcand_1[xcomb].M();  }
+			
 			if(Hcand_1_b_1_idx[xcomb]==0 || Hcand_1_b_2_idx[xcomb]==0) { JetAK4_Hcand_index_1 = 1;  } else { JetAK4_Hcand_index_1 = 2; }
 			if(Hcand_1_b_1_idx[xcomb]==1 || Hcand_1_b_2_idx[xcomb]==1) { JetAK4_Hcand_index_2 = 1;  } else { JetAK4_Hcand_index_2 = 2; }
 			if(Hcand_1_b_1_idx[xcomb]==2 || Hcand_1_b_2_idx[xcomb]==2) { JetAK4_Hcand_index_3 = 1;  } else { JetAK4_Hcand_index_3 = 2; }
@@ -2326,14 +2415,46 @@ int main(int argc, char *argv[])
 			
 			H1H2_deta = pairs[xcomb].DEta_H1H2; H1H2_dphi = pairs[xcomb].DPhi_H1H2; H1H2_dR = pairs[xcomb].DR_H1H2;
 			H1H2_pt = (H1_Cand+H2_Cand).Pt();  H1H2_eta = (H1_Cand+H2_Cand).Eta();   H1H2_phi = (H1_Cand+H2_Cand).Phi(); H1H2_mass = (H1_Cand+H2_Cand).M();      
-					
-			HT_4j = (JetAK4_pt_1+JetAK4_pt_2+JetAK4_pt_3+JetAK4_pt_4);
-			HT_allj = (HT_add<0)?HT_4j:(HT_4j+HT_add);
-					
+								
 			angle_CS_theta_H1H2 = pairs[xcomb].angle_theta_H1H2;
 			angle_CS_theta_H1   = pairs[xcomb].angle_theta_H1;
 			angle_CS_theta_H2   = pairs[xcomb].angle_theta_H2;
+			
+			// now store the variables for each pairing (could be improved later) //
+			
+			pair_index_maxscore = scoremax_comb;
+			
+			for(int icomb=0; icomb<ncomb; icomb++){
+			
+				pair_index.push_back(icomb);
+			
+				if(fabs(float(Hcand_1[icomb].M()) - SM_H_mass) < fabs(float(Hcand_2[icomb].M()) - SM_H_mass)) 
+					 { Hcand_mass_pair.push_back(Hcand_1[icomb].M());  Ycand_mass_pair.push_back(Hcand_2[icomb].M());  }
+				else { Hcand_mass_pair.push_back(Hcand_2[icomb].M());  Ycand_mass_pair.push_back(Hcand_1[icomb].M());  }
+																
+				Hcand_1_pt_pair.push_back(Hcand_1[icomb].Pt()); Hcand_1_eta_pair.push_back(Hcand_1[icomb].Eta()); Hcand_1_phi_pair.push_back(Hcand_1[icomb].Phi()); Hcand_1_mass_pair.push_back(Hcand_1[icomb].M());
+				Hcand_2_pt_pair.push_back(Hcand_2[icomb].Pt()); Hcand_2_eta_pair.push_back(Hcand_2[icomb].Eta()); Hcand_2_phi_pair.push_back(Hcand_2[icomb].Phi()); Hcand_2_mass_pair.push_back(Hcand_2[icomb].M());
 				
+				H1_b1b2_deta_pair.push_back(pairs[icomb].DEta_b1b2_H1); H1_b1b2_dphi_pair.push_back(pairs[icomb].DPhi_b1b2_H1); H1_b1b2_dR_pair.push_back(pairs[icomb].DR_b1b2_H1);  
+				H2_b1b2_deta_pair.push_back(pairs[icomb].DEta_b1b2_H2); H2_b1b2_dphi_pair.push_back(pairs[icomb].DPhi_b1b2_H2); H2_b1b2_dR_pair.push_back(pairs[icomb].DR_b1b2_H2);  
+			
+				H1H2_deta_pair.push_back(pairs[icomb].DEta_H1H2); H1H2_dphi_pair.push_back(pairs[icomb].DPhi_H1H2); H1H2_dR_pair.push_back(pairs[icomb].DR_H1H2);
+				H1H2_pt_pair.push_back((Hcand_1[icomb]+Hcand_2[icomb]).Pt());  H1H2_eta_pair.push_back((Hcand_1[icomb]+Hcand_2[icomb]).Eta()); H1H2_phi_pair.push_back((Hcand_1[icomb]+Hcand_2[icomb]).Phi()); H1H2_mass_pair.push_back((Hcand_1[icomb]+Hcand_2[icomb]).M());      
+					
+				angle_CS_theta_H1H2_pair.push_back(pairs[icomb].angle_theta_H1H2);
+				angle_CS_theta_H1_pair.push_back(pairs[icomb].angle_theta_H1);
+				angle_CS_theta_H2_pair.push_back(pairs[icomb].angle_theta_H2);
+			
+			}//icomb
+			
+			for(unsigned jsig=0; jsig<(signal_index.size()); jsig++){
+									
+				//mX_sig.push_back(signal_index[jsig].first);
+				//mY_sig.push_back(signal_index[jsig].second);
+				best_pair_sig.push_back(comb_pairing_bkg[jsig].index);
+				
+			}
+					
 		
 		}//scoremax_comb>=0
 		
@@ -2669,6 +2790,18 @@ int main(int argc, char *argv[])
 	  }//nJetAK4>=4
 	  
 	  pairs.clear();
+	  
+	  pair_index.clear();
+	  Hcand_mass_pair.clear(); Ycand_mass_pair.clear();
+	  Hcand_1_pt_pair.clear(); Hcand_1_eta_pair.clear(); Hcand_1_phi_pair.clear(); Hcand_1_mass_pair.clear();
+	  Hcand_2_pt_pair.clear(); Hcand_2_eta_pair.clear(); Hcand_2_phi_pair.clear(); Hcand_2_mass_pair.clear();
+	  H1_b1b2_deta_pair.clear(); H1_b1b2_dphi_pair.clear(); H1_b1b2_dR_pair.clear();
+	  H2_b1b2_deta_pair.clear(); H2_b1b2_dphi_pair.clear(); H2_b1b2_dR_pair.clear();
+	  H1H2_deta_pair.clear(); H1H2_dphi_pair.clear(); H1H2_dR_pair.clear();
+	  H1H2_pt_pair.clear(); H1H2_eta_pair.clear(); H1H2_phi_pair.clear(); H1H2_mass_pair.clear();
+	  angle_CS_theta_H1H2_pair.clear(); angle_CS_theta_H1_pair.clear(); angle_CS_theta_H2_pair.clear();		
+	  
+	  best_pair_sig.clear();
 
 	}// at least 4 jets found
 
