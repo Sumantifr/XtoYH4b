@@ -101,6 +101,12 @@ python3 create_btagSF_correction.py --YEAR YEAR
    test_run=0/1 (default:0) 
    show_signal=0/1 (default:0) 
    ```
+### Higgs pair reconstruction (Pairing MVA)
+
+   ```
+   cd CMSSW_14_2_1/src/MVA
+   sh run_full_training.sh
+   ```
 
 ### Using Combine tools 
 
