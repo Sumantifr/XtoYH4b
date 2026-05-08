@@ -72,6 +72,10 @@ class AK4Jet {
   vector<float>  btag_PNetB_SF_up;
   vector<float>  btag_PNetB_SF_dn;
   
+  float  btag_PNetB_wp_SF;
+  vector<float>  btag_PNetB_wp_SF_up;
+  vector<float>  btag_PNetB_wp_SF_dn;
+  
   float  btag_RobustParTAK4B_SF;
   vector<float>  btag_RobustParTAK4B_SF_up;
   vector<float>  btag_RobustParTAK4B_SF_dn;
@@ -79,6 +83,10 @@ class AK4Jet {
   float  btag_UParTAK4B_SF;
   vector<float>  btag_UParTAK4B_SF_up;
   vector<float>  btag_UParTAK4B_SF_dn;
+  
+  float  btag_UParTAK4B_wp_SF;
+  vector<float>  btag_UParTAK4B_wp_SF_up;
+  vector<float>  btag_UParTAK4B_wp_SF_dn;
   
   float PNetRegPtRawCorr;
   float PNetRegPtRawCorrNeutrino;

@@ -892,8 +892,11 @@
    float triggersf_weight_btag, triggersf_weight_btag_err;
    float triggersf_weight_L1HT, triggersf_weight_L1HT_err;
    float btag_PNet_weight, btag_ParT_weight, btag_UParT_weight;
+   float btag_PNet_wp_weight, btag_UParT_wp_weight;
    vector<float> btag_PNet_weight_up, btag_PNet_weight_dn;
    vector<float> btag_UParT_weight_up, btag_UParT_weight_dn;
+   vector<float> btag_PNet_wp_weight_up, btag_PNet_wp_weight_dn;
+   vector<float> btag_UParT_wp_weight_up, btag_UParT_wp_weight_dn;
    float xsec_weight, CrossSection;
    
    bool trigger_matching;
@@ -910,8 +913,13 @@
    int nMuon_max = 3;
    int nElectron_max = 3;
    
-   vector<string> btag_systematics = {"jes","lf","lfstats1","lfstats2","hf","hfstats1","hfstats2"};//,"cferr1","cferr2"}; 
-   
+   vector<string> btag_systematics = {"jes","lf","lfstats1","lfstats2","hf","hfstats1","hfstats2","cferr1","cferr2"}; 
+   vector<string> btag_wp_systematics = {"correlated","uncorrelated","statistic","jes","jer","type3","pileup","topmass","hdamp"};
+   // full list //
+   //2022:  statistic/jes/jer/type3/pileup/topmass/hdamp/pdf/colorreconnection/bfragmentation
+   //2023:  statistic/jes/jer/type3/pileup/topmass/hdamp/pdf/colorreconnection
+   //2024:  statistic/jes/jer/type3/pileup/topmass/hdamp/pdfas/bfragmentation/mur/isrdef/muf/fsrdef/	 
+  
    int nfatjets_boosted;
    float AK8_ptcut_boosted = 250.;
    float AK8_msdcut_boosted = 40.;
@@ -1511,7 +1519,6 @@ bool pass_NoiseFilter(bool Flag_goodVertices, bool Flag_globalSuperTightHalo2016
 
 	else if (year=="2025"){
 		pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter);
-		//pass = true;
 	}
 	
 	return pass;

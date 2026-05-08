@@ -35,6 +35,7 @@ if(year=="2024") { Filenames_MC = loadFilenames(file_path+"MC_names_2024.txt"); 
 vector<string> Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names.txt");
 if(year=="2023") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2023.txt");  }
 else if (year=="2023BPiX") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2023BPIX.txt");  }
+else if (year=="2024") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2024.txt");  }
 
 vector<string> Filenames_Data = loadFilenames(file_path+"Data_names_"+year+".txt");
 
@@ -81,14 +82,26 @@ else{ files = Filenames_MC; }
 }
 
 int nfile = int(files.size());
-
 for (int ii=0;ii<nfile;ii++)
 {
-
 ifstream input_file;
+//cout<<files[ii]<<endl;
+if(isSIGNAL){
+if(year=="2024") {
+	if(files[ii].find("MX-300-MY-95") == std::string::npos) continue;
+}
+else{
+	if(files[ii].find("MX-300_MY-125") == std::string::npos) continue;
+}
+}
+else{
+if(files[ii].find("QCD-4Jets_HT-1000") == std::string::npos) continue;
+}
 
-if(files[ii].find("QCD") == std::string::npos) continue;
-
+if(isSIGNAL){
+string filenamesig = "../FILES_"+year+"/"+files[ii]+".log";
+cout<<"opening "<<filenamesig<<endl;
+}
 input_file.open("../FILES_"+year+"/"+files[ii]+".log");
 string x1;
 
@@ -98,7 +111,7 @@ while (getline(input_file, line))
     count++; 
 std::cout <<files[ii]<<"\t"<< count << std::endl;
 
-int nstep = 10;
+int nstep = 1;
 if(isDATA) { nstep = 25; }
 if(isSIGNAL) { nstep = 20; }
 //if(!isDATA && year=="2024") { nstep = 5;  }
