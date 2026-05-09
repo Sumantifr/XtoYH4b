@@ -1,11 +1,16 @@
 #!/bin/bash
-##run command: sh release_held_jobs.sh (runtime) 
+##run command: sh release_held_jobs.sh (runtime) (tomorrow) 
 task="$1"
+time="$2"
 
 # Set your desired maximum runtime (in seconds)
 MAX_RUNTIME=86400  # Example: 12 hours
 MAX_MEMORY=8192
-flavor="nextweek" #testmatch"
+#flavor="nextweek" #testmatch"
+#flavor="testmatch"
+#flavor="tomorrow" 
+
+flavor="$time"
 
 # Find all held jobs for your user
 held_jobs=$(condor_q -constraint 'JobStatus==5' -af ClusterId ProcId)

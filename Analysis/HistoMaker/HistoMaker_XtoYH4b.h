@@ -406,9 +406,15 @@ using namespace std;
    Float_t		   btag_PNet_weight;
    vector<float>   *btag_PNet_weightup;
    vector<float>   *btag_PNet_weightdown;
+   Float_t		   btag_PNet_WP_weight;
+   vector<float>   *btag_PNet_WP_weightup;
+   vector<float>   *btag_PNet_WP_weightdown;
    Float_t		   btag_UParT_weight;
    vector<float>   *btag_UParT_weightup;
    vector<float>   *btag_UParT_weightdown;
+   Float_t		   btag_UParT_WP_weight;
+   vector<float>   *btag_UParT_WP_weightup;
+   vector<float>   *btag_UParT_WP_weightdown;
    Float_t		   btag_ParT_weight;
    Float_t		   triggersf_weight_pt;
    Float_t		   triggersf_weight_pt_err;
@@ -501,8 +507,9 @@ using namespace std;
 	 "JES_Total",
 	 "JER",
 	 "PU",
-	 "Btag_SF_jes","Btag_SF_lf","Btag_SF_lfstats1","Btag_SF_lfstats2","Btag_SF_hf","Btag_SF_hfstats1","Btag_SF_hfstats2",
+	 "Btag_SF_jes","Btag_SF_lf","Btag_SF_lfstats1","Btag_SF_lfstats2","Btag_SF_hf","Btag_SF_hfstats1","Btag_SF_hfstats2","Btag_SF_cferr1","Btag_SF_cferr2",
 	 "Btag_SF_correction",
+	 "Btag_WP_SF_correlated","Btag_WP_SF_uncorrelated",
 	 "LHEScale","LHEScale_muR","LHEScale_muF","LHEPDF","LHEAlphaS","PS_ISR","PS_FSR"
 	 }; 
 	 
@@ -943,18 +950,30 @@ using namespace std;
    fChain->SetBranchAddress("prefiringweightup", &prefiringweightup);
    fChain->SetBranchAddress("prefiringweightdown", &prefiringweightdown);
    
-   fChain->SetBranchAddress("btag_PNet_weight", &btag_PNet_weight);
-   if(isSignal){
-	fChain->SetBranchAddress("btag_PNet_weightup", &btag_PNet_weightup);
-	fChain->SetBranchAddress("btag_PNet_weightdown", &btag_PNet_weightdown);
+   if(year!="2024"&&year!="2025"){
+	fChain->SetBranchAddress("btag_PNet_weight", &btag_PNet_weight);
+	if(isSignal){
+		fChain->SetBranchAddress("btag_PNet_weightup", &btag_PNet_weightup);
+		fChain->SetBranchAddress("btag_PNet_weightdown", &btag_PNet_weightdown);
+	}
+	fChain->SetBranchAddress("btag_PNet_WP_weight", &btag_PNet_WP_weight);
+	if(isSignal){
+		fChain->SetBranchAddress("btag_PNet_WP_weightup", &btag_PNet_WP_weightup);
+		fChain->SetBranchAddress("btag_PNet_WP_weightdown", &btag_PNet_WP_weightdown);
+	}
    }
    fChain->SetBranchAddress("btag_ParT_weight", &btag_ParT_weight);
    if(year=="2024"||year=="2025"){
-   fChain->SetBranchAddress("btag_UParT_weight", &btag_UParT_weight);
-   if(isSignal){
-	fChain->SetBranchAddress("btag_UParT_weightup", &btag_UParT_weightup);
-	fChain->SetBranchAddress("btag_UParT_weightdown", &btag_UParT_weightdown);
-   }
+	fChain->SetBranchAddress("btag_UParT_weight", &btag_UParT_weight);
+	if(isSignal){
+		fChain->SetBranchAddress("btag_UParT_weightup", &btag_UParT_weightup);
+		fChain->SetBranchAddress("btag_UParT_weightdown", &btag_UParT_weightdown);
+	}
+	fChain->SetBranchAddress("btag_UParT_WP_weight", &btag_UParT_WP_weight);
+	if(isSignal){
+		fChain->SetBranchAddress("btag_UParT_WP_weightup", &btag_UParT_WP_weightup);
+		fChain->SetBranchAddress("btag_UParT_WP_weightdown", &btag_UParT_WP_weightdown);
+	}
    }
    fChain->SetBranchAddress("triggersf_weight_pt", &triggersf_weight_pt);	
    fChain->SetBranchAddress("triggersf_weight_pt_err", &triggersf_weight_pt_err);	
