@@ -178,7 +178,8 @@ python3 create_btagSF_correction.py --YEAR YEAR
 
     - This will create files for condor job submission (one job per signal) and you will see the job submission file at the end
 
-  - Submit condor jobs: sh `path`/condor_submit_text2workspace_6.sh   (`path` is the same path where workspaces will be created)
+  - Submit condor jobs: sh `path`/condor_submit_text2workspace_6.sh   
+    - `path` is the same path where workspaces will be created
 
   - Note: Inside `run_text2workspace_condor.sh`, the shapes to use is specified in `templates` (6: TTTM inclusive SR)
 
