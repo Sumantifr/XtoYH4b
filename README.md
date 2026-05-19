@@ -160,14 +160,49 @@ python3 create_btagSF_correction.py --YEAR YEAR
 
    - One note: since we have many mass points and volume of datacards and workspaces is large. So, we produce datacards in group directory, e.g.,
    ```
-   cd /data/dust/group/cms/higgs-bb-desy/XToYHTo4b/CombineResults/
+   cd /data/dust/group/cms/higgs-bb-desy/XToYHTo4b/USERNAME/CombineResults/
    mkdir -p 2023BPiX/datacards_vx/
    cd 2023BPiX/datacards_vx/
    ```
    Now create datacards here:
    ```CreateCards_XYHto4b 2023BPiX```
 
-7. In the scripts for workspace creation, the corresponding path (from the earlier step) should be used
+7. Create workspaces:
+
+ - Use `run_text2workspace_condor.sh` for creating workspaces from datacard 
+
+ - In `run_text2workspace_condor.sh`, the path (from the earlier step) should be used in `path_dir`
+   (you could use `/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/USERNAME/CombineResults/` from step 6)
+
+ - Run: sh run_text2workspace_condor.sh 2023BPiX
+
+ - This will create files for condor job submission (one job per signal) and you will see the job submission file at the end
+
+ - Submit condor jobs: sh `path`/condor_submit_text2workspace_6.sh   (`path` is the same path where workspaces will be created)
+
+ - Note: Inside `run_text2workspace_condor.sh`, the shapes to use is specified in `templates` (6: TTTM inclusive SR)
+
+8. Calculate limits:
+
+- Use `run_limit_condor.sh` to calculate limits 
+
+- Similar to workspace creation, path needs to be correctly specified in the script (use same `path_dir` as in run_text2workspace_condor.sh)
+
+- Run: sh run_limit_condor.sh 2023BPiX
+
+- This will also create job submission scripts and show you the submission file at the end
+
+- Submit condor jobs: sh `path`/condor_submit.sh
+
+9. Plot limits:
+
+- For plotting limits as functions of MX and MY, use `plotLimits.py` 
+
+- For this you need to deactivate `cmsenv` (can simply log in to another node)
+
+- First setup environment using: `source /data/dust/user/chatterj/environments/bdt/bin/activate`
+
+- Then run: `python3 plotLimits.py  --YEAR 2023BPiX`
 
 Below are example commands for different tasks:
 

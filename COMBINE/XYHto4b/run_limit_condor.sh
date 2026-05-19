@@ -28,8 +28,13 @@ submission_local="$input_dir/run_local.sh"
 
 for temp in "${templates[@]}"; do  
 
-    #files="$input_dir/workspace_XYH_4b_${temp}_13p6TeV_2022_XtoYHto4B_MX-*_MY-*.root"
-    files="$input_dir/workspace_XYH_4b_${temp}_13p6TeV_${year}_XtoYHto4B_Par-MX-*-MY-*.root"
+    if [ "$year" = "2024" ]; then
+	    files="$input_dir/workspace_XYH_4b_${temp}_13p6TeV_${year}_XtoYHto4B_Par-MX-*-MY-*.root"
+    else
+    	    files="$input_dir/workspace_XYH_4b_${temp}_13p6TeV_${year}_XtoYHto4B_MX-*_MY-*.root"
+    
+    fi
+    #files="$input_dir/workspace_XYH_4b_${temp}_13p6TeV_${year}_XtoYHto4B_Par-MX-*-MY-*.root"
 
     for file in $files; do
         if [[ ! -f "$file" ]]; then
@@ -43,9 +48,13 @@ for temp in "${templates[@]}"; do
         comb=$(echo "$file_name" | sed -n 's/.*4b_\([0-9]*\)_.*/\1/p')
         #mx_value=$(echo "$file_name" | sed -n 's/.*MX-\([0-9]*\)_MY-[0-9]*.*/\1/p')
         #my_value=$(echo "$file_name" | sed -n 's/.*MX-[0-9]*_MY-\([0-9]*\).*/\1/p')
-	mx_value=$(echo "$file_name" | sed -n 's/.*MX-\([0-9]*\)-MY-[0-9]*.*/\1/p')
-	my_value=$(echo "$file_name" | sed -n 's/.*MX-[0-9]*-MY-\([0-9]*\).*/\1/p')
-
+	if [ "$year" = "2024" ]; then
+		mx_value=$(echo "$file_name" | sed -n 's/.*MX-\([0-9]*\)-MY-[0-9]*.*/\1/p')
+		my_value=$(echo "$file_name" | sed -n 's/.*MX-[0-9]*-MY-\([0-9]*\).*/\1/p')
+	else
+		mx_value=$(echo "$file_name" | sed -n 's/.*MX-\([0-9]*\)_MY-[0-9]*.*/\1/p')
+		my_value=$(echo "$file_name" | sed -n 's/.*MX-[0-9]*_MY-\([0-9]*\).*/\1/p')
+	fi
         if [[ -n "$mx_value" && -n "$my_value" ]]; then
 
             output_file="$input_dir/execute_${comb}_${mx_value}_${my_value}.csh"
@@ -99,3 +108,4 @@ done
 
 chmod +x "$submission_file"
 chmod +x "$submission_local"
+echo "All jobs for template $temp prepared. Submit with: $submission_file"

@@ -30,9 +30,11 @@ data_lumi = 1.0
 if args.YEAR=="2023BPiX":
     data_lumi = 9.45
 elif args.YEAR=="2023":
-    data_lumi = 11.24
+    data_lumi = 11.2
 elif args.YEAR=="2022EE":
-    data_lumi = 22.10
+    data_lumi = 22.1
+elif args.YEAR=="2024":
+    data_lumi = 109
 else:
     data_lumi = 7.98
 
@@ -45,32 +47,42 @@ def plot2D(group,variable_to_plot,z_axis_title,outdir,filename,cmap_style='OrRd'
     plt.rcParams["xtick.labelsize"] = 14
     plt.rcParams["ytick.labelsize"] = 14
 
-
     pivot = group.pivot(index="MY", columns="MX", values=variable_to_plot)
 
     fig, ax = plt.subplots(figsize=(8, 6), constrained_layout=True)
 
-    im = ax.imshow(pivot.values,
-                #extent=[pivot.columns.min(), pivot.columns.max(),
-                #        pivot.index.min(), pivot.index.max()],
+    im = ax.imshow(
+                pivot.values,
+                #extent=[
+                #    pivot.columns.min(), pivot.columns.max(),
+                #    pivot.index.min(), pivot.index.max()
+                #],
                 origin="lower",
                 aspect="auto",
-                cmap=cmap_style
+                cmap=cmap_style,
+                #vmin=0,
+                #vmax=700
         )
 
     ax.set_xlabel("$m_X$ [GeV]",loc="right", labelpad=8)
     ax.set_xticks(np.arange(len(pivot.columns)))
     ax.set_xticklabels(pivot.columns)
+    #ax.set_xticks(pivot.columns)
 
     ax.set_ylabel("$m_Y$ [GeV]",loc="top", labelpad=8)
     ax.set_yticks(np.arange(len(pivot.index)))
     ax.set_yticklabels(pivot.index)
+    #ax.set_yticks(pivot.index)
 
     ax.set_xticks(np.arange(-0.5, len(pivot.columns), 1), minor=True)
     ax.set_yticks(np.arange(-0.5, len(pivot.index), 1), minor=True)
     ax.grid(which="minor", color="w", linewidth=0.5)
 
     ax.tick_params(axis="both", which="both", direction="in", top=True, right=True)
+
+    #plt.xlim(350,1950)
+    #plt.ylim(50,1500)
+    #ax.set_xlim([350, 1950])
 
     fig.colorbar(im, ax=ax, label=z_axis_title)
 
@@ -85,12 +97,14 @@ def plot2D(group,variable_to_plot,z_axis_title,outdir,filename,cmap_style='OrRd'
             color="black"
         )
 
+    
     for i, y in enumerate(pivot.index):
         for j, x in enumerate(pivot.columns):
             val = pivot.iloc[i, j]
             if not np.isnan(val):
                 ax.text(j, i, f"{val:.2f}", ha="center", va="center", color="black", fontsize=10)
-
+                #ax.text(x, y, f"{val:.2f}", ha="center", va="center", color="black", fontsize=10)
+    
     hep.cms.text("Simulation", loc=0, ax=ax)
     ax.text(1.0, 1.02, "L = "+str(data_lumi)+" fb$^{-1}$ (13.6 TeV)",transform=ax.transAxes, ha="right", va="bottom", fontsize=18)
 
@@ -102,7 +116,7 @@ def plot2D(group,variable_to_plot,z_axis_title,outdir,filename,cmap_style='OrRd'
 def plotLimits(log=False,inDir="",outDir="",shapes=[],legends=[]):
 
     #input_dir = "/afs/desy.de/user/c/chokepra/private/XtoYH4b/CMSSW_14_2_1/src/CombineHarvester/CombineTools/XYHto4b/workspace_v3"
-    #output_dir = "/afs/desy.de/user/c/chokepra/private/XtoYH4b/CMSSW_14_2_1/src/CombineHarvester/CombineTools/XYHto4b/ExpLimits_v3"
+    #output_dir ="/afs/desy.de/user/c/chokepra/private/XtoYH4b/CMSSW_14_2_1/src/CombineHarvester/CombineTools/XYHto4b/ExpLimits_v3"
 
     os.makedirs(outDir, exist_ok=True)
 
@@ -112,6 +126,7 @@ def plotLimits(log=False,inDir="",outDir="",shapes=[],legends=[]):
     unavailable_df = pd.DataFrame(unavailable, columns=["Scenario", "MX", "MY"])
 
     file_list = []
+    print("inDir",inDir)
     for template in shapes:
         files = glob.glob(os.path.join(inDir, f"higgsCombine_Comb_{template}*"))
         file_list.extend([f for f in files])
@@ -133,7 +148,7 @@ def plotLimits(log=False,inDir="",outDir="",shapes=[],legends=[]):
 
         #scenario, MX, MY = file_name.split("higgsCombine")[1].split(".")[0].split("_")
 
-        if scenario==5:
+        if scenario==6:
             mx_list.append(MX)
             my_list.append(MY)
 
@@ -143,6 +158,10 @@ def plotLimits(log=False,inDir="",outDir="",shapes=[],legends=[]):
         limits = [confidence_level.limit for confidence_level in tree]
 
         sigma_1_up, sigma_1_dn, sigma_2_up, sigma_2_dn = 0, 0, 0, 0
+
+        #changing units from pb to fb
+        for lx in range(len(limits)):
+            limits[lx] *= 1000
 
         if len(limits) != 6: # 6 -> 5 expected + 1 observed
             observed = limits[-1] # -1 = observed
@@ -161,13 +180,13 @@ def plotLimits(log=False,inDir="",outDir="",shapes=[],legends=[]):
 
     df_org = pd.DataFrame(data, columns=["scenario", "MX", "MY", "expected","sigma_1_up","sigma_1_dn","sigma_2_up","sigma_2_dn"])
 
-    df = df_org[df_org["MX"] <= 2000]
+    df = df_org[(df_org["MX"]>350) & (df_org["MX"]<=2200)]
 
     # plotting limits for each scenario
 
     for scenario, group in df.groupby("scenario"):
       
-        plot2D(group,"expected","Expected limits at 95% CL [pb]",outDir,f"Exp_limits_MX_MY_{scenario}",'OrRd',True,legends[scenario-5])
+        plot2D(group,"expected","Expected limits at 95% CL [fb]",outDir,f"Exp_limits_MX_MY_{scenario}",'OrRd',True,legends[scenario-5])
 
     # ratio between combine and inclusive signal regions #
 
@@ -188,6 +207,8 @@ def plotLimits(log=False,inDir="",outDir="",shapes=[],legends=[]):
 if __name__ == "__main__":
 
     path_dir="/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/CombineResults/"
+    if args.YEAR=="2024":
+        path_dir+="SignalExtraction/"
     if args.NoSys:
         input_dir= path_dir+args.YEAR+"/limits_v5_nosys"
     else:
