@@ -292,6 +292,29 @@ float* TriggerSF_L1HT(TFile *file_trigger_L1HT, vector<AK4Jet> inputjets, string
 	return sfvalues;
 }
 
+void read_btag_efficiency(TFile *file_btag_eff, vector<vector<TH2F*>>& h_eff, string btagger="PNet")
+{
+	
+	h_eff.clear();
+
+	for(int iflav=0; iflav<flavs.size(); iflav++){
+		
+		vector<TH2F*> hists_flav;
+		
+		for(int jwp=0; jwp<btag_WPs.size(); jwp++){
+			
+			TH2F *htemp;
+			string name = "h_Efficiency_AK4_"+flavs[iflav]+"_flv_"+btagger+"_"+btag_WPs[jwp];
+			htemp = (TH2F*)file_btag_eff->Get(name.c_str());
+			hists_flav.push_back((TH2F*)htemp->Clone());
+	
+		}
+		
+		h_eff.push_back(hists_flav);
+	}
+	
+} 
+
 // For b tagging combinations //
 
 using Combination = tuple<int, int, int, int>;
@@ -620,6 +643,20 @@ int main(int argc, char *argv[])
 	//DeepTag PNet_TvsQCD cut values source: https://indico.cern.ch/event/1221195/contributions/5141581/attachments/2556595/4514497/Top_W_Calibration_Updated.pdf#page=27
 	PN_Top_med = 0.74; 
    }
+   
+   //putting btag score WPs into vectors
+   
+   btagWP_cuts_PNet.push_back(PNetAK4_L);
+   btagWP_cuts_PNet.push_back(PNetAK4_M);
+   btagWP_cuts_PNet.push_back(PNetAK4_T);
+   btagWP_cuts_PNet.push_back(PNetAK4_XT);
+   btagWP_cuts_PNet.push_back(PNetAK4_XXT);
+   
+   btagWP_cuts_UParT.push_back(UParTAK4_L);
+   btagWP_cuts_UParT.push_back(UParTAK4_M);
+   btagWP_cuts_UParT.push_back(UParTAK4_T);
+   btagWP_cuts_UParT.push_back(UParTAK4_XT);
+   btagWP_cuts_UParT.push_back(UParTAK4_XXT);
    
    if(year=="2016postVFP"||year=="2016preVFP"){ absetacut = 2.4; }
    else{ absetacut = 2.5; }
@@ -1161,26 +1198,30 @@ int main(int argc, char *argv[])
    
    Tout->Branch("btag_PNet_weight", &btag_PNet_weight, "btag_PNet_weight/F");
    Tout->Branch("btag_PNet_WP_weight", &btag_PNet_wp_weight, "btag_PNet_wp_weight/F");
+   Tout->Branch("btag_PNet_MultiWP_weight", &btag_PNet_multiwp_weight, "btag_PNet_multiwp_weight/F");
    if(isSignal){
 	   Tout->Branch("btag_PNet_weightup", &btag_PNet_weight_up);
 	   Tout->Branch("btag_PNet_weightdown", &btag_PNet_weight_dn);
 	   Tout->Branch("btag_PNet_WP_weightup", &btag_PNet_wp_weight_up);
 	   Tout->Branch("btag_PNet_WP_weightdown", &btag_PNet_wp_weight_dn);
+	   Tout->Branch("btag_PNet_MultiWP_weightup", &btag_PNet_multiwp_weight_up);
+	   Tout->Branch("btag_PNet_MultiWP_weightdown", &btag_PNet_multiwp_weight_dn);
    }
    
    Tout->Branch("btag_ParT_weight", &btag_ParT_weight, "btag_ParT_weight/F"); 
    
    Tout->Branch("btag_UParT_weight", &btag_UParT_weight, "btag_UParT_weight/F"); 
    Tout->Branch("btag_UParT_WP_weight", &btag_UParT_wp_weight, "btag_UParT_wp_weight/F"); 
+   Tout->Branch("btag_UParT_MultiWP_weight", &btag_UParT_multiwp_weight, "btag_UParT_multiwp_weight/F"); 
    if(isSignal){
 	   Tout->Branch("btag_UParT_weightup", &btag_UParT_weight_up);
 	   Tout->Branch("btag_UParT_weightdown", &btag_UParT_weight_dn);
 	   Tout->Branch("btag_UParT_WP_weightup", &btag_UParT_wp_weight_up);
 	   Tout->Branch("btag_UParT_WP_weightdown", &btag_UParT_wp_weight_dn);
+	   Tout->Branch("btag_UParT_MultiWP_weightup", &btag_UParT_multiwp_weight_up);
+	   Tout->Branch("btag_UParT_MultiWP_weightdown", &btag_UParT_multiwp_weight_dn);
    }
    
-   
-  
    Tout->Branch("triggersf_weight_pt", &triggersf_weight_pt, "triggersf_weight_pt/F");	
    Tout->Branch("triggersf_weight_pt_err", &triggersf_weight_pt_err, "triggersf_weight_pt_err/F");	
    Tout->Branch("triggersf_weight_btag", &triggersf_weight_btag, "triggersf_weight_btag/F");	
@@ -1342,6 +1383,27 @@ int main(int argc, char *argv[])
    sprintf(name,"data/TriggerSF/%s/L1_SF.root",year.c_str());
    file_trigger_SF_L1HT = new TFile(name,"read");
    
+   string samplename = string(outfilx);
+   if(samplename.find("QCD") != std::string::npos) { sample_tag = "QCD"; }
+   else if(samplename.find("Zto2Q") != std::string::npos) { sample_tag = "Zto2Q"; }
+   else if(samplename.find("Wto2Q") != std::string::npos) { sample_tag = "Wto2Q"; }
+   else if(samplename.find("TT") != std::string::npos) 	  { sample_tag = "TT"; }
+   else if((samplename.find("WW") != std::string::npos)||(samplename.find("WZ") != std::string::npos)||(samplename.find("ZZ") != std::string::npos)) 	  { sample_tag = "Diboson"; }
+   else if(samplename.find("Hto2B") != std::string::npos) 	  { sample_tag = "SingleH"; }
+   else if(samplename.find("HHto4B") != std::string::npos) 	  { sample_tag = "DoubleH"; }
+   else { sample_tag = "ST"; }
+   if(isSignal) { 
+	  if(year=="2022EE") { sample_tag = "QCD"; }
+	  else { sample_tag = "NMSSM_XtoYHto4B_AllSummed"; }
+   }
+   sprintf(name,"data/BTagEfficiency/%s/Btag_efficiency_%s.root",year.c_str(),sample_tag.c_str());
+   file_btag_eff = new TFile(name,"read");
+  
+   cout<<"samplename "<<samplename<<" sample_tag "<<sample_tag<<endl;
+
+   if(year=="2024"||year=="2025"){  read_btag_efficiency(file_btag_eff,h_eff_UParT,"UParT");  }
+   else 						 {  read_btag_efficiency(file_btag_eff,h_eff_PNet,"PNet");    }
+   
    cout<<"Auxiliary files used \n";
    //cout<<file_mu_sf->GetName()<<endl;
    //cout<<file_el_sf->GetName()<<endl;
@@ -1355,6 +1417,7 @@ int main(int argc, char *argv[])
    }
    cout<<file_trigger_SF_btag->GetName()<<endl;
    cout<<file_trigger_SF_L1HT->GetName()<<endl;
+   cout<<file_btag_eff->GetName()<<endl;
    
    int count =0;
    string fileName;
@@ -1696,27 +1759,7 @@ int main(int argc, char *argv[])
 			};
 		
 			jet.btag_PNetB_SF = (year=="2024")?1.:read_btagSF_fromCorrectiolib(cset_btag, "particleNet_shape",jetInfo_pnet);
-			
-			map<string, correction::Variable::Type> jetInfo_pnet_wp {
-            {"pt"  , jet.pt}, // jet transverse momentum
-            {"abseta" , min(fabs(jet.eta),float(2.49))}, // absolute jet pseudorapidity
-            {"flavor", abs(jet.hadronFlavour)}, // jet flavour
-            //{"discriminant", max(jet.btag_PNetB,float(0.))}, // jet discriminant
-            {"systematic", "central"}, // systematic variation
-            {"working_point", "L"}, // discriminant working point
-			};
-			
-			if       (jet.btag_PNetB>=PNetAK4_XXT) {  jetInfo_pnet_wp["working_point"] = "XXT"; }
-			else if  (jet.btag_PNetB>=PNetAK4_XT)  {  jetInfo_pnet_wp["working_point"] = "XT"; }
-			else if  (jet.btag_PNetB>=PNetAK4_T)   {  jetInfo_pnet_wp["working_point"] = "T"; }
-			else if  (jet.btag_PNetB>=PNetAK4_M)   {  jetInfo_pnet_wp["working_point"] = "M"; }
-			
-			jet.btag_PNetB_wp_SF = 1;
-			if (year=="2024"||year=="2025") { jet.btag_PNetB_wp_SF = 1; }
-			else {
-				jet.btag_PNetB_wp_SF = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp);
-			}
-			
+		
 			map<string, correction::Variable::Type> jetInfo_parT {
             {"pt"  , jet.pt}, // jet transverse momentum
             {"abseta" , min(fabs(jet.eta),float(2.49))}, // absolute jet pseudorapidity
@@ -1739,26 +1782,6 @@ int main(int argc, char *argv[])
 
 			//jet.btag_UParTAK4B_SF = read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_shape",jetInfo_uparT);
 			jet.btag_UParTAK4B_SF = 1.;
-
-			map<string, correction::Variable::Type> jetInfo_uparT_wp {
-            {"pt"  , jet.pt}, // jet transverse momentum
-            {"abseta" , min(fabs(jet.eta),float(2.49))}, // absolute jet pseudorapidity
-            {"flavor", abs(jet.hadronFlavour)}, // jet flavour
-            //{"discriminant", max(jet.btag_UParTAK4B,float(0.))}, // jet discriminant
-            {"systematic", "central"}, // systematic variation
-            {"working_point", "L"}, // discriminant working point
-			};
-			
-			if       (jet.btag_UParTAK4B>=UParTAK4_XXT) {  jetInfo_uparT_wp["working_point"] = "XXT"; }
-			else if  (jet.btag_UParTAK4B>=UParTAK4_XT)  {  jetInfo_uparT_wp["working_point"] = "XT"; }
-			else if  (jet.btag_UParTAK4B>=UParTAK4_T)   {  jetInfo_uparT_wp["working_point"] = "T"; }
-			else if  (jet.btag_UParTAK4B>=UParTAK4_M)   {  jetInfo_uparT_wp["working_point"] = "M"; }
-			
-			jet.btag_UParTAK4B_wp_SF = 1.;
-			if (year=="2024"||year=="2025") { 
-				jet.btag_UParTAK4B_wp_SF = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp);
-			}
-			
 			
 			jet.btag_PNetB_SF_up.clear();  jet.btag_PNetB_SF_dn.clear();
 			jet.btag_RobustParTAK4B_SF_up.clear(); jet.btag_RobustParTAK4B_SF_dn.clear(); 
@@ -1813,74 +1836,157 @@ int main(int argc, char *argv[])
 			
 			}
 			
-			jet.btag_PNetB_wp_SF_up.clear();  jet.btag_PNetB_wp_SF_dn.clear();
-			jet.btag_UParTAK4B_wp_SF_up.clear(); jet.btag_UParTAK4B_wp_SF_dn.clear(); 
+			//wp-based SF//
 			
-			for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+			// compute b tagging efficiency for each WP //
+			
+			TH2F *h_map_ref  =  (year=="2024"||year=="2025")?(TH2F*)h_eff_UParT[0][0]->Clone():(TH2F*)h_eff_PNet[0][0]->Clone();
+			
+			int ipt =  h_map_ref->GetXaxis()->FindBin(jet.pt);
+			int ieta = h_map_ref->GetYaxis()->FindBin(fabs(jet.eta));
+			int flav = BTV_flavor_ID(abs(jet.hadronFlavour));
+			
+			//safety for underflow/overflow //
+			ipt = max(1, min(ipt, h_map_ref->GetNbinsX()));
+			ieta = max(1, min(ieta, h_map_ref->GetNbinsY()));
+			
+			for(unsigned ibwp=0; ibwp<btag_WPs.size(); ibwp++){ 
 				
-				// b/c jets //
+				float eff_MC = (year=="2024"||year=="2025")?h_eff_UParT[flav][ibwp]->GetBinContent(ipt,ieta):h_eff_PNet[flav][ibwp]->GetBinContent(ipt,ieta);
+								
+				if(year=="2024"||year=="2025"){  jet.btag_PNetB_allwp_eff.push_back(1.);  	  jet.btag_UParTAK4B_allwp_eff.push_back(eff_MC);  }
+				else 						  {  jet.btag_PNetB_allwp_eff.push_back(eff_MC);  jet.btag_UParTAK4B_allwp_eff.push_back(1.);  }
+							
+			}
+			
+			// SF correctionlib //
+			
+			map<string, correction::Variable::Type> jetInfo_pnet_wp {
+            {"pt"  , jet.pt}, // jet transverse momentum
+            {"abseta" , min(fabs(jet.eta),float(2.49))}, // absolute jet pseudorapidity
+            {"flavor", abs(jet.hadronFlavour)}, // jet flavour
+            //{"discriminant", max(jet.btag_PNetB,float(0.))}, // jet discriminant
+            {"systematic", "central"}, // systematic variation
+            {"working_point", "L"}, // discriminant working point
+			};			
+			
+			map<string, correction::Variable::Type> jetInfo_uparT_wp {
+            {"pt"  , jet.pt}, // jet transverse momentum
+            {"abseta" , min(fabs(jet.eta),float(2.49))}, // absolute jet pseudorapidity
+            {"flavor", abs(jet.hadronFlavour)}, // jet flavour
+            //{"discriminant", max(jet.btag_UParTAK4B,float(0.))}, // jet discriminant
+            {"systematic", "central"}, // systematic variation
+            {"working_point", "L"}, // discriminant working point
+			};
+			
+			//not fully correct, don't use it//
+			jet.btag_PNetB_wp_SF = 1; jet.btag_UParTAK4B_wp_SF = 1.;
+			if (year=="2024"||year=="2025") { 
+				jet.btag_UParTAK4B_wp_SF = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp);
+			}
+			else{
+				jet.btag_PNetB_wp_SF = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp); 
+			}
+		
+			//Compute WP-based SFs for each WP//
+			
+			jet.btag_PNetB_allwp_SF.clear(); jet.btag_PNetB_allwp_SF_up.clear(); jet.btag_PNetB_allwp_SF_dn.clear();
+			jet.btag_UParTAK4B_allwp_SF.clear(); jet.btag_UParTAK4B_allwp_SF_up.clear(); jet.btag_UParTAK4B_allwp_SF_dn.clear();
+			
+			for(unsigned ibwp=0; ibwp<btag_WPs.size(); ibwp++){ 
+			
+				if (year=="2024"||year=="2025") { 
 					
-				if(abs(jet.hadronFlavour)!=0){
-						
 					// PNet //
-						
-					jetInfo_pnet_wp["systematic"] = "up_"+btag_wp_systematics[ibsys];
-					jet.btag_PNetB_wp_SF_up.push_back((year!="2024" && year!="2025")?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):1.);
 					
-					jetInfo_pnet_wp["systematic"] = "down_"+btag_wp_systematics[ibsys];
-					jet.btag_PNetB_wp_SF_dn.push_back((year!="2024" && year!="2025")?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):1.);
-						
+					jet.btag_PNetB_allwp_SF.push_back(1); 
+				
+					vector<float> SF_uncs_up, SF_uncs_dn;
+				
+					for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){  SF_uncs_up.push_back(1.); SF_uncs_dn.push_back(1.);  }
+				
+					jet.btag_PNetB_allwp_SF_up.push_back(SF_uncs_up); 
+					jet.btag_PNetB_allwp_SF_dn.push_back(SF_uncs_dn);
+					
+					SF_uncs_up.clear(); SF_uncs_dn.clear();
+				
 					// UParT //
-							
-					jetInfo_uparT_wp["systematic"] = "up_"+btag_wp_systematics[ibsys];
-					jet.btag_UParTAK4B_wp_SF_up.push_back((year=="2024" || year=="2025")?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):1.);
-						
-					jetInfo_uparT_wp["systematic"] = "down_"+btag_wp_systematics[ibsys];
-					jet.btag_UParTAK4B_wp_SF_dn.push_back((year=="2024" || year=="2025")?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):1.);
-							
-				}
 				
-				// u/d/s/g jets //
+					float SF_calculated =  1.;
+							
+					jetInfo_uparT_wp["working_point"] = btag_WPs[ibwp];
+					
+					jetInfo_uparT_wp["systematic"] = "central";
+					SF_calculated = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp);
+					jet.btag_UParTAK4B_allwp_SF.push_back(SF_calculated);
+								
+					for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+								
+						jetInfo_uparT_wp["systematic"] = "up_"+btag_wp_systematics[ibsys];
+						SF_calculated = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):((ibsys<2)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp):1.);
+						SF_uncs_up.push_back(SF_calculated);
 				
-				else{
+						jetInfo_uparT_wp["systematic"] = "down_"+btag_wp_systematics[ibsys];
+						SF_calculated = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_comb",jetInfo_uparT_wp):((ibsys<2)?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp):1.);
+						SF_uncs_dn.push_back(SF_calculated);
+				
+					}
+				
+					jet.btag_UParTAK4B_allwp_SF_up.push_back(SF_uncs_up);
+					jet.btag_UParTAK4B_allwp_SF_dn.push_back(SF_uncs_dn);
 					
-					if(ibsys<2){
+					SF_uncs_up.clear(); SF_uncs_dn.clear();
+				
+				}//(year=="2024"||year=="2025")
+			
+			else{
+					// UParT //
 					
+					jet.btag_UParTAK4B_allwp_SF.push_back(1); 
+				
+					vector<float> SF_uncs_up, SF_uncs_dn;
+				
+					for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){  SF_uncs_up.push_back(1.); SF_uncs_dn.push_back(1.);  }
+				
+					jet.btag_UParTAK4B_allwp_SF_up.push_back(SF_uncs_up); 
+					jet.btag_UParTAK4B_allwp_SF_dn.push_back(SF_uncs_dn);
+					
+					SF_uncs_up.clear(); SF_uncs_dn.clear(); 
+				
 					// PNet //
-						
-					jetInfo_pnet_wp["systematic"] = "up_"+btag_wp_systematics[ibsys];
-					jet.btag_PNetB_wp_SF_up.push_back((year!="2024" && year!="2025")?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp):1.);
-						
-					jetInfo_pnet_wp["systematic"] = "down_"+btag_wp_systematics[ibsys];
-					jet.btag_PNetB_wp_SF_dn.push_back((year!="2024" && year!="2025")?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp):1.);
-					
-					// UParT //
-					
-					jetInfo_uparT_wp["systematic"] = "up_"+btag_wp_systematics[ibsys];
-					jet.btag_UParTAK4B_wp_SF_up.push_back((year=="2024" || year=="2025")?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp):1.);
+			
+					float SF_calculated =  1.;
 							
-					jetInfo_uparT_wp["systematic"] = "down_"+btag_wp_systematics[ibsys];
-					jet.btag_UParTAK4B_wp_SF_dn.push_back((year=="2024" || year=="2025")?read_btagSF_fromCorrectiolib(cset_btag, "UParTAK4_light",jetInfo_uparT_wp):1.);
-						
-					}
+					jetInfo_pnet_wp["working_point"] = btag_WPs[ibwp];
 					
-					else{
-					
-						jet.btag_PNetB_wp_SF_up.push_back(1.); jet.btag_UParTAK4B_wp_SF_up.push_back(1.);
-						jet.btag_PNetB_wp_SF_dn.push_back(1.); jet.btag_UParTAK4B_wp_SF_dn.push_back(1.);
-						
+					jetInfo_pnet_wp["systematic"] = "central";
+					SF_calculated = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp);
+					jet.btag_PNetB_allwp_SF.push_back(SF_calculated);
+								
+					for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+				
+						jetInfo_pnet_wp["systematic"] = "up_"+btag_wp_systematics[ibsys];
+						SF_calculated = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):((ibsys<2)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp):1.);
+						SF_uncs_up.push_back(SF_calculated);
+				
+						jetInfo_pnet_wp["systematic"] = "down_"+btag_wp_systematics[ibsys];
+						SF_calculated = (abs(jet.hadronFlavour)!=0)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_comb",jetInfo_pnet_wp):((ibsys<2)?read_btagSF_fromCorrectiolib(cset_btag, "particleNet_light",jetInfo_pnet_wp):1.);
+						SF_uncs_dn.push_back(SF_calculated);
+				
 					}
 				
-				}
-			
-			}//ibsys
-			
-			
-			//cout<<"flav "<<jet.hadronFlavour<<" PNet wp SF "<<jet.btag_PNetB_wp_SF<<" UParT wp SF "<<jet.btag_UParTAK4B_wp_SF<<endl;
-			//for(int ibbbb=0; ibbbb<jet.btag_PNetB_wp_SF_up.size(); ibbbb++){
-			//	cout<<btag_wp_systematics[ibbbb]<<" btag_PNetB_wp_SF up "<<jet.btag_PNetB_wp_SF_up[ibbbb]<<" dn "<<jet.btag_PNetB_wp_SF_dn[ibbbb]<<" btag_UParTAK4B_wp_SF up "<<jet.btag_UParTAK4B_wp_SF_up[ibbbb]<<" dn "<<jet.btag_UParTAK4B_wp_SF_dn[ibbbb]<<endl;
-			//	cout<<endl;
-			//}
+					jet.btag_PNetB_allwp_SF_up.push_back(SF_uncs_up);
+					jet.btag_PNetB_allwp_SF_dn.push_back(SF_uncs_dn);
+					
+					SF_uncs_up.clear(); SF_uncs_dn.clear();
+					
+					//cout<<"WP "<<btag_WPs[ibwp]<<" "<<jet.btag_PNetB_allwp_SF[ibwp]<<endl;
+					//for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+					//	cout<<btag_wp_systematics[ibsys]<<" up "<<jet.btag_PNetB_allwp_SF_up[ibwp][ibsys]<<" down "<<jet.btag_PNetB_allwp_SF_dn[ibwp][ibsys]<<endl;
+					//}
+			}
+				
+		}//ibwp
 			
 			
 		}//isMC
@@ -1894,9 +2000,9 @@ int main(int argc, char *argv[])
 			}
 			
 			jet.btag_PNetB_wp_SF = 1;  jet.btag_UParTAK4B_wp_SF = 1;
-			for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
-				jet.btag_PNetB_wp_SF_up.push_back(1.); jet.btag_UParTAK4B_wp_SF_up.push_back(1.);
-				jet.btag_PNetB_wp_SF_dn.push_back(1.); jet.btag_UParTAK4B_wp_SF_dn.push_back(1.);
+			
+			for(unsigned ibwp=0; ibwp<btag_WPs.size(); ibwp++){
+				jet.btag_UParTAK4B_allwp_SF.push_back(1);    jet.btag_PNetB_allwp_SF.push_back(1); 
 			}
 		
 		}
@@ -2185,26 +2291,37 @@ int main(int argc, char *argv[])
     
     btag_PNet_weight = 1; btag_ParT_weight = 1; btag_UParT_weight = 1.;
     btag_PNet_wp_weight = 1; btag_UParT_wp_weight = 1.;
+    btag_PNet_multiwp_weight = 1.; btag_UParT_multiwp_weight = 1.;
+    
     //central weights //
+    
     for(int ijet=0; ijet<Jets.size(); ijet++){
 		//shape-based//
-		btag_PNet_weight *= Jets[ijet].btag_PNetB_SF;
-		btag_ParT_weight *= Jets[ijet].btag_RobustParTAK4B_SF;
-		btag_UParT_weight *= Jets[ijet].btag_UParTAK4B_SF;
+		if(year=="2024"||year=="2025"){
+			btag_UParT_weight *= Jets[ijet].btag_UParTAK4B_SF;
+		}
+		else{
+			btag_PNet_weight *= Jets[ijet].btag_PNetB_SF;
+			btag_ParT_weight *= Jets[ijet].btag_RobustParTAK4B_SF;
+		}
 		//wp-based//
-		btag_PNet_wp_weight *= Jets[ijet].btag_PNetB_wp_SF;
-		btag_UParT_wp_weight *= Jets[ijet].btag_UParTAK4B_wp_SF;
-		if(ijet==4) break;
+		if(year=="2024"||year=="2025"){
+			btag_UParT_wp_weight *= Jets[ijet].btag_UParTAK4B_wp_SF;
+		}
+		else{
+			btag_PNet_wp_weight *= Jets[ijet].btag_PNetB_wp_SF;
+		}
+		if(ijet==3) break;
 	}
 	
 	//systematic uncs (need only for signal) //
+	
+	// for shape-based SF //
+	
 	if(isSignal){
 		
 		btag_PNet_weight_up.clear(); btag_PNet_weight_dn.clear(); 
 		btag_UParT_weight_up.clear(); btag_UParT_weight_dn.clear();
-		
-		btag_PNet_wp_weight_up.clear(); btag_PNet_wp_weight_dn.clear(); 
-		btag_UParT_wp_weight_up.clear(); btag_UParT_wp_weight_dn.clear();
 		
 		for(int ibsys=0; ibsys<btag_systematics.size(); ibsys++){
 				
@@ -2212,11 +2329,15 @@ int main(int argc, char *argv[])
 			float btag_UParT_weight_sys_up = 1.; float btag_UParT_weight_sys_dn = 1.;
 			
 			for(int ijet=0; ijet<Jets.size(); ijet++){
-				btag_PNet_weight_sys_up *= Jets[ijet].btag_PNetB_SF_up[ibsys];
-				btag_PNet_weight_sys_dn *= Jets[ijet].btag_PNetB_SF_dn[ibsys];
-				btag_UParT_weight_sys_up *= Jets[ijet].btag_UParTAK4B_SF_up[ibsys];
-				btag_UParT_weight_sys_dn *= Jets[ijet].btag_UParTAK4B_SF_dn[ibsys];
-				if(ijet==4) break;
+				if(year=="2024"||year=="2025"){ 
+					btag_UParT_weight_sys_up *= Jets[ijet].btag_UParTAK4B_SF_up[ibsys];
+					btag_UParT_weight_sys_dn *= Jets[ijet].btag_UParTAK4B_SF_dn[ibsys];
+				}
+				else{
+					btag_PNet_weight_sys_up *= Jets[ijet].btag_PNetB_SF_up[ibsys];
+					btag_PNet_weight_sys_dn *= Jets[ijet].btag_PNetB_SF_dn[ibsys];
+				}
+				if(ijet==3) break;
 			}
 			
 			btag_PNet_weight_up.push_back(btag_PNet_weight_sys_up);
@@ -2224,29 +2345,29 @@ int main(int argc, char *argv[])
 			
 			btag_UParT_weight_up.push_back(btag_UParT_weight_sys_up);
 			btag_UParT_weight_dn.push_back(btag_UParT_weight_sys_dn);
-			
+		
 		}
 		
-		for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
-		
-			float btag_PNet_weight_sys_up = 1.;  float btag_PNet_weight_sys_dn = 1.; 
-			float btag_UParT_weight_sys_up = 1.; float btag_UParT_weight_sys_dn = 1.;
-			
-			for(int ijet=0; ijet<Jets.size(); ijet++){
-				btag_PNet_weight_sys_up *= Jets[ijet].btag_PNetB_wp_SF_up[ibsys];
-				btag_PNet_weight_sys_dn *= Jets[ijet].btag_PNetB_wp_SF_dn[ibsys];
-				btag_UParT_weight_sys_up *= Jets[ijet].btag_UParTAK4B_wp_SF_up[ibsys];
-				btag_UParT_weight_sys_dn *= Jets[ijet].btag_UParTAK4B_wp_SF_dn[ibsys];
-				if(ijet==4) break;
-			}
-			
-			btag_PNet_wp_weight_up.push_back(btag_PNet_weight_sys_up);
-			btag_PNet_wp_weight_dn.push_back(btag_PNet_weight_sys_dn);
-			
-			btag_UParT_wp_weight_up.push_back(btag_UParT_weight_sys_up);
-			btag_UParT_wp_weight_dn.push_back(btag_UParT_weight_sys_dn);
-			
-		}
+	}
+	
+	// for WP-based SF //
+	
+	btag_PNet_wp_weight_up.clear(); btag_PNet_wp_weight_dn.clear(); 
+	btag_UParT_wp_weight_up.clear(); btag_UParT_wp_weight_dn.clear();
+	btag_PNet_multiwp_weight_up.clear(); btag_PNet_multiwp_weight_dn.clear(); 
+	btag_UParT_multiwp_weight_up.clear(); btag_UParT_multiwp_weight_dn.clear();
+		 
+	if(year=="2024"||year=="2025"){ 
+		//fixed WPs//
+		compute_btagSFWeight_fixedWPs(Jets,btagWP_cuts_UParT,btagWPs_SR,btag_UParT_wp_weight,btag_UParT_wp_weight_up,btag_UParT_wp_weight_dn,"UParT",isSignal);
+		//multuple WPs//
+		compute_btagSFWeight_multipleWPs(Jets,btagWP_cuts_UParT,btag_UParT_multiwp_weight,btag_UParT_multiwp_weight_up,btag_UParT_multiwp_weight_dn,"UParT",isSignal);
+	}
+	else{
+		//fixed WPs//
+		compute_btagSFWeight_fixedWPs(Jets,btagWP_cuts_PNet,btagWPs_SR,btag_PNet_wp_weight,btag_PNet_wp_weight_up,btag_PNet_wp_weight_dn,"PNet",isSignal);
+		//multuple WPs//
+		compute_btagSFWeight_multipleWPs(Jets,btagWP_cuts_PNet,btag_PNet_multiwp_weight,btag_PNet_multiwp_weight_up,btag_PNet_multiwp_weight_dn,"PNet",isSignal);
 	}
 	
     if(isMC){
@@ -2326,7 +2447,6 @@ int main(int argc, char *argv[])
 		//	}
 			
 		//}//jet
-	   
 	    
 	    // Reading trigger SF //
 	    if(Jets.size()>=4)

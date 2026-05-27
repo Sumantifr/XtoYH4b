@@ -5,7 +5,7 @@ time="$2"
 
 # Set your desired maximum runtime (in seconds)
 MAX_RUNTIME=86400  # Example: 12 hours
-MAX_MEMORY=8192
+MAX_MEMORY=16384 #8192 #16384 #32768
 #flavor="nextweek" #testmatch"
 #flavor="testmatch"
 #flavor="tomorrow" 

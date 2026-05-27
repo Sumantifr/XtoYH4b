@@ -643,6 +643,9 @@
    TFile *file_trigger_SF_jet[ntrigger_etas][ntrigger_jets];
    TFile *file_trigger_SF_btag, *file_trigger_SF_L1HT;
    
+   TFile *file_btag_eff;
+   string sample_tag;
+   
    //// cuts & WPs for object selection ////
    
    float muon_pt_cut = 10;
@@ -711,6 +714,14 @@
    float UParTAK4_T = 0;
    float UParTAK4_M = 0;
    float UParTAK4_L = 0;
+   
+   vector<string> btag_WPs = {"L","M","T","XT","XXT"};
+   vector<float> btagWP_cuts_PNet, btagWP_cuts_UParT;
+   vector<string> flavs = {"b", "c", "l"};
+   
+   vector<int> btagWPs_SR = {2,2,2,1}; // "T","T","T","M"
+   
+   vector<vector<TH2F*>> h_eff_PNet, h_eff_UParT;
    
    //DeepTag_PNet_TvsQCD
    float PN_Top_med = 0.8;
@@ -888,16 +899,24 @@
    float puWeight, puWeightup, puWeightdown;
    float leptonsf_weight, leptonsf_weight_up, leptonsf_weight_dn, leptonsf_weight_stat, leptonsf_weight_syst;
    float jetpuidsf_weight, jetpuidsf_weight_stat, jetpuidsf_weight_syst;
+   
    float triggersf_weight_pt, triggersf_weight_pt_err;
    float triggersf_weight_btag, triggersf_weight_btag_err;
    float triggersf_weight_L1HT, triggersf_weight_L1HT_err;
+   
    float btag_PNet_weight, btag_ParT_weight, btag_UParT_weight;
    float btag_PNet_wp_weight, btag_UParT_wp_weight;
+   float btag_PNet_multiwp_weight, btag_UParT_multiwp_weight;
+   
    vector<float> btag_PNet_weight_up, btag_PNet_weight_dn;
    vector<float> btag_UParT_weight_up, btag_UParT_weight_dn;
    vector<float> btag_PNet_wp_weight_up, btag_PNet_wp_weight_dn;
    vector<float> btag_UParT_wp_weight_up, btag_UParT_wp_weight_dn;
+   vector<float> btag_PNet_multiwp_weight_up, btag_PNet_multiwp_weight_dn;
+   vector<float> btag_UParT_multiwp_weight_up, btag_UParT_multiwp_weight_dn;
+   
    float xsec_weight, CrossSection;
+   
    
    bool trigger_matching;
    
@@ -914,7 +933,7 @@
    int nElectron_max = 3;
    
    vector<string> btag_systematics = {"jes","lf","lfstats1","lfstats2","hf","hfstats1","hfstats2","cferr1","cferr2"}; 
-   vector<string> btag_wp_systematics = {"correlated","uncorrelated","statistic","jes","jer","type3","pileup","topmass","hdamp"};
+   vector<string> btag_wp_systematics = {"correlated","uncorrelated"};//,"statistic","jes","jer","type3","pileup","topmass","hdamp"};
    // full list //
    //2022:  statistic/jes/jer/type3/pileup/topmass/hdamp/pdf/colorreconnection/bfragmentation
    //2023:  statistic/jes/jer/type3/pileup/topmass/hdamp/pdf/colorreconnection
@@ -1523,3 +1542,249 @@ bool pass_NoiseFilter(bool Flag_goodVertices, bool Flag_globalSuperTightHalo2016
 	
 	return pass;
 }
+
+void compute_btagSFWeight_fixedWPs(vector<AK4Jet> Jets, vector<float> btagWP_cuts, vector<int> btagWPs_analysis, /*vector<vector<TH2F*>> h_eff_maps, */
+									   float &btag_weight_new, vector<float> &btag_weight_new_up, vector<float> &btag_weight_new_dn, 
+									   string algo="PNet",
+									   bool isSignal=false, int njetmax=4)
+{
+	vector<int> btag_bin_ids;
+	vector<float> eff_MC_v;
+	vector<float> eff_DATA_v;
+	vector<vector<float>> eff_DATA_up_v, eff_DATA_dn_v;
+
+	float weight_nom = 1.;
+	btag_weight_new_up.clear(); btag_weight_new_dn.clear();
+	
+	for(int ijet=0; ijet<Jets.size(); ijet++){
+		
+		if(ijet==njetmax) break;
+		
+		 auto& jet = Jets[ijet];
+		
+		//first check the range of btag score & store it//
+
+		int bin_id = -1;
+		
+		float btag_score = (algo=="UParT")?jet.btag_UParTAK4B:jet.btag_PNetB; 
+		
+		for(int icut=0; icut<btagWP_cuts.size(); icut++){
+			if (btag_score>=btagWP_cuts[icut]) { bin_id = icut; }
+		}
+		
+		btag_bin_ids.push_back(bin_id);
+		
+		// compute efficiency in DATA (SF*eff_MC)
+		
+		int jet_wp = (btagWPs_analysis[ijet]>=0 && btagWPs_analysis[ijet]<btagWP_cuts.size())?btagWPs_analysis[ijet]:-1;
+		
+		float eff_MC, eff_DATA;
+		
+		eff_MC = (algo=="UParT")?jet.btag_UParTAK4B_allwp_eff[jet_wp]:jet.btag_PNetB_allwp_eff[jet_wp];
+		eff_DATA = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF[jet_wp]*eff_MC:jet.btag_PNetB_allwp_SF[jet_wp]*eff_MC;
+		
+		//cout<<"flav: "<<abs(jet.hadronFlavour)<<" pt "<<jet.pt<<" eta "<<jet.eta<<" btag bin_id "<<bin_id<<" eff "<<eff_MC<<endl;
+		
+		if(jet_wp>=0){ 	eff_MC_v.push_back(eff_MC); 	eff_DATA_v.push_back(eff_DATA); }
+		else {  eff_MC_v.push_back(0.5); 	eff_DATA_v.push_back(0.5); }
+		
+		vector<float> _sys_up, _sys_dn; 
+		
+		for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+				
+			float eff_DATA_up = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF_up[jet_wp][ibsys]*eff_MC:jet.btag_PNetB_allwp_SF_up[jet_wp][ibsys]*eff_MC;
+			float eff_DATA_dn = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF_dn[jet_wp][ibsys]*eff_MC:jet.btag_PNetB_allwp_SF_dn[jet_wp][ibsys]*eff_MC;
+		
+			if(jet_wp>=0){ _sys_up.push_back(eff_DATA_up); } else { _sys_up.push_back(0.5) ; }
+			if(jet_wp>=0){ _sys_dn.push_back(eff_DATA_dn); } else { _sys_up.push_back(0.5) ; }
+		}
+		
+		eff_DATA_up_v.push_back(_sys_up);
+		eff_DATA_dn_v.push_back(_sys_dn);
+		
+	}//jets
+	
+	for(int ijet=0; ijet<min(int(Jets.size()),njetmax); ijet++){
+				
+		int bin_id = btag_bin_ids[ijet];
+		
+		float SF_weight = 1.;
+				
+		if (bin_id >= btagWPs_analysis[ijet]) {  SF_weight = eff_DATA_v[ijet]*1./eff_MC_v[ijet]; }
+		else 								  {  SF_weight = (max(0.,1. - eff_DATA_v[ijet]))*1./(1. - eff_MC_v[ijet]); } 
+		weight_nom *= ((SF_weight>1.e-6)?SF_weight:1.);;	
+	}
+	
+	btag_weight_new = weight_nom;
+		
+	// systematic variation //
+	
+	if(isSignal){
+	
+		for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+			
+			float weight_up = 1.;
+			float weight_dn = 1.;
+			
+			for(int ijet=0; ijet<min(int(Jets.size()),njetmax); ijet++){
+				
+				int bin_id = btag_bin_ids[ijet];
+				
+				float SF_weight = 1.;
+				
+				if (bin_id >= btagWPs_analysis[ijet]) {  SF_weight = eff_DATA_up_v[ijet][ibsys]*1./eff_MC_v[ijet]; }
+				else {   {  SF_weight = (max(0.,1. - eff_DATA_up_v[ijet][ibsys]))*1./(1. - eff_MC_v[ijet]); } }
+				weight_up *= ((SF_weight>1.e-6)?SF_weight:1.);
+				
+				
+				if (bin_id >= btagWPs_analysis[ijet]) {  SF_weight = eff_DATA_dn_v[ijet][ibsys]*1./eff_MC_v[ijet]; }
+				else {   {  SF_weight = (max(0.,1. - eff_DATA_dn_v[ijet][ibsys]))*1./(1. - eff_MC_v[ijet]); } }
+				weight_dn *= ((SF_weight>1.e-6)?SF_weight:1.);
+			
+			}
+			
+			btag_weight_new_up.push_back(weight_up);
+			btag_weight_new_dn.push_back(weight_dn);
+			
+		}
+		
+	}
+		
+}
+
+void compute_btagSFWeight_multipleWPs(vector<AK4Jet> Jets, vector<float> btagWP_cuts, /*vector<vector<TH2F*>> h_eff_maps, */
+									   float &btag_weight_new, vector<float> &btag_weight_new_up, vector<float> &btag_weight_new_dn, 
+									   string algo="PNet",
+									   bool isSignal=false, int njetmax=4)
+{
+	
+	float weight_nom = 1.;
+
+	btag_weight_new_up.clear(); btag_weight_new_dn.clear();
+	
+	vector<int> btag_bin_ids;
+	vector<float> mc_effs;
+	
+	for(int ijet=0; ijet<Jets.size(); ijet++){
+		
+		if(ijet==njetmax) break;
+		
+		 auto& jet = Jets[ijet];
+		
+		//first check the range of btag score & store it//
+
+		int bin_id = -1;
+		
+		for(int icut=0; icut<btagWP_cuts.size(); icut++){
+			
+			float btag_score; 
+			if(algo=="UParT") { btag_score = jet.btag_UParTAK4B; }
+			else { btag_score = jet.btag_PNetB; }
+			if (btag_score>=btagWP_cuts[icut]) { bin_id = icut; }
+		
+		}
+
+		btag_bin_ids.push_back(bin_id);
+				
+		// nominal SF weight //
+					
+		float eff_DATA, eff_MC;
+		eff_DATA = 1.; eff_MC = 1.;
+		
+		if (bin_id==(btagWP_cuts.size()-1)) { 
+			eff_MC = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_eff[bin_id]):(jet.btag_PNetB_allwp_eff[bin_id]);
+			eff_DATA = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_SF[bin_id]*eff_MC):(jet.btag_PNetB_allwp_SF[bin_id]*eff_MC); 
+		}
+		else if (bin_id<0) { 
+			if(abs(Jets[ijet].hadronFlavour)==5) { eff_MC = 1.; eff_DATA = 1.;}
+			else 	{ 
+				eff_MC =  (algo=="UParT")?(1.-jet.btag_UParTAK4B_allwp_eff[0]):(1.-jet.btag_PNetB_allwp_eff[0]);
+				eff_DATA = (algo=="UParT")?(1. - jet.btag_UParTAK4B_allwp_SF[0]*jet.btag_UParTAK4B_allwp_eff[0]):(1. - jet.btag_PNetB_allwp_SF[0]*jet.btag_PNetB_allwp_eff[0]);
+			}
+		}
+		else { 
+			eff_MC =   (algo=="UParT")?(jet.btag_UParTAK4B_allwp_eff[bin_id]-jet.btag_UParTAK4B_allwp_eff[bin_id+1]):(jet.btag_PNetB_allwp_eff[bin_id]-jet.btag_PNetB_allwp_eff[bin_id+1]); 
+			eff_DATA = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_SF[bin_id]*jet.btag_UParTAK4B_allwp_eff[bin_id] - jet.btag_UParTAK4B_allwp_SF[bin_id+1]*jet.btag_UParTAK4B_allwp_eff[bin_id+1]):(jet.btag_PNetB_allwp_SF[bin_id]*jet.btag_PNetB_allwp_eff[bin_id] - jet.btag_PNetB_allwp_SF[bin_id+1]*jet.btag_PNetB_allwp_eff[bin_id+1]);
+			}
+	
+		mc_effs.push_back(eff_MC);
+		
+		weight_nom *= ( (eff_DATA<0)?1.:((eff_DATA/eff_MC>1.e-6)?eff_DATA/eff_MC:1.) );	
+		
+	}//jets
+	
+	btag_weight_new = weight_nom;
+	
+	// systematic variation //
+	
+	if(isSignal){
+			
+	for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
+		
+		float weight_up = 1.;
+		float weight_dn = 1.;
+	
+		for(int ijet=0; ijet<Jets.size(); ijet++){
+		
+			if(ijet==njetmax) break;
+		
+			auto& jet = Jets[ijet];
+		
+			int bin_id = btag_bin_ids[ijet];
+					    
+		    float eff_DATA, eff_MC;
+			eff_DATA = 1.; eff_MC = 1.;
+			
+			eff_MC = mc_effs[ijet];
+		    
+			if (bin_id==(btagWP_cuts.size()-1)) { 
+				eff_DATA = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_SF_up[bin_id][ibsys]*eff_MC):(jet.btag_PNetB_allwp_SF_up[bin_id][ibsys]*eff_MC); 
+			}
+			else if (bin_id<0) 					{ 
+				if(abs(Jets[ijet].hadronFlavour)==5) { eff_DATA = 1.;}
+				else { 
+						eff_DATA = (algo=="UParT")?(1. - jet.btag_UParTAK4B_allwp_SF_up[0][ibsys]*jet.btag_UParTAK4B_allwp_eff[0]):(1. - jet.btag_PNetB_allwp_SF_up[0][ibsys]*jet.btag_PNetB_allwp_eff[0]);
+					}
+				}
+			else  { 					
+				eff_DATA = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_SF_up[bin_id][ibsys]*jet.btag_UParTAK4B_allwp_eff[bin_id] - jet.btag_UParTAK4B_allwp_SF_up[bin_id+1][ibsys]*jet.btag_UParTAK4B_allwp_eff[bin_id+1]):(jet.btag_PNetB_allwp_SF_up[bin_id][ibsys]*jet.btag_PNetB_allwp_eff[bin_id] - jet.btag_PNetB_allwp_SF_up[bin_id+1][ibsys]*jet.btag_PNetB_allwp_eff[bin_id+1]);
+			}
+			
+			weight_up *= ( (eff_DATA<0)?1.:((eff_DATA/eff_MC>1.e-6)?eff_DATA/eff_MC:1.) );
+		
+			if (bin_id==(btagWP_cuts.size()-1)) { 
+				eff_DATA = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_SF_dn[btag_WPs.size()-1][ibsys]*eff_MC):(jet.btag_PNetB_allwp_SF_dn[btag_WPs.size()-1][ibsys]*eff_MC); 
+			}
+			else if (bin_id<0) {
+				if(abs(Jets[ijet].hadronFlavour)==5) {  eff_DATA = 1.;}				 
+				else		{ 
+					eff_DATA = (algo=="UParT")?(1. - jet.btag_UParTAK4B_allwp_SF_dn[0][ibsys]*jet.btag_UParTAK4B_allwp_eff[0]):(1. - jet.btag_PNetB_allwp_SF_dn[0][ibsys]*jet.btag_PNetB_allwp_eff[0]);
+				}
+			}
+			else  { 
+				eff_DATA = (algo=="UParT")?(jet.btag_UParTAK4B_allwp_SF_dn[bin_id][ibsys]*jet.btag_UParTAK4B_allwp_eff[bin_id] - jet.btag_UParTAK4B_allwp_SF_dn[bin_id+1][ibsys]*jet.btag_UParTAK4B_allwp_eff[bin_id+1]):(jet.btag_PNetB_allwp_SF_dn[bin_id][ibsys]*jet.btag_PNetB_allwp_eff[bin_id] - jet.btag_PNetB_allwp_SF_dn[bin_id+1][ibsys]*jet.btag_PNetB_allwp_eff[bin_id+1]);
+			}
+	
+			weight_dn *= ( (eff_DATA<0)?1.:((eff_DATA/eff_MC>1.e-6)?eff_DATA/eff_MC:1.) );
+		
+		}//jets
+		
+		btag_weight_new_up.push_back(weight_up);
+		btag_weight_new_dn.push_back(weight_dn);
+	
+	}//ibsys
+	
+	}//only for signal
+	
+}
+
+int BTV_flavor_ID(int hadronflavor){
+	
+	int flav=2;
+	if 		( abs(hadronflavor)==5 ) { flav=0; }
+	else if ( abs(hadronflavor)==4 ) { flav=1; }
+			
+	return flav;		
+}
+
+
