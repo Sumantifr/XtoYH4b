@@ -14,6 +14,7 @@ import math
 
 import os
 import argparse
+import getpass
 
 parser = argparse.ArgumentParser(description="Arguments: YEAR, isDATA")
 
@@ -73,8 +74,14 @@ def plot_bdt_hist(scores, weights, mask, label, color, linestyle="solid"):
 
 #base_path = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
 base_path = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
-plot_path =  "../Plotter/Pairing_plots/BDT/"+args.YEAR+"/May2026/"
-model_dir = "Models/"+args.YEAR+"/May2026/"
+
+#plot_path =  "../Plotter/Pairing_plots/BDT/"+args.YEAR+"/May2026/"
+#model_dir = "Models/"+args.YEAR+"/May2026/"
+
+#make the output path more generic 
+username = getpass.getuser()
+model_dir = "/data/dust/user/"+username+"/XToYHTo4b/Pairing/Models/"+args.YEAR+"/"
+plot_path = "/data/dust/user/"+username+"/XToYHTo4b/Pairing/Plots/"+args.YEAR+"/"
 
 if args.TrainingScheme == 1:
     input_file = base_path + "Tree_NMSSM_XtoYHto4B_HighPriority_TuneCP5_13p6TeV_madgraph-pythia8.root"

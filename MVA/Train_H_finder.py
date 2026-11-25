@@ -51,8 +51,13 @@ if args.usesubsetsignal:
     file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2024/Tree_NMSSM_XtoYHto4B_MY80to200_TuneCP5_13p6TeV_madgraph-pythia8.root"
 #file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2023BPiX/Tree_NMSSM_XtoYHto4B_AllMX_MY_80to200_TuneCP5_13p6TeV_madgraph-pythia8.root"
 
-plot_dir =  "../Plotter/H_finder/"
-model_dir = "Models/H_finder/"
+#plot_dir =  "../Plotter/H_finder/"
+#model_dir = "Models/H_finder/"
+
+#make the output path more generic 
+username = getpass.getuser()
+model_dir = "/data/dust/user/"+username+"/XToYHTo4b/Hfinder/Models/"+args.YEAR+"/"
+plot_path = "/data/dust/user/"+username+"/XToYHTo4b/Hfinder/Plots/"+args.YEAR+"/"
 
 os.makedirs(plot_dir, exist_ok=True)
 os.makedirs(model_dir, exist_ok=True)
