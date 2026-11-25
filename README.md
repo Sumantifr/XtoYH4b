@@ -103,10 +103,39 @@ python3 create_btagSF_correction.py --YEAR YEAR
    ```
 ### Higgs pair reconstruction (Pairing MVA)
 
+```
+cd CMSSW_14_2_1/src/MVA
+```
+
+1. Create the input file using `add_input_trees.sh` script. E.g.,
    ```
-   cd CMSSW_14_2_1/src/MVA
-   sh run_full_training.sh
+   sh add_input_trees.sh 2024
    ```
+
+   Right now, this works for single eras (2022, 2022EE, 2023, 2023BPiX, 2024). 
+   
+2. Run training command:
+   ```
+   python3 run_full_training.py --YEAR 2024
+   ```
+
+### Higgs finder (separate H vs Y)
+
+```
+cd CMSSW_14_2_1/src/MVA
+```
+
+1. Prepare the input file:
+   ```
+   python3 prepare_Hfinder_input.py 2024
+   ```
+
+2. Run training command:
+   ```
+   python3 Train_H_finder.py --YEAR 2024 --usesubsetsignal 1
+   ```
+   If you want to use all signal samples, don't use `usesubsetsignal`
+   There are also options to use mass parameterizations (set to False as default)
 
 ### Using Combine tools 
 
