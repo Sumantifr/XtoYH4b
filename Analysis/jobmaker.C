@@ -34,11 +34,10 @@ file_path = gSystem->DirName(pwd_);
 file_path += "/";
 
 vector<string> Filenames_MC = loadFilenames(file_path+"MC_names.txt");
-if(year=="2024") { Filenames_MC = loadFilenames(file_path+"MC_names_2024.txt");   }
+if(year=="2024"||year=="2025"||year=="2026") { Filenames_MC = loadFilenames(file_path+"MC_names_2024.txt");   }
 vector<string> Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names.txt");
 if(year=="2023") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2023.txt");  }
-else if (year=="2023BPiX") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2023BPIX.txt");  }
-else if (year=="2024") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2024.txt");  }
+else if (year=="2024"||year=="2025") {  Filenames_SIGNAL = loadFilenames(file_path+"SIGNAL_names_2024.txt");  }
 
 vector<string> Filenames_Data = loadFilenames(file_path+"Data_names_"+year+".txt");
 
@@ -107,8 +106,15 @@ for (int ii=0;ii<nfile;ii++)
 ifstream input_file;
 
 //if(files[ii].find("HT-2000") == std::string::npos) continue;
+string YEAR = year;
+if(year=="2025" && !isDATA) { YEAR = "2024";}
 
-input_file.open("../FILES_"+year+"/"+files[ii]+".log");
+if(YEAR=="2024"){
+input_file.open("../FILES_"+YEAR+"_v2/"+files[ii]+".log");
+}
+else{
+input_file.open("../FILES_"+YEAR+"/"+files[ii]+".log");
+}
 string x1;
 
 int count = 0;
@@ -117,7 +123,7 @@ while (getline(input_file, line))
     count++; 
 std::cout <<files[ii]<<"\t"<< count << std::endl;
 
-int nstep = 10;
+int nstep = 5;
 if(isDATA) { nstep = 25; }
 if(isSIGNAL) { nstep = 20; }
 //if(!isDATA && year=="2024") { nstep = 5;  }
@@ -126,6 +132,10 @@ fstream file;
 char name_buffer[512];
 sprintf(name_buffer,"FILELIST_args_%s.txt",files[ii].c_str());
 file.open(name_buffer,ios::out);
+
+//if (!isDATA && !isSIGNAL){
+//	if(files[ii].find("QCD") == std::string::npos){ continue; }
+//}
 
 for(int il=0; il<count; il=il+nstep){
 
@@ -140,10 +150,20 @@ if(!file)
        cout<<"Error in creating file!!!";
    }
    if(isDATA){
-   file<<il<<" "<<jk<<" "<<"../FILES_"<<year<<"/"<<files[ii]<<".log "<<" "<<output_path<<" "<<!isDATA<<" 0 "<<isSIGNAL<<" "<<year<<" "<<ERA_Data[ii]<<"\n";
+	   if(YEAR=="2024"){
+	   	file<<il<<" "<<jk<<" "<<"../FILES_"<<YEAR<<"_v2/"<<files[ii]<<".log "<<" "<<output_path<<" "<<!isDATA<<" 0 "<<isSIGNAL<<" "<<year<<" "<<ERA_Data[ii]<<"\n";
+	   }
+	   else{
+   		file<<il<<" "<<jk<<" "<<"../FILES_"<<YEAR<<"/"<<files[ii]<<".log "<<" "<<output_path<<" "<<!isDATA<<" 0 "<<isSIGNAL<<" "<<year<<" "<<ERA_Data[ii]<<"\n";
+   	   }
    }
    else{
-   file<<il<<" "<<jk<<" "<<"../FILES_"<<year<<"/"<<files[ii]<<".log "<<" "<<output_path<<" "<<!isDATA<<" 0 "<<isSIGNAL<<" "<<year<<"\n";
+	if(YEAR=="2024"){
+   		file<<il<<" "<<jk<<" "<<"../FILES_"<<YEAR<<"_v2/"<<files[ii]<<".log "<<" "<<output_path<<" "<<!isDATA<<" 0 "<<isSIGNAL<<" "<<year<<"\n";
+	}
+	else{
+		file<<il<<" "<<jk<<" "<<"../FILES_"<<YEAR<<"/"<<files[ii]<<".log "<<" "<<output_path<<" "<<!isDATA<<" 0 "<<isSIGNAL<<" "<<year<<"\n";
+	}
    }
 
 }// loop over files in one sample, il
@@ -165,9 +185,9 @@ file1<< "executable = "<<name_buffer_ex<<"\n";
 file1<<"arguments = $(args)\n";
 file1 << "getenv = TRUE\n";
 
-file1 << "log = logs/job_"<<files[ii].c_str()<<"_$(Process).log\n";
-file1 << "output = logs/job_"<<files[ii].c_str()<<"_$(Process).out\n";
-file1 << "error = logs/job_"<<files[ii].c_str()<<"_$(Process).error\n";
+file1 << "log = /data/dust/group/cms/higgs-bb-desy/XToYHTo4b/Condor_Jobs/logs/job_"<<files[ii].c_str()<<"_$(Process).log\n";
+file1 << "output = /data/dust/group/cms/higgs-bb-desy/XToYHTo4b/Condor_Jobs/logs/job_"<<files[ii].c_str()<<"_$(Process).out\n";
+file1 << "error = /data/dust/group/cms/higgs-bb-desy/XToYHTo4b/Condor_Jobs/logs/job_"<<files[ii].c_str()<<"_$(Process).error\n";
 
 file1 << "notification = never\n";
 file1 << "should_transfer_files = YES\n";

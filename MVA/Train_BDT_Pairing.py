@@ -73,8 +73,8 @@ def plot_bdt_hist(scores, weights, mask, label, color, linestyle="solid"):
 
 #base_path = "/data/dust/user/chatterj/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
 base_path = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/"+args.YEAR+"/"
-plot_path =  "../Plotter/Pairing_plots/BDT/"+args.YEAR+"/"
-model_dir = "Models/"+args.YEAR+"/"
+plot_path =  "../Plotter/Pairing_plots/BDT/"+args.YEAR+"/May2026/"
+model_dir = "Models/"+args.YEAR+"/May2026/"
 
 if args.TrainingScheme == 1:
     input_file = base_path + "Tree_NMSSM_XtoYHto4B_HighPriority_TuneCP5_13p6TeV_madgraph-pythia8.root"
@@ -332,8 +332,8 @@ roc_auc = auc(fpr, tpr)
 plt.figure(figsize=(8, 6))
 plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {roc_auc:.3f})')
 plt.plot([0, 1], [0, 1], color='gray', lw=1, linestyle='--', label='Random')
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate',size=12)
+plt.ylabel('True Positive Rate',size=12)
 plt.title('Receiver Operating Characteristic (ROC)')
 plt.legend(loc='lower right')
 plt.grid(True)
@@ -477,8 +477,8 @@ for MX, MY in mass_points:
 # Add reference diagonal
 plt.plot([0, 1], [0, 1], color="gray", linestyle="--", label="Random")
 
-plt.xlabel("False Positive Rate")
-plt.ylabel("True Positive Rate")
+plt.xlabel("False Positive Rate",size=16)
+plt.ylabel("True Positive Rate",size=16)
 plt.title("ROC Curves for Multiple (MX, MY) Signal Points")
 plt.grid(True)
 
@@ -496,25 +496,10 @@ plt.tight_layout()
 plt.savefig(os.path.join(plot_dir, "roc_curve_MX_MY.png"), dpi=300)
 plt.close()
 
-'''
-#Correlation of input features
-feature_cols = [col for col in data.columns if col not in [label_name, weight_name, 'w_train', 'w_test']]
-# Compute correlation matrix
-corr_matrix = data[feature_cols].corr()
-# Plot correlation matrix
-plt.figure(figsize=(12, 10))
-sns.heatmap(corr_matrix, annot=False, cmap='coolwarm', vmin=-1, vmax=1, square=True, cbar_kws={"shrink": 0.75})
-plt.title("Feature Correlation Matrix")
-plt.tight_layout()
-plt.savefig(os.path.join(plot_dir, "Feature_Correlation_Matrix.png"), dpi=300)
-plt.close()
-'''
-
 ### If no mass parameterization is done, we're done! ####
 
 if args.nomassparameterization or args.hybridparameterization:
     exit()
-
 
 ##############################
 ### More performance plots ###

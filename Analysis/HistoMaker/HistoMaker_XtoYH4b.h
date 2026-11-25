@@ -42,6 +42,7 @@
 struct BestPair {
     int index;
     float score;
+    int H_index;
 };
 
 struct Pair{
@@ -127,6 +128,10 @@ struct Pair{
  
  //
  float score;
+ 
+ //
+ bool H1_isH_BDT;
+ bool H2_isH_BDT;
   
 };
 
@@ -135,8 +140,9 @@ using namespace std;
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
-   static const int njetmax = 6;
+   static const int njetmax = 8;
    static const int narray = 20;
+   static const int ncutmax = 10;
 
    static const int nlhescalemax = 9;
    static const int nlhepdfmax = 101;
@@ -153,9 +159,9 @@ using namespace std;
    Int_t           nfatjets;
    Int_t		   nsmalljets;
    Int_t           ncuts;
-   Bool_t          Flag_event_cuts[njetmax];   //[ncuts]
+   Bool_t          Flag_event_cuts[ncutmax];   //[ncuts]
    Int_t           ncuts_offline;
-   Bool_t          Flag_event_cuts_offline[njetmax];   //[ncuts]
+   Bool_t          Flag_event_cuts_offline[ncutmax];   //[ncuts]
    Bool_t          Flag_pass_baseline;
    Bool_t		   Flag_pass_baseline_nobtag;
    Bool_t          Flag_pass_baseline_no_LJet;
@@ -277,6 +283,9 @@ using namespace std;
    Float_t         PFJetAK8_partT_massCorr_generic[njetmax];   //[_s_nPFJetAK8]
    Float_t         PFJetAK8_partT_massCorr_twoprong[njetmax];   //[_s_nPFJetAK8]
    Int_t		   nfatjets_boosted;
+   Int_t		   nfatjets_semiboosted;
+   Float_t		   fatjet_Hmass_semiboosted;
+   Float_t		   smalljet_Ymass_semiboosted;
    Int_t           nJetAK4;
    Float_t         JetAK4_pt[njetmax];   //[_s_nJetAK4]
    Float_t         JetAK4_eta[njetmax];   //[_s_nJetAK4]
@@ -318,6 +327,8 @@ using namespace std;
    Float_t		   JetAK4_RegCorr[njetmax];   //[_s_nJetAK4]
    Float_t		   JetAK4_JEC[njetmax];   //[_s_nJetAK4]
    Float_t		   JetAK4_JEC_bReg[njetmax];   //[_s_nJetAK4]
+   Float_t		   JetAK4_JER[njetmax];   //[_s_nJetAK4]
+   Float_t		   JetAK4_JER_bReg[njetmax];   //[_s_nJetAK4]
    Int_t           JetAK4_hadronflav[njetmax];   //[_s_nJetAK4]
    Int_t           JetAK4_partonflav[njetmax];   //[_s_nJetAK4]
    Float_t         JetAK4_qgl[njetmax];   //[_s_nJetAK4]
@@ -409,12 +420,18 @@ using namespace std;
    Float_t		   btag_PNet_WP_weight;
    vector<float>   *btag_PNet_WP_weightup;
    vector<float>   *btag_PNet_WP_weightdown;
+   Float_t		   btag_PNet_MultiWP_weight;
+   vector<float>   *btag_PNet_MultiWP_weightup;
+   vector<float>   *btag_PNet_MultiWP_weightdown;
    Float_t		   btag_UParT_weight;
    vector<float>   *btag_UParT_weightup;
    vector<float>   *btag_UParT_weightdown;
    Float_t		   btag_UParT_WP_weight;
    vector<float>   *btag_UParT_WP_weightup;
    vector<float>   *btag_UParT_WP_weightdown;
+   Float_t		   btag_UParT_MultiWP_weight;
+   vector<float>   *btag_UParT_MultiWP_weightup;
+   vector<float>   *btag_UParT_MultiWP_weightdown;
    Float_t		   btag_ParT_weight;
    Float_t		   triggersf_weight_pt;
    Float_t		   triggersf_weight_pt_err;
@@ -530,6 +547,8 @@ using namespace std;
   string sample_tag;
   TFile *file_btagSF_correction;
   
+  bool use_btagshape_SF = false;
+  
   //variables for jet pairing //
   
   float DR_b1b2_H1, DR_b1b2_H2;
@@ -552,6 +571,8 @@ using namespace std;
   int H1_b1_mom_pdgId, H1_b2_mom_pdgId;
   int H2_b1_mom_pdgId, H2_b2_mom_pdgId;
   int H1_pdgId, H2_pdgId;
+  
+  bool H1_isH_BDT, H2_isH_BDT;
   
   float pT_ratio_H1H2, DR_H1H2, DEta_H1H2, DPhi_H1H2;
   vector<float> angles_comb;
@@ -577,6 +598,11 @@ using namespace std;
   float score_pairing;
   int pair_index_maxscore;
   
+  bool b_quark_matching;
+  
+  int MY_min = 80;
+  int MY_max = 200;
+  
   const int ncomb = 3;
   
   bool use_sys;
@@ -595,8 +621,10 @@ using namespace std;
   int JetAK4_btag_B_WP_1, JetAK4_btag_B_WP_2, JetAK4_btag_B_WP_3, JetAK4_btag_B_WP_4;
   int JetAK4_Hcand_index_1, JetAK4_Hcand_index_2, JetAK4_Hcand_index_3, JetAK4_Hcand_index_4;
   float Hcand_mass, Ycand_mass; 
+  float Hcand_mass_BDT, Ycand_mass_BDT; 
   float Hcand_mass_proxy, Ycand_mass_proxy; 
   vector<float> Hcand_mass_bkg, Ycand_mass_bkg;
+  vector<float> Hcand_mass_BDT_bkg, Ycand_mass_BDT_bkg;
   
   int njets_add, njets_add_btag; 
   float HT_add;
@@ -619,9 +647,12 @@ using namespace std;
   vector<int> pair_index;
 
   vector<float> Hcand_mass_pair, Ycand_mass_pair;
+  vector<float> Hcand_mass_BDT_pair, Ycand_mass_BDT_pair;
   
   vector<float> Hcand_1_pt_pair, Hcand_1_eta_pair, Hcand_1_phi_pair, Hcand_1_mass_pair;
   vector<float> Hcand_2_pt_pair, Hcand_2_eta_pair, Hcand_2_phi_pair, Hcand_2_mass_pair;
+  
+  vector<int> Hcand_1_isH_BDT_pair, Hcand_2_isH_BDT_pair;
   
   vector<float> H1_b1b2_deta_pair, H1_b1b2_dphi_pair, H1_b1b2_dR_pair;
   vector<float> H2_b1b2_deta_pair, H2_b1b2_dphi_pair, H2_b1b2_dR_pair;
@@ -631,8 +662,6 @@ using namespace std;
   vector<float> angle_CS_theta_H1H2_pair, angle_CS_theta_H1_pair, angle_CS_theta_H2_pair;
   
   vector<int> mX_sig, mY_sig, best_pair_sig;
-  
-  const int nmasspoints = 300;
     
   TTree *Tree_Pairing ;
   TTree *Tree_Pairing_Out ;
@@ -642,30 +671,30 @@ using namespace std;
   // end of pairing variables //
   
   map<int, std::vector<int>> signal_mass_grid = {
-        {300,   {60, 70, 80, 90, 95, 100, 125, 150}},
-        {400,   {60, 70, 80, 90, 95, 100, 125, 150, 200}},
-        {500,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300}},
-        {500,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},
-        {600,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},
-        {650,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},
-        {700,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},
-        {800,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},
-        {900,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},
-        {1000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800}},
-        {1200,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000}},
-        {1400,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200}},
-        {1600,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400}},
-        {1800,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600}},
-        {2000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800}},
-        {2500,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000}},
-        {3000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000}},
-        {3500,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2600, 3000}},
-        {4000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2600, 3000, 3500}}
+        {300,   {60, 70, 80, 90, 95, 100, 125, 150}}, //8
+        {400,   {60, 70, 80, 90, 95, 100, 125, 150, 200}},//9
+        {500,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300}},//10
+        {600,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400}},//11
+        {650,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},//12
+        {700,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500}},//12
+        {800,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},//13
+        {900,   {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600}},//13
+        {1000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800}},//14
+        {1200,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000}},//15
+        {1400,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200}},//16
+        {1600,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400}},//17
+        {1800,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600}},//18
+        {2000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800}},//19
+        {2500,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000}},//20
+        {3000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2600}},//21
+        {3500,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2600, 3000}},//22
+        {4000,  {60, 70, 80, 90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2600, 3000, 3500}}//23
   };
   
   vector<pair<int,int>> signal_index;
   
-  const int nsig = 272;
+  const int nsig = 273;
+  //const int nmasspoints = 300;
   
   //vector<float> score_pairing_bkg[ncomb];
   //vector<vector<float>> score_pairing_bkg(nsig, vector<float>(ncomb));
@@ -718,7 +747,7 @@ using namespace std;
    
    fChain->SetBranchAddress("MET_pt", &MET_pt);
    fChain->SetBranchAddress("MET_phi", &MET_phi);
-   if(year!="2024" && year!="2025" && 0>1){
+   if(year!="2024" && year!="2025" && year!="2026" && 0>1){
    fChain->SetBranchAddress("MET_sig", &MET_sig);
    fChain->SetBranchAddress("MET_sumEt", &MET_sumEt);
    fChain->SetBranchAddress("MET_pt_JESup", &MET_pt_JESup);
@@ -742,7 +771,7 @@ using namespace std;
    }
    
    fChain->SetBranchAddress("ST", &ST);
-   if(year!="2024" && year!="2025" && 0>1){
+   if(year!="2024" && year!="2025" && year!="2026" && 0>1){
    fChain->SetBranchAddress("ST_JESup", &ST_JESup);
    fChain->SetBranchAddress("ST_JESdn", &ST_JESdn);
    fChain->SetBranchAddress("ST_JERup", &ST_JERup);
@@ -754,6 +783,7 @@ using namespace std;
    fChain->SetBranchAddress("HT_jets", &HT_jets);
    
    if(readAK8jets){
+	   
    fChain->SetBranchAddress("nPFJetAK8", &nPFJetAK8);
    fChain->SetBranchAddress("PFJetAK8_pt", PFJetAK8_pt);
    fChain->SetBranchAddress("PFJetAK8_eta", PFJetAK8_eta);
@@ -761,14 +791,14 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_mass", PFJetAK8_mass);
    fChain->SetBranchAddress("PFJetAK8_jetID_tightlepveto", PFJetAK8_jetID_tightlepveto);
    fChain->SetBranchAddress("PFJetAK8_msoftdrop", PFJetAK8_msoftdrop);
-   }
-   if(year!="2024" && year!="2025"){
+   
+   if(year!="2024" && year!="2025" && year!="2026"){
    fChain->SetBranchAddress("PFJetAK8_JESup", PFJetAK8_JESup);
    fChain->SetBranchAddress("PFJetAK8_JESdn", PFJetAK8_JESdn);
-	}
+   }
    //fChain->SetBranchAddress("PFJetAK8_JESup_split", &PFJetAK8_JESup_split);
    //fChain->SetBranchAddress("PFJetAK8_JESdn_split", &PFJetAK8_JESdn_split);
-   if(year!="2024" && year!="2025"){
+   if(year!="2024" && year!="2025" && year!="2026"){
    fChain->SetBranchAddress("PFJetAK8_label_Top_bq", PFJetAK8_label_Top_bq);
    fChain->SetBranchAddress("PFJetAK8_label_Top_bc", PFJetAK8_label_Top_bc);
    fChain->SetBranchAddress("PFJetAK8_label_Top_bcq", PFJetAK8_label_Top_bcq);
@@ -782,10 +812,8 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNet_HbbvsQCD", PFJetAK8_DeepTag_PNet_HbbvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNet_HccvsQCD", PFJetAK8_DeepTag_PNet_HccvsQCD);
    }
-   if(readAK8jets){
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XbbvsQCD", PFJetAK8_DeepTag_PNetMD_XbbvsQCD);
-   }
-   if(year!="2024" && year!="2025"){
+   if(year!="2024" && year!="2025" && year!="2026"){
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XccvsQCD", PFJetAK8_DeepTag_PNetMD_XccvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_XqqvsQCD", PFJetAK8_DeepTag_PNetMD_XqqvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PNetMD_QCD", PFJetAK8_DeepTag_PNetMD_QCD);
@@ -799,19 +827,23 @@ using namespace std;
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PartT_TvsQCD", PFJetAK8_DeepTag_PartT_TvsQCD);
    fChain->SetBranchAddress("PFJetAK8_DeepTag_PartT_WvsQCD", PFJetAK8_DeepTag_PartT_WvsQCD);
 	}
-   if(readAK8jets){	
    fChain->SetBranchAddress("PFJetAK8_particleNet_massCorr", PFJetAK8_particleNet_massCorr);
    fChain->SetBranchAddress("PFJetAK8_partT_massCorr_generic", PFJetAK8_partT_massCorr_generic);
    fChain->SetBranchAddress("PFJetAK8_partT_massCorr_twoprong", PFJetAK8_partT_massCorr_twoprong);
-   }
-   fChain->SetBranchAddress("nfatjets_boosted", &nfatjets_boosted);
    
+   }//readAK8jets
+   
+   fChain->SetBranchAddress("nfatjets_boosted", &nfatjets_boosted);
+   fChain->SetBranchAddress("nfatjets_semiboosted", &nfatjets_semiboosted);
+   fChain->SetBranchAddress("fatjet_Hmass_semiboosted", &fatjet_Hmass_semiboosted);
+   fChain->SetBranchAddress("smalljet_Ymass_semiboosted", &smalljet_Ymass_semiboosted);
+  
    fChain->SetBranchAddress("nJetAK4", &nJetAK4);
    fChain->SetBranchAddress("JetAK4_pt", JetAK4_pt);
    fChain->SetBranchAddress("JetAK4_eta", JetAK4_eta);
    fChain->SetBranchAddress("JetAK4_phi", JetAK4_phi);
    fChain->SetBranchAddress("JetAK4_mass", JetAK4_mass);
-   if(year!="2024" && year!="2025"){
+   if(year!="2024" && year!="2025" && year!="2026"){
    if(0>1){
    fChain->SetBranchAddress("JetAK4_btag_DeepCSV", JetAK4_btag_DeepCSV);
    fChain->SetBranchAddress("JetAK4_btag_DeepFlav", JetAK4_btag_DeepFlav);
@@ -839,7 +871,7 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_btag_UParTAK4QG", JetAK4_btag_UParTAK4QG);
    fChain->SetBranchAddress("JetAK4_btag_UParTAK4B_WP", JetAK4_btag_UParTAK4B_WP);
    }
-   if(year!="2024" && year!="2025"){
+   if(year!="2024" && year!="2025"  && year!="2026"){
    fChain->SetBranchAddress("JetAK4_PNetRegPtRawCorr", JetAK4_PNetRegPtRawCorr);
    fChain->SetBranchAddress("JetAK4_PNetRegPtRawCorrNeutrino", JetAK4_PNetRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("JetAK4_PNetRegPtRawRes", JetAK4_PNetRegPtRawRes);
@@ -856,6 +888,10 @@ using namespace std;
    fChain->SetBranchAddress("JetAK4_RegCorr", JetAK4_RegCorr);
    fChain->SetBranchAddress("JetAK4_JEC", JetAK4_JEC);
    fChain->SetBranchAddress("JetAK4_JEC_bReg", JetAK4_JEC_bReg);
+   if(isMC){
+   fChain->SetBranchAddress("JetAK4_JER", JetAK4_JER);
+   fChain->SetBranchAddress("JetAK4_JER_bReg", JetAK4_JER_bReg);
+   }
    fChain->SetBranchAddress("JetAK4_hadronflav", JetAK4_hadronflav);
    fChain->SetBranchAddress("JetAK4_partonflav", JetAK4_partonflav);
    fChain->SetBranchAddress("JetAK4_qgl", JetAK4_qgl);
@@ -950,7 +986,7 @@ using namespace std;
    fChain->SetBranchAddress("prefiringweightup", &prefiringweightup);
    fChain->SetBranchAddress("prefiringweightdown", &prefiringweightdown);
    
-   if(year!="2024"&&year!="2025"){
+   if(year!="2024" && year!="2025"  && year!="2026"){
 	fChain->SetBranchAddress("btag_PNet_weight", &btag_PNet_weight);
 	if(isSignal){
 		fChain->SetBranchAddress("btag_PNet_weightup", &btag_PNet_weightup);
@@ -961,9 +997,14 @@ using namespace std;
 		fChain->SetBranchAddress("btag_PNet_WP_weightup", &btag_PNet_WP_weightup);
 		fChain->SetBranchAddress("btag_PNet_WP_weightdown", &btag_PNet_WP_weightdown);
 	}
+	fChain->SetBranchAddress("btag_PNet_MultiWP_weight", &btag_PNet_MultiWP_weight);
+	if(isSignal){
+		fChain->SetBranchAddress("btag_PNet_MultiWP_weightup", &btag_PNet_MultiWP_weightup);
+		fChain->SetBranchAddress("btag_PNet_MultiWP_weightdown", &btag_PNet_MultiWP_weightdown);
+	}
    }
    fChain->SetBranchAddress("btag_ParT_weight", &btag_ParT_weight);
-   if(year=="2024"||year=="2025"){
+   if(year=="2024"||year=="2025"||year=="2026"){
 	fChain->SetBranchAddress("btag_UParT_weight", &btag_UParT_weight);
 	if(isSignal){
 		fChain->SetBranchAddress("btag_UParT_weightup", &btag_UParT_weightup);
@@ -973,6 +1014,11 @@ using namespace std;
 	if(isSignal){
 		fChain->SetBranchAddress("btag_UParT_WP_weightup", &btag_UParT_WP_weightup);
 		fChain->SetBranchAddress("btag_UParT_WP_weightdown", &btag_UParT_WP_weightdown);
+	}
+	fChain->SetBranchAddress("btag_UParT_MultiWP_weight", &btag_UParT_MultiWP_weight);
+	if(isSignal){
+		fChain->SetBranchAddress("btag_UParT_MultiWP_weightup", &btag_UParT_MultiWP_weightup);
+		fChain->SetBranchAddress("btag_UParT_MultiWP_weightdown", &btag_UParT_MultiWP_weightdown);
 	}
    }
    fChain->SetBranchAddress("triggersf_weight_pt", &triggersf_weight_pt);	

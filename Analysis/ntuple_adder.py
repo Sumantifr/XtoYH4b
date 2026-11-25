@@ -98,6 +98,8 @@ if args.isDATA:
         samples = read_sample_names('../Data_names_2024.txt')
     elif args.YEAR == "2025":
         samples = read_sample_names('../Data_names_2025.txt')
+    elif args.YEAR == "2026":
+        samples = read_sample_names('../Data_names_2026.txt')
     else:
         samples = samples_data_2022
 else:
@@ -107,27 +109,34 @@ else:
             samples = read_sample_names('../SIGNAL_names_2023.txt')
         elif(args.YEAR=="2023BPiX"):
             samples = read_sample_names('../SIGNAL_names_2023BPIX.txt')
-        elif(args.YEAR=="2024"):
+        elif(args.YEAR=="2024" or args.YEAR=="2025"):
             samples = read_sample_names('../SIGNAL_names_2024.txt')
     elif args.SingleH:
         samples = read_sample_names('../MC_names_SingleH.txt')
     else:
-        if args.YEAR=="2024":
+        if args.YEAR=="2024" or args.YEAR=="2025":
             samples = read_sample_names('../MC_names_2024.txt')
         else:
             samples = read_sample_names('../MC_names.txt')
 
 for sam in samples:
-    if args.YEAR=="2024": #special scheme for 2024 due to very large size of files
-        if "TTto4QXXX" in sam:
-        #if "QCD" not in sam:
-            continue #this is because TTto4Q sample is super-large (P.S. with veto maps, now < 100 GB)
+    if args.YEAR=="2024" or args.YEAR=="2025": #special scheme for 2024 due to very large size of files
+        #if "GluGlutoHHto4B" not in sam:
+        #if "TTto" in sam:
+        #    continue #this is because TTto4Q sample is super-large (P.S. with veto maps, now < 100 GB)
+        #else:
+        if args.isSIGNAL:
+            command = "hadd -f %s/%s.root %s/%s_*.root"%(out_path,sam,in_path,sam)
+            print("running ",command)
+            os.system(command)
         else:
+            #if "QCD-4Jets_Bin-HT-800to1000" in sam:# or "QCD-4Jets_Bin-HT-1000to1200":
+            #    continue
             pattern = os.path.join(in_path, sam+"*.root")
             input_files = glob.glob(pattern)
             batch_hadd(out_path, sam, in_path, input_files)
     else:
-        #if "QCD-4Jets_HT-1000to1200" not in sam:
+        #if "Data_Run3_Run2026_A" not in sam:
         #    continue
         #else:
 	    command = "hadd -f %s/%s.root %s/%s_*.root"%(out_path,sam,in_path,sam)

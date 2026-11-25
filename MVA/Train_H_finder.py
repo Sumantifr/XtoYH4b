@@ -22,6 +22,9 @@ parser = argparse.ArgumentParser(description="Arguments: massparameterization, m
 parser.add_argument('--massparameterization', action='store', default=False, type=bool, help = "Use mass parameterization?")
 parser.add_argument('--mxparameterization', action='store', default=False, type=bool, help = "Use only MX parameterization?")
 parser.add_argument('--myparameterization', action='store', default=False, type=bool, help = "Use only MY parameterization?")
+parser.add_argument('--usesubsetsignal', action='store', default=False, type=bool, help = "Use a subset of signals (MY:80-200)?")
+
+parser.add_argument('--splitfraction', default=0.3, type=float, help = "Fraction of test data")
 
 args = parser.parse_args()
 
@@ -43,8 +46,10 @@ def plot_bdt_hist(scores, mask, label, color, linestyle="solid"):
 # ----------------------------
 # Load tree
 # ----------------------------
-#file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2023BPiX/Tree_NMSSM_XtoYHto4B_AllMasses_TuneCP5_13p6TeV_madgraph-pythia8.root"
-file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2023BPiX/Tree_NMSSM_XtoYHto4B_AllMX_MY_80to200_TuneCP5_13p6TeV_madgraph-pythia8.root"
+file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2024/Tree_NMSSM_XtoYHto4B_AllSummed_TuneCP5_13p6TeV_madgraph-pythia8.root"
+if args.usesubsetsignal:
+    file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2024/Tree_NMSSM_XtoYHto4B_MY80to200_TuneCP5_13p6TeV_madgraph-pythia8.root"
+#file = "/data/dust/group/cms/higgs-bb-desy/XToYHTo4b/SmallNtuples/Histograms/2023BPiX/Tree_NMSSM_XtoYHto4B_AllMX_MY_80to200_TuneCP5_13p6TeV_madgraph-pythia8.root"
 
 plot_dir =  "../Plotter/H_finder/"
 model_dir = "Models/H_finder/"
@@ -139,7 +144,7 @@ evt_idx = np.arange(n_events)
 
 train_evt, test_evt = train_test_split(
     evt_idx,
-    test_size=0.3,
+    test_size=args.splitfraction,
     random_state=42
 )
 
@@ -342,6 +347,7 @@ legend_linestyles = ['-', '--', '-.', ':']
 unique_MX  = np.unique(np.column_stack(MX))
 unique_MY  = np.unique(np.column_stack(MY))
 
+print("MY values used in training")
 print(unique_MY)
 
 color_map = {MY: legend_colors[i % len(legend_colors)] for i, MY in enumerate(unique_MY)}
@@ -498,7 +504,7 @@ plt.close()
 #Efficiency calculation
 #----------------------
 
-bins_my = np.linspace(np.min(MY), np.max(MY), 20)
+bins_my = np.linspace(np.min(MY)-10, np.max(MY)+10, 20)
 bins_mx = np.linspace(np.min(MX), np.max(MX), 20)
 
 effs_my, centers_my = [], []

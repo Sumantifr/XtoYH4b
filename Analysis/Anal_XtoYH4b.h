@@ -123,12 +123,27 @@
    Bool_t          hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65;
    Bool_t          hlt_PFHT340_QuadPFJet70_50_40_40_PNet2BTagMean0p70;
    Bool_t          hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p55;
+   Bool_t	       hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p60;
+   Bool_t		   hlt_PFHT280_QuadPFJet35_PNet2BTagMean0p60;
+   Bool_t		   hlt_PFHT250_QuadPFJet25_PNet2BTagMean0p55;
+   Bool_t		   hlt_PFHT250_QuadPFJet30_PNet2BTagMean0p55;
+   Bool_t		   hlt_PFHT280_QuadPFJet30;
+   Bool_t		   hlt_PFHT250_QuadPFJet25;
+   
    Bool_t          hlt_Photon175;
    Bool_t          hlt_Photon200;
    Bool_t          hlt_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60;
    Bool_t          hlt_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60;
    Bool_t          hlt_PFMETNoMu140_PFMHTNoMu140_IDTight;
    Bool_t          hlt_PFMETTypeOne140_PFMHT140_IDTight;
+   
+   Bool_t		   hlt_QuadPFJet103_88_75_15;
+   Bool_t		   hlt_QuadPFJet103_88_75_15_PNetBTag_0p4_VBF2;
+   Bool_t		   hlt_QuadPFJet103_88_75_15_PNet2BTag_0p4_0p12_VBF1;
+   Bool_t		   hlt_VBF_DiPFJet125_45_Mjj1050;
+   Bool_t		   hlt_VBF_DiPFJet75_45_Mjj800_DiPFJet60;
+   Bool_t		   hlt_VBF_DiPFJet105_40_Mjj1000_Detajj3p5;
+   Bool_t		   hlt_VBF_DiPFJet105_40_Mjj1000_Detajj3p5_TriplePFJet;
    
    int ncuts;
    Bool_t          Flag_event_cuts[njetmxAK8];
@@ -640,6 +655,7 @@
    static const int ntrigger_etas = 2;
    string trigger_jet_names[ntrigger_jets] = {"leadpt","secondpt","thirdpt","fourthpt"};
    string trigger_eta_names[ntrigger_etas] = {"eb","ee"};
+   string trigger_eta_names_2024[ntrigger_etas] = {"eta0p0to1p5","eta1p5to2p5"};
    TFile *file_trigger_SF_jet[ntrigger_etas][ntrigger_jets];
    TFile *file_trigger_SF_btag, *file_trigger_SF_L1HT;
    
@@ -737,6 +753,7 @@
    string btagSF_file_correctionlib;
    string jec_file_correctionlib;
    string jec_tag;
+   string jer_tag;
    string pu_file_correctionlib;
    string pu_tag;
    
@@ -749,6 +766,7 @@
    bool L1_trig_pass;
    
    int nmuons, nelectrons, nleptons, nfatjets, nsmalljets;
+   vector<int> nbjets;
   
    static const int nmaxleptons = 2;
    static const int nmaxWcands = 2;
@@ -777,6 +795,7 @@
    bool store_hadronic_trigger;
    bool store_HH4b_trigger;
    bool store_photon_trigger;
+   bool store_VBF_trigger;
    
    bool store_additional_MET_variables, store_MET_sys;
    
@@ -814,6 +833,7 @@
    int _s_nJetAK4;
    float _s_JetAK4_pt[njetmx], _s_JetAK4_eta[njetmx], _s_JetAK4_phi[njetmx], _s_JetAK4_mass[njetmx];
    float _s_JetAK4_JEC[njetmx], _s_JetAK4_JEC_bReg[njetmx];
+   float _s_JetAK4_JER[njetmx], _s_JetAK4_JER_bReg[njetmx];
    float _s_JetAK4_btag_DeepFlav[njetmx], _s_JetAK4_btag_DeepCSV[njetmx];
    float _s_JetAK4_btag_DeepFlavB[njetmx], _s_JetAK4_btag_DeepFlavCvB[njetmx], _s_JetAK4_btag_DeepFlavCvL[njetmx], _s_JetAK4_btag_DeepFlavQG[njetmx];
    float _s_JetAK4_btag_PNetB[njetmx], _s_JetAK4_btag_PNetCvB[njetmx], _s_JetAK4_btag_PNetCvL[njetmx], _s_JetAK4_btag_PNetCvNotB[njetmx], _s_JetAK4_btag_PNetQG[njetmx];
@@ -830,7 +850,7 @@
    float _s_JetAK4_charge_kappa_0p3[njetmx], _s_JetAK4_charge_kappa_0p6[njetmx], _s_JetAK4_charge_kappa_1p0[njetmx];
    bool _s_JetAK4_matchb[njetmx];
    int _s_JetAK4_matchb_index[njetmx];
-   float _s_JetAK4_JESup[njetmx], _s_JetAK4_JESdn[njetmx], _s_JetAK4_JERup[njetmx], _s_JetAK4_JERdn[njetmx];
+   float _s_JetAK4_JESup[njetmx], _s_JetAK4_JESdn[njetmx], _s_JetAK4_JERup[njetmx], _s_JetAK4_JERdn[njetmx],  _s_JetAK4_JERup_bReg[njetmx], _s_JetAK4_JERdn_bReg[njetmx];
    float _s_JetAK4_btag_PNetB_SF[njetmx];
    std::vector <std::vector <float> >  _s_JetAK4_btag_PNetB_SF_up, _s_JetAK4_btag_PNetB_SF_dn;
    float _s_JetAK4_btag_RobustParTAK4B_SF[njetmx];
@@ -940,10 +960,16 @@
    //2024:  statistic/jes/jer/type3/pileup/topmass/hdamp/pdfas/bfragmentation/mur/isrdef/muf/fsrdef/	 
   
    int nfatjets_boosted;
-   float AK8_ptcut_boosted = 250.;
+   float AK8_ptcut_boosted = 450.;
+   int nfatjets_semiboosted;
+   float AK8_ptcut_semiboosted = 300.;
+   float AK4_ptcut_semiboosted = 50.;
    float AK8_msdcut_boosted = 40.;
-   float AK8_PNetmasscut_boosted = 60.;
+   float AK8_PNetmasscut_boosted = 40.;
    float AK8_Htagcut_boosted = 0.8;
+   float AK8_ParTXbbvsQCDcut_boosted = 0.1;
+   float fatjet_Hmass_semiboosted;
+   float smalljet_Ymass_semiboosted;
    
    static const int nsrc = 24;
    const char* jecsrcnames[nsrc] = {
@@ -1037,12 +1063,28 @@
    fChain->SetBranchAddress("hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65", &hlt_QuadPFJet70_50_40_35_PNet2BTagMean0p65);
    fChain->SetBranchAddress("hlt_PFHT340_QuadPFJet70_50_40_40_PNet2BTagMean0p70", &hlt_PFHT340_QuadPFJet70_50_40_40_PNet2BTagMean0p70);
    fChain->SetBranchAddress("hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p55", &hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p55);
+   fChain->SetBranchAddress("hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p60", &hlt_PFHT280_QuadPFJet30_PNet2BTagMean0p60);
+   fChain->SetBranchAddress("hlt_PFHT280_QuadPFJet35_PNet2BTagMean0p60", &hlt_PFHT280_QuadPFJet35_PNet2BTagMean0p60);
+   fChain->SetBranchAddress("hlt_PFHT250_QuadPFJet25_PNet2BTagMean0p55", &hlt_PFHT250_QuadPFJet25_PNet2BTagMean0p55);
+   fChain->SetBranchAddress("hlt_PFHT250_QuadPFJet30_PNet2BTagMean0p55", &hlt_PFHT250_QuadPFJet30_PNet2BTagMean0p55);
+   fChain->SetBranchAddress("hlt_PFHT280_QuadPFJet30", &hlt_PFHT280_QuadPFJet30);
+   fChain->SetBranchAddress("hlt_PFHT250_QuadPFJet25", &hlt_PFHT250_QuadPFJet25);
+   
    fChain->SetBranchAddress("hlt_Photon175", &hlt_Photon175);
    fChain->SetBranchAddress("hlt_Photon200", &hlt_Photon200);
    fChain->SetBranchAddress("hlt_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60", &hlt_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60);
    fChain->SetBranchAddress("hlt_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60", &hlt_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60);
    fChain->SetBranchAddress("hlt_PFMETNoMu140_PFMHTNoMu140_IDTight", &hlt_PFMETNoMu140_PFMHTNoMu140_IDTight);
    fChain->SetBranchAddress("hlt_PFMETTypeOne140_PFMHT140_IDTight", &hlt_PFMETTypeOne140_PFMHT140_IDTight);
+   
+   fChain->SetBranchAddress("hlt_QuadPFJet103_88_75_15", &hlt_QuadPFJet103_88_75_15);
+   fChain->SetBranchAddress("hlt_QuadPFJet103_88_75_15_PNetBTag_0p4_VBF2", &hlt_QuadPFJet103_88_75_15_PNetBTag_0p4_VBF2);
+   fChain->SetBranchAddress("hlt_QuadPFJet103_88_75_15_PNet2BTag_0p4_0p12_VBF1", &hlt_QuadPFJet103_88_75_15_PNet2BTag_0p4_0p12_VBF1);
+   fChain->SetBranchAddress("hlt_VBF_DiPFJet125_45_Mjj1050", &hlt_VBF_DiPFJet125_45_Mjj1050);
+   fChain->SetBranchAddress("hlt_VBF_DiPFJet75_45_Mjj800_DiPFJet60", &hlt_VBF_DiPFJet75_45_Mjj800_DiPFJet60);
+   fChain->SetBranchAddress("hlt_VBF_DiPFJet105_40_Mjj1000_Detajj3p5", &hlt_VBF_DiPFJet105_40_Mjj1000_Detajj3p5);
+   fChain->SetBranchAddress("hlt_VBF_DiPFJet105_40_Mjj1000_Detajj3p5_TriplePFJet", &hlt_VBF_DiPFJet105_40_Mjj1000_Detajj3p5_TriplePFJet);
+   
    fChain->SetBranchAddress("nTrigObj", &nTrigObj);
    fChain->SetBranchAddress("TrigObj_pt", TrigObj_pt);
    fChain->SetBranchAddress("TrigObj_eta", TrigObj_eta);
@@ -1236,7 +1278,7 @@
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4CvB", PFJetAK4_btagRobustParTAK4CvB);
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4CvL", PFJetAK4_btagRobustParTAK4CvL);
    fChain->SetBranchAddress("PFJetAK4_btagRobustParTAK4QG", PFJetAK4_btagRobustParTAK4QG);
-   if(YEAR=="2024"||YEAR=="2025"){
+   if(YEAR=="2024"||YEAR=="2025"||YEAR=="2026"){
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4B", PFJetAK4_btagUParTAK4B);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4CvB", PFJetAK4_btagUParTAK4CvB);
    fChain->SetBranchAddress("PFJetAK4_btagUParTAK4CvL", PFJetAK4_btagUParTAK4CvL);
@@ -1245,7 +1287,7 @@
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawCorr", PFJetAK4_PNetRegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawCorrNeutrino", PFJetAK4_PNetRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_PNetRegPtRawRes", PFJetAK4_PNetRegPtRawRes);
-   if(YEAR=="2024"||YEAR=="2025"){
+   if(YEAR=="2024"||YEAR=="2025"||YEAR=="2026"){
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawCorr", PFJetAK4_UParTRegPtRawCorr);
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawCorrNeutrino", PFJetAK4_UParTRegPtRawCorrNeutrino);
    fChain->SetBranchAddress("PFJetAK4_UParTRegPtRawRes", PFJetAK4_UParTRegPtRawRes);
@@ -1536,8 +1578,8 @@ bool pass_NoiseFilter(bool Flag_goodVertices, bool Flag_globalSuperTightHalo2016
 		pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_eeBadScFilter && Flag_ecalBadCalibFilter);
 	}
 
-	else if (year=="2025"){
-		pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter);
+	else if (year=="2025"||year=="2026"){
+		pass = (Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadPFMuonDzFilter && Flag_hfNoisyHitsFilter && Flag_eeBadScFilter);
 	}
 	
 	return pass;
@@ -1580,9 +1622,11 @@ void compute_btagSFWeight_fixedWPs(vector<AK4Jet> Jets, vector<float> btagWP_cut
 		
 		float eff_MC, eff_DATA;
 		
-		eff_MC = (algo=="UParT")?jet.btag_UParTAK4B_allwp_eff[jet_wp]:jet.btag_PNetB_allwp_eff[jet_wp];
-		eff_DATA = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF[jet_wp]*eff_MC:jet.btag_PNetB_allwp_SF[jet_wp]*eff_MC;
-		
+		if(jet_wp<0) {  eff_DATA = 0.5; eff_MC = 0.5; }
+		else{
+			eff_MC = (algo=="UParT")?jet.btag_UParTAK4B_allwp_eff[jet_wp]:jet.btag_PNetB_allwp_eff[jet_wp];
+			eff_DATA = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF[jet_wp]*eff_MC:jet.btag_PNetB_allwp_SF[jet_wp]*eff_MC;
+		}
 		//cout<<"flav: "<<abs(jet.hadronFlavour)<<" pt "<<jet.pt<<" eta "<<jet.eta<<" btag bin_id "<<bin_id<<" eff "<<eff_MC<<endl;
 		
 		if(jet_wp>=0){ 	eff_MC_v.push_back(eff_MC); 	eff_DATA_v.push_back(eff_DATA); }
@@ -1592,11 +1636,14 @@ void compute_btagSFWeight_fixedWPs(vector<AK4Jet> Jets, vector<float> btagWP_cut
 		
 		for(int ibsys=0; ibsys<(btag_wp_systematics.size()); ibsys++){
 				
-			float eff_DATA_up = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF_up[jet_wp][ibsys]*eff_MC:jet.btag_PNetB_allwp_SF_up[jet_wp][ibsys]*eff_MC;
-			float eff_DATA_dn = (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF_dn[jet_wp][ibsys]*eff_MC:jet.btag_PNetB_allwp_SF_dn[jet_wp][ibsys]*eff_MC;
+			float eff_DATA_up = 0.5;
+			if(jet_wp>=0) {   eff_DATA_up =  (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF_up[jet_wp][ibsys]*eff_MC:jet.btag_PNetB_allwp_SF_up[jet_wp][ibsys]*eff_MC; }
+			float eff_DATA_dn = 0.5;
+			if(jet_wp>=0) {   eff_DATA_dn =  (algo=="UParT")?jet.btag_UParTAK4B_allwp_SF_dn[jet_wp][ibsys]*eff_MC:jet.btag_PNetB_allwp_SF_dn[jet_wp][ibsys]*eff_MC; }
 		
-			if(jet_wp>=0){ _sys_up.push_back(eff_DATA_up); } else { _sys_up.push_back(0.5) ; }
-			if(jet_wp>=0){ _sys_dn.push_back(eff_DATA_dn); } else { _sys_up.push_back(0.5) ; }
+			_sys_up.push_back(eff_DATA_up); 
+			_sys_dn.push_back(eff_DATA_dn); 
+			
 		}
 		
 		eff_DATA_up_v.push_back(_sys_up);
@@ -1708,6 +1755,8 @@ void compute_btagSFWeight_multipleWPs(vector<AK4Jet> Jets, vector<float> btagWP_
 			}
 	
 		mc_effs.push_back(eff_MC);
+		
+		//cout<<"flav: "<<abs(jet.hadronFlavour)<<" pt "<<jet.pt<<" eta "<<jet.eta<<" btag bin_id "<<bin_id<<" eff MC "<<eff_MC<<" eff Data "<<eff_DATA<<endl;
 		
 		weight_nom *= ( (eff_DATA<0)?1.:((eff_DATA/eff_MC>1.e-6)?eff_DATA/eff_MC:1.) );	
 		

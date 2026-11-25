@@ -76,6 +76,10 @@ class AK4Jet {
   vector<float>  btag_PNetB_wp_SF_up;
   vector<float>  btag_PNetB_wp_SF_dn;
   
+  vector<float>  btag_PNetB_allwp_SF;
+  vector<vector<float>> btag_PNetB_allwp_SF_up;
+  vector<vector<float>> btag_PNetB_allwp_SF_dn;
+  
   float  btag_RobustParTAK4B_SF;
   vector<float>  btag_RobustParTAK4B_SF_up;
   vector<float>  btag_RobustParTAK4B_SF_dn;
@@ -87,6 +91,13 @@ class AK4Jet {
   float  btag_UParTAK4B_wp_SF;
   vector<float>  btag_UParTAK4B_wp_SF_up;
   vector<float>  btag_UParTAK4B_wp_SF_dn;
+  
+  vector<float>  btag_UParTAK4B_allwp_SF;
+  vector<vector<float>> btag_UParTAK4B_allwp_SF_up;
+  vector<vector<float>> btag_UParTAK4B_allwp_SF_dn;
+  
+  vector<float>  btag_PNetB_allwp_eff;
+  vector<float>  btag_UParTAK4B_allwp_eff;
   
   float PNetRegPtRawCorr;
   float PNetRegPtRawCorrNeutrino;
@@ -158,6 +169,10 @@ class AK4Jet {
   float jesdn_Total;
   
   float JEC_bReg;
+  
+  float JER_bReg;
+  float JERup_bReg;
+  float JERdn_bReg;
   
   float HEMcor;
   
@@ -259,6 +274,7 @@ class AK8Jet {
   float DeepTag_PartT_TvsQCD;
   float DeepTag_PartT_WvsQCD;
   float DeepTag_PartT_ZvsQCD;
+  float DeepTag_PartT_XbbvsQCD;
   
   // mass regression //
   

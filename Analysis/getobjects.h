@@ -17,24 +17,24 @@ for(int mu=0; mu<(nMuon); mu++){
 		
 		//if(Muon_PF_iso[mu]>=pfiso_cut) continue;  // cut on relative PF-isolation (i.e. isolation divided by pt)
 		
-		if(Iso_str=="VeryLoose" && !(Muon_PF_iso[nMuon]>=1)) continue;
-		else if(Iso_str=="Loose" && !(Muon_PF_iso[nMuon]>=2)) continue;
-		else if(Iso_str=="Medium" && !(Muon_PF_iso[nMuon]>=3)) continue;
-		else if(Iso_str=="Tight" && !(Muon_PF_iso[nMuon]>=4)) continue;
-		else if(Iso_str=="VeryTight" && !(Muon_PF_iso[nMuon]>=5)) continue;
-		else if(Iso_str=="VeryVeryTight" && !(Muon_PF_iso[nMuon]>=6)) continue;
+		if(Iso_str=="VeryLoose" && !(Muon_PF_iso[mu]>=1)) continue;
+		else if(Iso_str=="Loose" && !(Muon_PF_iso[mu]>=2)) continue;
+		else if(Iso_str=="Medium" && !(Muon_PF_iso[mu]>=3)) continue;
+		else if(Iso_str=="Tight" && !(Muon_PF_iso[mu]>=4)) continue;
+		else if(Iso_str=="VeryTight" && !(Muon_PF_iso[mu]>=5)) continue;
+		else if(Iso_str=="VeryVeryTight" && !(Muon_PF_iso[mu]>=6)) continue;
 	}
 	
 	else if(use_miniiso){
 	
 		//if(Muon_minisoall[mu]>=miniiso_cut) continue; // cut on relative mini-isolation (i.e. mini-isolation divided by pt)
 	
-		if(Iso_str=="VeryLoose" && !(Muon_Mini_iso[nMuon]>=1)) continue;
-		else if(Iso_str=="Loose" && !(Muon_Mini_iso[nMuon]>=2)) continue;
-		else if(Iso_str=="Medium" && !(Muon_Mini_iso[nMuon]>=3)) continue;
-		else if(Iso_str=="Tight" && !(Muon_Mini_iso[nMuon]>=4)) continue;
-		else if(Iso_str=="VeryTight" && !(Muon_Mini_iso[nMuon]>=5)) continue;
-		else if(Iso_str=="VeryVeryTight" && !(Muon_Mini_iso[nMuon]>=6)) continue;
+		if(Iso_str=="VeryLoose" && !(Muon_Mini_iso[mu]>=1)) continue;
+		else if(Iso_str=="Loose" && !(Muon_Mini_iso[mu]>=2)) continue;
+		else if(Iso_str=="Medium" && !(Muon_Mini_iso[mu]>=3)) continue;
+		else if(Iso_str=="Tight" && !(Muon_Mini_iso[mu]>=4)) continue;
+		else if(Iso_str=="VeryTight" && !(Muon_Mini_iso[mu]>=5)) continue;
+		else if(Iso_str=="VeryVeryTight" && !(Muon_Mini_iso[mu]>=6)) continue;
 	}
     
     if(fabs(Muon_dxy[mu])>dxy_cut || fabs(Muon_dz[mu])>dz_cut) continue;
@@ -127,7 +127,7 @@ void getelectrons(std::vector<Electron> &velectrons, float ptcut=25, float etacu
 
 	if(!impact_pass) continue;
 	
-	if((ID_str.find("wp80noiso")!=string::npos)||(ID_str.find("wp80noiso")!=string::npos)){
+	if((ID_str.find("wp80noiso")!=string::npos)||(ID_str.find("wp90noiso")!=string::npos)){
 		if(use_pfiso){
 			//if(Electron_pfiso_eacor[ie]>=pfiso_cut) continue;  // cut on relative PF-isolation (i.e. isolation divided by pt)
 		}
@@ -340,8 +340,12 @@ void getAK4jets(std::vector<AK4Jet> &Jets, float ptcut=30, float etacut=2.5, boo
   for(int ijet=0; ijet<(nPFJetAK4); ijet++){
 	 
 	AK4Jet sJet; 
-	  
-    if(!PFJetAK4_jetID[ijet]) continue;
+	
+	//Jet ID condition//  
+    if(!PFJetAK4_jetID_tightlepveto[ijet]) continue;
+    
+    //Jet Veto Map condition//
+    //if(PFJetAK4_jetveto_Flag[ijet]) continue;
     
     sJet.ptRaw = PFJetAK4_pt[ijet];
     
@@ -491,6 +495,10 @@ void getAK4jets(std::vector<AK4Jet> &Jets, float ptcut=30, float etacut=2.5, boo
 	}
 	
 	sJet.JEC_bReg = 1;
+	
+	sJet.JER_bReg = 1;
+	sJet.JERup_bReg = 1;
+	sJet.JERdn_bReg = 1;
     
     Jets.push_back(sJet);
     
@@ -507,7 +515,11 @@ void getAK8jets(std::vector<AK8Jet> &LJets, float ptcut=200, float etacut=2.5, b
 
   for(int ijet=0; ijet<(nPFJetAK8); ijet++){
   
-    if(!PFJetAK8_jetID[ijet]) continue;
+	//Jet ID condition //
+    if(!PFJetAK8_jetID_tightlepveto[ijet]) continue;
+    
+    //Jet Veto Map condition//
+    //if(PFJetAK8_jetveto_Flag[ijet]) continue;
     
     // JES correction //
     PFJetAK8_pt[ijet] *= PFJetAK8_JEC[ijet] ;
@@ -591,6 +603,8 @@ void getAK8jets(std::vector<AK8Jet> &LJets, float ptcut=200, float etacut=2.5, b
     LJet.DeepTag_PartT_TvsQCD = PFJetAK8_DeepTag_PartT_TvsQCD[ijet];
     LJet.DeepTag_PartT_WvsQCD = PFJetAK8_DeepTag_PartT_WvsQCD[ijet];
     LJet.DeepTag_PartT_ZvsQCD = PFJetAK8_DeepTag_PartT_ZvsQCD[ijet];
+    
+    LJet.DeepTag_PartT_XbbvsQCD = PFJetAK8_DeepTag_PartT_Xbb[ijet]*1./(PFJetAK8_DeepTag_PartT_Xbb[ijet]+PFJetAK8_DeepTag_PartT_QCD[ijet]);
     
     LJet.particleNet_massCorr = PFJetAK8_particleNet_massCorr[ijet];
     LJet.partT_massCorr_generic = PFJetAK8_partT_massCorr_generic[ijet];

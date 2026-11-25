@@ -90,7 +90,7 @@ int getbinid(double val, int nbmx, double* array) {
 double theta_to_eta(double theta) { return -log(tan(theta/2.)); }
 
 double eta_to_theta(double eta){
-return(2*atan(exp(-2*eta)));
+return(2*atan(exp(-eta)));
 }
 
 double PhiInRange(const double& phi) {
@@ -129,8 +129,8 @@ double Top_pt_reweight_NNLOvsMC(double pt0, double pt1, double a0=0.103, double 
 {
         //https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting#How_to_practically_apply_default
         double sfwt1 = a0*exp(b0*pt0) + c0*pt0 + d0;
-	double sfwt2 = a0*exp(b0*pt1) + c0*pt0 + d0;
-	double sfwt = sqrt(sfwt1*sfwt2);
+		double sfwt2 = a0*exp(b0*pt1) + c0*pt1 + d0;
+		double sfwt = sqrt(sfwt1*sfwt2);
         return sfwt;
 }
 
@@ -260,7 +260,7 @@ void check_zero_bin(TH1D *hin)
 void check_zero_bin_2D(TH2D *hin)
 {
         for(int bx=0; bx<hin->GetNbinsX(); bx++){
-			for(int by=0; by<hin->GetNbinsX(); by++){
+			for(int by=0; by<hin->GetNbinsY(); by++){
 				if((hin->GetBinContent(bx+1,by+1)) < 1.e-12){ hin->SetBinContent(bx+1,by+1,1.e-12);  }
 			}
         }
@@ -615,3 +615,4 @@ TH1F *hout = new TH1F(name.c_str(),title.c_str(),nbins,bins);
 hout->Sumw2();
 return hout;
 }
+
