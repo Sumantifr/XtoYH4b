@@ -12,15 +12,15 @@ E.g. `cd /afs/desy.de/user/u/username/work`
 
 Release a recent version of CMSSW and go to src
 ```
+source /cvmfs/cms.cern.ch/cmsset_default.sh
 cmsrel CMSSW_14_2_1 
 cd CMSSW_14_2_1/src
 ```
 Now lone the repository 
 ```git clone https://github.com/Sumantifr/XtoYH4b.git .```
 
-Setup environment
+Setup environment *(not needed for MVA)*
 ```
-cd XtoYH4b/
 source ~/.bashrc
 cmsenv
 ```
