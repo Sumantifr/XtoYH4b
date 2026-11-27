@@ -527,6 +527,7 @@ using namespace std;
 	 "Btag_SF_jes","Btag_SF_lf","Btag_SF_lfstats1","Btag_SF_lfstats2","Btag_SF_hf","Btag_SF_hfstats1","Btag_SF_hfstats2","Btag_SF_cferr1","Btag_SF_cferr2",
 	 "Btag_SF_correction",
 	 "Btag_WP_SF_correlated","Btag_WP_SF_uncorrelated",
+	 "Trig_pt","Trig_btag","Trig_L1HT",
 	 "LHEScale","LHEScale_muR","LHEScale_muF","LHEPDF","LHEAlphaS","PS_ISR","PS_FSR"
 	 }; 
 	 

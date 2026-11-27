@@ -1443,7 +1443,16 @@ int main(int argc, char *argv[])
 				shape_weight_up.push_back(min((*btag_PNet_MultiWP_weightup)[ibsys],float(10.))); shape_weight_dn.push_back(min((*btag_PNet_MultiWP_weightdown)[ibsys],float(10.))); shape_weight_nom.push_back(btag_PNet_MultiWP_weight);
 			}
 		}
-
+		
+		//Trig SF//
+		float trigsf_err = 0;
+		trigsf_err = max(triggersf_weight_pt_err - triggersf_weight_pt,float(0.));
+		shape_weight_up.push_back(triggersf_weight_pt+trigsf_err); shape_weight_dn.push_back(triggersf_weight_pt-trigsf_err); shape_weight_nom.push_back(triggersf_weight_pt);
+		trigsf_err = max(triggersf_weight_btag_err - triggersf_weight_btag,float(0.));
+		shape_weight_up.push_back(triggersf_weight_btag+trigsf_err); shape_weight_dn.push_back(triggersf_weight_btag-trigsf_err); shape_weight_nom.push_back(triggersf_weight_btag);
+		trigsf_err = max(triggersf_weight_L1HT_err - triggersf_weight_L1HT,float(0.));
+		shape_weight_up.push_back(triggersf_weight_L1HT+trigsf_err); shape_weight_dn.push_back(triggersf_weight_L1HT-trigsf_err); shape_weight_nom.push_back(triggersf_weight_L1HT);
+		
 		//LHEScale//
 		float *LHEScale_errs = getTheoryEsystematics_Scale(nLHEScaleWeights,LHEScaleWeights);
 		float LHEScale_err_up = LHEScale_errs[0];
@@ -3223,7 +3232,7 @@ int main(int argc, char *argv[])
      	//if(!isSignal && jet_btag_2>=3){
 		if(jet_btag_2>=3){
 			
-			if(JetAK4_btag_B_WP_1>=3 && JetAK4_btag_B_WP_2>=3 && JetAK4_btag_B_WP_3>=3 && JetAK4_btag_B_WP_4>=2 && Hcand_mass>=H_mass_min && Hcand_mass<=H_mass_max && pt_condition_forbkg){
+			if(JetAK4_btag_B_WP_1>=3 && JetAK4_btag_B_WP_2>=3 && JetAK4_btag_B_WP_3>=3 && JetAK4_btag_B_WP_4>=2 && Hcand_mass_BDT>=H_mass_min && Hcand_mass_BDT<=H_mass_max && pt_condition_forbkg){
 				count_tree += 1;
 			}
 			
