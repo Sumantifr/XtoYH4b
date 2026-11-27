@@ -1529,6 +1529,8 @@ int main(int argc, char *argv[])
    h_nAK8jet_pass->Fill(nfatjet_pass,weight_nom);
    h_nAK8jet_pass_semiboosted->Fill(nfatjets_semiboosted,weight_nom);
    
+   if(verbose) { cout<<"nfatjet_pass "<<nfatjet_pass<<endl; }
+   
    //**veto condition**//
    if(nfatjet_pass>=2) continue;
    
@@ -1860,6 +1862,8 @@ int main(int argc, char *argv[])
    
    if(year=="2024"||year=="2025"||year=="2026") {  jet_p4s_btag = jet_p4s_UParT; jet_idx_btag = jet_idx_UParT; }
    else 						  				{  jet_p4s_btag = jet_p4s_PNet;  jet_idx_btag = jet_idx_PNet;  }
+   
+   if(verbose) { cout<<"jet_p4s_btag.size() "<<jet_p4s_btag.size()<<endl; }
    
    for(int ijet=0; ijet<nJetAK4; ijet++)
    {
@@ -2885,7 +2889,7 @@ int main(int argc, char *argv[])
 				//jet_btag_1 = JetAK4_btag_UParTAK4B_WP[0]; jet_btag_2 = JetAK4_btag_UParTAK4B_WP[1]; jet_btag_3 = JetAK4_btag_UParTAK4B_WP[2]; jet_btag_4 = JetAK4_btag_UParTAK4B_WP[3];
 			}
 			else{
-				jet_btag_1 = JetAK4_btag_PNetB_WP[0]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[1]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[2]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[3];
+				jet_btag_1 = JetAK4_btag_PNetB_WP[btag_indices[0]]; 	  jet_btag_2 = JetAK4_btag_PNetB_WP[btag_indices[1]]; 	jet_btag_3 = JetAK4_btag_PNetB_WP[btag_indices[2]]; 	  jet_btag_4 = JetAK4_btag_PNetB_WP[btag_indices[3]];
 			}
 			
 			// very tight SR (no mHcut) [XXT,XXT,..,..]
@@ -2931,7 +2935,7 @@ int main(int argc, char *argv[])
 						if(MY_value<MY_min) {
 							Hcand_mass_proxy = max(Hcand_1[jxcomb].M(),Hcand_2[jxcomb].M()); Ycand_mass_proxy = min(Hcand_1[jxcomb].M(),Hcand_2[jxcomb].M()); 
 						}
-						else if(MY_value>MY_min) {
+						else if(MY_value>MY_max) {
 							Hcand_mass_proxy = min(Hcand_1[jxcomb].M(),Hcand_2[jxcomb].M()); Ycand_mass_proxy = max(Hcand_1[jxcomb].M(),Hcand_2[jxcomb].M()); 
 						}
 						else{
